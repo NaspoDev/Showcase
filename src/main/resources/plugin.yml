@@ -1,0 +1,9 @@
+name: Showcase
+version: '${project.version}'
+main: me.naspo.showcase.Showcase
+api-version: 1.18
+authors: [ Naspo ]
+description: Show off your prized possessions.
+
+commands:
+  showcase:
