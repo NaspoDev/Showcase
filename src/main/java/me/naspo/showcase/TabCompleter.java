@@ -20,9 +20,6 @@ public class TabCompleter implements org.bukkit.command.TabCompleter {
             List<String> arguments = new ArrayList<>();
 
             arguments.add("help");
-            if (sender.hasPermission("showcase.edit")) {
-                arguments.add("edit");
-            }
             if (sender.hasPermission("showcase.reload")) {
                 arguments.add("reload");
             }
