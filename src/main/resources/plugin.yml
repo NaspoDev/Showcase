@@ -5,5 +5,8 @@ api-version: 1.18
 authors: [ Naspo ]
 description: Show off your prized possessions.
 
+softdepend:
+  - PlaceholderAPI
+
 commands:
   showcase:

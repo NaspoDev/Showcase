@@ -2,9 +2,12 @@
 #viewable GUI.
 
 #Do not touch this!
-config-version: 1
+config-version: 2
 
 messages:
   prefix: "&8[&5&lShowcase&8] &r"
   reload: "&7Showcase has been reloaded."
   no-permission: "&cYou do not have permission."
+  player-not-created-showcase: "&7%player_name% has not created a showcase."
+  player-has-never-joined: "&7%player_name% has never played on the server before."
+  unknown-player: "&7Unknown player."

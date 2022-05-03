@@ -1,5 +1,7 @@
-package me.naspo.showcase;
+package me.naspo.showcase.datamanagement;
 
+import me.naspo.showcase.Showcase;
+import me.naspo.showcase.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,7 +19,7 @@ public class Data {
     public static HashMap<String, ItemStack[]> invs = new HashMap<>();
 
     Showcase plugin;
-    Data(Showcase plugin) {
+    public Data(Showcase plugin) {
         this.plugin = plugin;
 
         mkdirs();
