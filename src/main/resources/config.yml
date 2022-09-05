@@ -1,9 +1,6 @@
 #The Showcase plugin allows players to show off their prized possessions by storing them in a publicly
 #viewable GUI.
 
-#Do not touch this!
-config-version: 2
-
 messages:
   prefix: "&8[&5&lShowcase&8] &r"
   reload: "&7Showcase has been reloaded."
