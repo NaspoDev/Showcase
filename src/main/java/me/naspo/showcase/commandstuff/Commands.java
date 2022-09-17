@@ -9,17 +9,19 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Commands implements CommandExecutor {
-    Showcase plugin;
-    Data data;
-    public Commands(Showcase plugin, Data data) {
+
+    private Showcase plugin;
+    private Data data;
+    private OpenShowcase openShowcase;
+    public Commands(Showcase plugin, Data data, OpenShowcase openShowcase) {
         this.plugin = plugin;
         this.data = data;
+        this.openShowcase = openShowcase;
     }
 
     @Override
@@ -72,7 +74,7 @@ public class Commands implements CommandExecutor {
                 players.addAll(Bukkit.getOnlinePlayers());
                 for (Player p : players) {
                     if (args[0].equalsIgnoreCase(p.getName().toLowerCase())) {
-                        openOthersOnlineInv(player, p);
+                        openShowcase.openOthersOnlineInv(player, p);
                         return true;
                     }
                 }
@@ -81,7 +83,7 @@ public class Commands implements CommandExecutor {
                 try {
                     if (Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore()) {
                         OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-                        openOthersOfflineInv(player, p);
+                        openShowcase.openOthersOfflineInv(player, p);
                         return true;
                     }
                     OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
@@ -99,7 +101,7 @@ public class Commands implements CommandExecutor {
             }
 
             //Open the player's own showcase.
-            openOwnShowcase(player);
+            openShowcase.openOwnShowcase(player);
         }
         return false;
     }
@@ -133,40 +135,4 @@ public class Commands implements CommandExecutor {
         }
     }
 
-    // --- OPEN SHOWCASE LOGIC ---
-
-    //Open another (online) player's showcase.
-    private void openOthersOnlineInv(Player player, Player owner) {
-        if (Data.invs.containsKey(owner.getUniqueId().toString())) {
-            Inventory showcase = Bukkit.createInventory(owner, 9, owner.getName() + "'s Showcase");
-            showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
-            player.openInventory(showcase);
-            return;
-        }
-        player.sendMessage(Utils.chatColor(Utils.prefix +
-                Utils.placeholderPlayer(owner,
-                        plugin.getConfig().getString("messages.player-not-created-showcase"))));
-    }
-
-    //Open another (offline) player's showcase.
-    private void openOthersOfflineInv(Player player, OfflinePlayer owner) {
-        if (Data.invs.containsKey(owner.getUniqueId().toString())) {
-            Inventory showcase = Bukkit.createInventory(null, 9, owner.getName() + "'s Showcase");
-            showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
-            player.openInventory(showcase);
-            return;
-        }
-        player.sendMessage(Utils.chatColor(Utils.prefix +
-                Utils.placeholderPlayer(owner,
-                        plugin.getConfig().getString("messages.player-not-created-showcase"))));
-    }
-
-    //Open player's own showcase.
-    private void openOwnShowcase(Player player) {
-        Inventory showcase = Bukkit.createInventory(player, 9, player.getName() + "'s Showcase");
-        if (Data.invs.containsKey(player.getUniqueId().toString())) {
-            showcase.setContents(Data.invs.get(player.getUniqueId().toString()));
-        }
-        player.openInventory(showcase);
-    }
 }
