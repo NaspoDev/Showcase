@@ -1,6 +1,7 @@
 package me.naspo.showcase;
 
 import me.naspo.showcase.commandstuff.Commands;
+import me.naspo.showcase.commandstuff.OpenShowcase;
 import me.naspo.showcase.commandstuff.TabCompleter;
 import me.naspo.showcase.datamanagement.Data;
 import me.naspo.showcase.datamanagement.Events;
@@ -12,6 +13,7 @@ import java.util.logging.Level;
 public final class Showcase extends JavaPlugin {
     private Utils utils;
     private Data data;
+    private OpenShowcase openShowcase;
     private Commands commands;
     private TabCompleter tabCompleter;
     private Events events;
@@ -21,6 +23,7 @@ public final class Showcase extends JavaPlugin {
         this.saveDefaultConfig();
         this.getLogger().info("Showcase has been enabled!");
 
+        dependencyCheck();
         softDependencyCheck();
         instantiateClasses();
         registerEvents();
@@ -38,6 +41,15 @@ public final class Showcase extends JavaPlugin {
         }
     }
 
+    private void dependencyCheck() {
+        //Vault
+        if (this.getServer().getPluginManager().getPlugin("Vault") == null) {
+            this.getLogger().log(Level.SEVERE, "Could not locate Vault which is a dependency of this plugin!");
+            this.getLogger().log(Level.SEVERE, "Disabling plugin.");
+            this.getServer().getPluginManager().disablePlugin(this);
+        }
+    }
+
     private void softDependencyCheck() {
         //PlaceholderAPI
         if (this.getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) {
@@ -49,7 +61,8 @@ public final class Showcase extends JavaPlugin {
     private void instantiateClasses() {
         utils = new Utils(this);
         data = new Data(this);
-        commands = new Commands(this, data);
+        openShowcase = new OpenShowcase(this);
+        commands = new Commands(this, data, openShowcase);
         tabCompleter = new TabCompleter();
         events = new Events();
     }

@@ -16,6 +16,7 @@ public class Data {
     private File playerFile;
     private YamlConfiguration playerConfig;
 
+    //Main working HashMap that stores showcase data in runtime.
     public static HashMap<String, ItemStack[]> invs = new HashMap<>();
 
     Showcase plugin;
