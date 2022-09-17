@@ -134,5 +134,4 @@ public class Commands implements CommandExecutor {
             player.sendMessage(Utils.chatColor(help[3]));
         }
     }
-
 }
