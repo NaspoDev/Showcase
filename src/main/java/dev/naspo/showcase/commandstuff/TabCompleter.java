@@ -1,4 +1,4 @@
-package me.naspo.showcase.commandstuff;
+package dev.naspo.showcase.commandstuff;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

@@ -1,4 +1,4 @@
-package me.naspo.showcase;
+package dev.naspo.showcase;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;

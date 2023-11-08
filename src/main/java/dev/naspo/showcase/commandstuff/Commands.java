@@ -1,8 +1,8 @@
-package me.naspo.showcase.commandstuff;
+package dev.naspo.showcase.commandstuff;
 
-import me.naspo.showcase.datamanagement.Data;
-import me.naspo.showcase.Showcase;
-import me.naspo.showcase.Utils;
+import dev.naspo.showcase.datamanagement.Data;
+import dev.naspo.showcase.Showcase;
+import dev.naspo.showcase.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;

@@ -1,7 +1,7 @@
-package me.naspo.showcase.datamanagement;
+package dev.naspo.showcase.datamanagement;
 
-import me.naspo.showcase.Showcase;
-import me.naspo.showcase.Utils;
+import dev.naspo.showcase.Showcase;
+import dev.naspo.showcase.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 

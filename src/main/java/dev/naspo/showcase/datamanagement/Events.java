@@ -1,4 +1,4 @@
-package me.naspo.showcase.datamanagement;
+package dev.naspo.showcase.datamanagement;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

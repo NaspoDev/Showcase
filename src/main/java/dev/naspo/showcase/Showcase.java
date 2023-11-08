@@ -1,10 +1,10 @@
-package me.naspo.showcase;
+package dev.naspo.showcase;
 
-import me.naspo.showcase.commandstuff.Commands;
-import me.naspo.showcase.commandstuff.OpenShowcase;
-import me.naspo.showcase.commandstuff.TabCompleter;
-import me.naspo.showcase.datamanagement.Data;
-import me.naspo.showcase.datamanagement.Events;
+import dev.naspo.showcase.commandstuff.Commands;
+import dev.naspo.showcase.commandstuff.OpenShowcase;
+import dev.naspo.showcase.commandstuff.TabCompleter;
+import dev.naspo.showcase.datamanagement.Data;
+import dev.naspo.showcase.datamanagement.Events;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
