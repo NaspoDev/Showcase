@@ -5,6 +5,7 @@ import dev.naspo.showcase.commandstuff.OpenShowcase;
 import dev.naspo.showcase.commandstuff.TabCompleter;
 import dev.naspo.showcase.datamanagement.Data;
 import dev.naspo.showcase.datamanagement.Events;
+import dev.naspo.showcase.otherfeatures.SignFeature;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,6 +18,7 @@ public final class Showcase extends JavaPlugin {
     private Commands commands;
     private TabCompleter tabCompleter;
     private Events events;
+    private SignFeature signFeature;
 
     @Override
     public void onEnable() {
@@ -65,6 +67,7 @@ public final class Showcase extends JavaPlugin {
         commands = new Commands(this, data, openShowcase);
         tabCompleter = new TabCompleter();
         events = new Events();
+        signFeature = new SignFeature(openShowcase);
     }
 
     private void registerEvents() {

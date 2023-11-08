@@ -1,6 +1,11 @@
 #The Showcase plugin allows players to show off their prized possessions by storing them in a publicly
 #viewable GUI.
 
+# Sign Functionality
+# Writing [Showcase] on a sign links the sign to that player's showcase. Sign can be clicked
+# by anyone to view that player's showcase.
+sign-functionality: true
+
 messages:
   prefix: "&8[&5&lShowcase&8] &r"
   reload: "&7Showcase has been reloaded."
