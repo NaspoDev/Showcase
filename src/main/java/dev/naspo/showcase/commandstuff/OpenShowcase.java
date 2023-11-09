@@ -72,7 +72,7 @@ public class OpenShowcase {
     }
 
     // --- Get Player's Showcase Size ---
-    //Returns the size of the player in question's showcase size.
+    //Returns the size of the player's showcase.
 
     //(For online player)
     private int getShowcaseSize(Player player) {

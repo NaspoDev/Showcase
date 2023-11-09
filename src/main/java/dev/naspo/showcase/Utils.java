@@ -5,6 +5,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 public class Utils {
     public static String prefix;
 
@@ -33,6 +35,17 @@ public class Utils {
     //Removes filetype extension from file name.
     public static String removeExtension(String name) {
         return name.substring(0, name.lastIndexOf('.'));
+    }
+
+    // Returns the player if online, null if offline.
+    public static Player getPlayer(UUID uuid) {
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            if (p.getUniqueId() == uuid) {
+                return p;
+            }
+        }
+
+        return null;
     }
 
     // --- PlaceholderAPI Stuff ---

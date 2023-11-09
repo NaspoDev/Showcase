@@ -16,7 +16,7 @@ public class Data {
     private File playerFile;
     private YamlConfiguration playerConfig;
 
-    //Main working HashMap that stores showcase data in runtime.
+    // Main working HashMap that stores showcase data in runtime.
     public static HashMap<String, ItemStack[]> invs = new HashMap<>();
 
     Showcase plugin;
@@ -26,7 +26,7 @@ public class Data {
         mkdirs();
     }
 
-    //Creates the PlayerData folder.
+    // Creates the PlayerData folder.
     private void mkdirs() {
         dir = new File(plugin.getDataFolder(), "PlayerData");
         if (!(dir.exists())) {
@@ -46,7 +46,7 @@ public class Data {
         }
     }
 
-    //Saves hashmap data to files.
+    // Saves hashmap data to files.
     public void saveInvs() {
         for (Map.Entry<String, ItemStack[]> entry : invs.entrySet()) {
 
@@ -72,7 +72,7 @@ public class Data {
         }
     }
 
-    //Restores file data to hashmap.
+    // Restores file data to hashmap.
     public void restoreInvs() {
         if (dir.length() == 0) {
             return;
