@@ -17,7 +17,7 @@ public class Data {
     private YamlConfiguration playerConfig;
 
     // Main working HashMap that stores showcase data in runtime.
-    public static HashMap<String, ItemStack[]> invs = new HashMap<>();
+    public static ArrayList<PlayerShowcase> showcases = new ArrayList<>();
 
     Showcase plugin;
     public Data(Showcase plugin) {
@@ -48,25 +48,32 @@ public class Data {
 
     // Saves hashmap data to files.
     public void saveInvs() {
-        for (Map.Entry<String, ItemStack[]> entry : invs.entrySet()) {
+        for (PlayerShowcase showcase : showcases) {
 
-            playerFile = new File(dir, entry.getKey() + ".yml");
+            // Define the player file.
+            playerFile = new File(dir, showcase.getOwnerUUID() + ".yml");
+            // If the player file doesn't already exist, create it.
             if (!(playerFile.exists())) {
                 try {
                     playerFile.createNewFile();
                 } catch (IOException e) {
-                    plugin.getLogger().log(Level.WARNING, "Could not create playerdata file for player uuid " + entry.getKey());
+                    plugin.getLogger().log(Level.WARNING, "Could not create playerdata file for player uuid " +
+                            showcase.getOwnerUUID());
                     e.printStackTrace();
                     return;
                 }
             }
 
+            // Define the YAML config from the player file.
             playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-            playerConfig.set("data", entry.getValue());
+            // Set the showcase item data under a key called "data".
+            playerConfig.set("data", showcase.getItems());
+
+            // Save the file.
             try {
                 playerConfig.save(playerFile);
             } catch (IOException e) {
-                plugin.getLogger().log(Level.WARNING, "Could not save playerdata for player uuid " + entry.getKey());
+                plugin.getLogger().log(Level.WARNING, "Could not save playerdata for player uuid " + showcase.getOwnerUUID());
                 e.printStackTrace();
             }
         }
@@ -79,9 +86,10 @@ public class Data {
         }
         for (File file : dirListings) {
             playerConfig = YamlConfiguration.loadConfiguration(file);
-            List<ItemStack> content = new ArrayList<>();
-            playerConfig.getList("data").stream().forEach(item -> content.add((ItemStack) item));
-            invs.put(Utils.removeExtension(file.getName()), content.toArray(new ItemStack[0]));
+            List<ItemStack> items = new ArrayList<>();
+            playerConfig.getList("data").stream().forEach(item -> items.add((ItemStack) item));
+            showcases.add(new PlayerShowcase(UUID.fromString(Utils.removeExtension(file.getName())),
+                    items.toArray(new ItemStack[0])));
         }
     }
 
