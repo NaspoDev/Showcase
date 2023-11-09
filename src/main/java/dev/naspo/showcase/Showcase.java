@@ -18,7 +18,6 @@ public final class Showcase extends JavaPlugin {
     private Commands commands;
     private TabCompleter tabCompleter;
     private Events events;
-    private SignFeature signFeature;
 
     @Override
     public void onEnable() {
@@ -38,7 +37,8 @@ public final class Showcase extends JavaPlugin {
     @Override
     public void onDisable() {
         this.getLogger().info("Showcase has been disabled!");
-        if (!(Data.invs.isEmpty())) {
+        // If there are showcases, save them.
+        if (!(Data.showcases.isEmpty())) {
             data.saveInvs();
         }
     }
@@ -67,7 +67,6 @@ public final class Showcase extends JavaPlugin {
         commands = new Commands(this, data, openShowcase);
         tabCompleter = new TabCompleter();
         events = new Events();
-        signFeature = new SignFeature(openShowcase);
     }
 
     private void registerEvents() {
