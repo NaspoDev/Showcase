@@ -93,5 +93,13 @@ public class Data {
         }
     }
 
-
+    // Finds and returns a showcase based on the owner uuid.
+    public static PlayerShowcase getShowcase(UUID ownerUUID) {
+        for (PlayerShowcase showcase : showcases) {
+            if (showcase.getOwnerUUID() == ownerUUID) {
+                return showcase;
+            }
+        }
+        return null;
+    }
 }
