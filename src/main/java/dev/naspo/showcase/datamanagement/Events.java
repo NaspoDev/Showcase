@@ -8,9 +8,13 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
@@ -21,6 +25,8 @@ public class Events implements Listener {
 
     // Owner tag used for block metadata.
     private final String METADATA_OWNER_TAG = "ownerUUID";
+    // The text that should be written on a sign to link it with the player's showcase.
+    private final String SIGN_SHOWCASE_LINK = "[Showcase]";
     private Showcase plugin;
 
     public Events(Showcase plugin) {
@@ -89,5 +95,35 @@ public class Events implements Listener {
         }
     }
 
-    // TODO: Implement a listener to see if "[Showcase]" is written on a sign, then do what you gotta do...
+    // If "[Showcase]" is written on a sign, link the sign to the player's showcase.
+    @EventHandler
+    private void onSignChange(SignChangeEvent event) {
+        for (String line : event.getLines()) {
+            // If sign contains "[Showcase]"
+            if (line.toLowerCase().contains(SIGN_SHOWCASE_LINK.toLowerCase())) {
+                // If the writer of the sign has a showcase, add the sign location to their showcase data.
+                if (Data.getShowcase(event.getPlayer().getUniqueId()) != null) {
+                    Data.getShowcase(event.getPlayer().getUniqueId())
+                            .addSign(event.getBlock().getLocation());
+                }
+            }
+        }
+    }
+
+    // Open a showcase from a sign (right click on sign).
+    @EventHandler
+    private void onRightClick(PlayerInteractEvent event) {
+        // If the action was a right click on a block
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            // If the block is a sign
+            if (event.getClickedBlock().getState() instanceof Sign) {
+                // If the sign has an owner metadata.
+                if (event.getClickedBlock().hasMetadata(METADATA_OWNER_TAG)) {
+                    // If the sign is linked to a showcase
+                    // TODO: left off here
+                    if ()
+                }
+            }
+        }
+    }
 }
