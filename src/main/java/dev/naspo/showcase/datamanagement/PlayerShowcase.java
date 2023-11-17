@@ -39,6 +39,11 @@ public class PlayerShowcase {
         showcaseSizes.put("showcase.size.6", 54);
     }
 
+    // Opens the showcase for the specified player.
+    public void openForPlayer(Player target) {
+        target.openInventory(getShowcaseInventory());
+    }
+
     // Adds a new sign to the sign list
     public void addSign(Location location) {
         signLocations.add(location);
@@ -60,16 +65,16 @@ public class PlayerShowcase {
     }
 
     // Create and return an Inventory of this showcase.
-    public Inventory getShowcaseInv() {
+    public Inventory getShowcaseInventory() {
         Inventory showcase;
 
         // If owner is online
-        if (Utils.getPlayer(OWNER_UUID) != null) {
-            showcase = Bukkit.createInventory(Utils.getPlayer(OWNER_UUID), getShowcaseSize(),
-                    Utils.getPlayer(OWNER_UUID).getName() + "'s Showcase");
+        if (Utils.getOnlinePlayer(OWNER_UUID) != null) {
+            showcase = Bukkit.createInventory(Utils.getOnlinePlayer(OWNER_UUID), getShowcaseSize(),
+                    Utils.getOnlinePlayer(OWNER_UUID).getName() + "'s Showcase");
             // if the owner is offline
         } else {
-            showcase = Bukkit.createInventory(Utils.getPlayer(OWNER_UUID), getShowcaseSize(),
+            showcase = Bukkit.createInventory(Utils.getOnlinePlayer(OWNER_UUID), getShowcaseSize(),
                     Bukkit.getOfflinePlayer(OWNER_UUID).getName() + "'s Showcase");
         }
 
@@ -86,9 +91,9 @@ public class PlayerShowcase {
         int showcaseSize = 9;
 
         // If the owner is online
-        if (Utils.getPlayer(OWNER_UUID) != null) {
+        if (Utils.getOnlinePlayer(OWNER_UUID) != null) {
             for (Map.Entry<String, Integer> entry : showcaseSizes.entrySet()) {
-                if (Utils.getPlayer(OWNER_UUID).hasPermission(entry.getKey())) {
+                if (Utils.getOnlinePlayer(OWNER_UUID).hasPermission(entry.getKey())) {
                     showcaseSize = entry.getValue();
                 }
             }

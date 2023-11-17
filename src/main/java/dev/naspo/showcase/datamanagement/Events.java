@@ -113,15 +113,28 @@ public class Events implements Listener {
     // Open a showcase from a sign (right click on sign).
     @EventHandler
     private void onRightClick(PlayerInteractEvent event) {
+        Block block = event.getClickedBlock();
+
         // If the action was a right click on a block
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             // If the block is a sign
-            if (event.getClickedBlock().getState() instanceof Sign) {
-                // If the sign has an owner metadata.
-                if (event.getClickedBlock().hasMetadata(METADATA_OWNER_TAG)) {
-                    // If the sign is linked to a showcase
-                    // TODO: left off here
-                    if ()
+            if (block.getState() instanceof Sign) {
+                // If the sign has an "ownerUUD" metadata.
+                if (block.hasMetadata(METADATA_OWNER_TAG)) {
+
+                    // If the sign has "[Showcase]" written on it open the linked showcase.
+                    for (String line : ((Sign) block.getState()).getLines()) {
+                        if (line.toLowerCase().contains(SIGN_SHOWCASE_LINK.toLowerCase())) {
+                            // Get the showcase. (Getting the owner's uuid from the metadata to pass in).
+                            PlayerShowcase showcase = Data.getShowcase(UUID.fromString(
+                                    block.getMetadata(METADATA_OWNER_TAG).get(0).toString()));
+
+                            // If there is a showcase associated with that sign, open it.
+                            if (showcase != null) {
+                                showcase.openForPlayer(event.getPlayer());
+                            }
+                        }
+                    }
                 }
             }
         }

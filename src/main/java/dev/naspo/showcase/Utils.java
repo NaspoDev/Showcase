@@ -38,7 +38,7 @@ public class Utils {
     }
 
     // Returns the player if online, null if offline.
-    public static Player getPlayer(UUID uuid) {
+    public static Player getOnlinePlayer(UUID uuid) {
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             if (p.getUniqueId() == uuid) {
                 return p;
