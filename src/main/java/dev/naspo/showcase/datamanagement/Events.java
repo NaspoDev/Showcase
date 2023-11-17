@@ -2,6 +2,7 @@ package dev.naspo.showcase.datamanagement;
 
 import dev.naspo.showcase.Showcase;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -85,6 +87,7 @@ public class Events implements Listener {
         }
     }
 
+    // SIGN FEATURE
     // If the block placed is a sign, set its owner to the player who placed it in its metadata.
     @EventHandler
     private void onBlockPlace(BlockPlaceEvent event) {
@@ -95,7 +98,9 @@ public class Events implements Listener {
         }
     }
 
+    // SIGN FEATURE
     // If "[Showcase]" is written on a sign, link the sign to the player's showcase.
+    // (i.e. add it to their sign list).
     @EventHandler
     private void onSignChange(SignChangeEvent event) {
         for (String line : event.getLines()) {
@@ -110,6 +115,7 @@ public class Events implements Listener {
         }
     }
 
+    // SIGN FEATURE
     // Open a showcase from a sign (right click on sign).
     @EventHandler
     private void onRightClick(PlayerInteractEvent event) {
@@ -133,6 +139,31 @@ public class Events implements Listener {
                             if (showcase != null) {
                                 showcase.openForPlayer(event.getPlayer());
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // SIGN FEATURE
+    // If the block broken is a showcase sign, remove it from the player's showcases' sign list.
+    @EventHandler
+    private void onBlockBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+
+        if (block.getState() instanceof Sign) {
+            if (block.hasMetadata(METADATA_OWNER_TAG)) {
+                // Getting the showcase. (Getting UUID from block metadata).
+                PlayerShowcase showcase = Data.getShowcase(UUID.fromString(
+                        block.getMetadata(METADATA_OWNER_TAG).get(0).toString()));
+
+                // If the sign owner does have a showcase, check if this sign is linked to it.
+                if (showcase != null) {
+                    for (Location loc : showcase.getSignLocations()) {
+                        if (loc == block.getLocation()) {
+                            showcase.removeSign(loc);
+                            // TODO: working on removing linked signs upon break. Is this done?
                         }
                     }
                 }
