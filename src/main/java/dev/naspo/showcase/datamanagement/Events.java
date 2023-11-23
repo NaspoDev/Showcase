@@ -160,11 +160,8 @@ public class Events implements Listener {
 
                 // If the sign owner does have a showcase, check if this sign is linked to it.
                 if (showcase != null) {
-                    for (Location loc : showcase.getSignLocations()) {
-                        if (loc == block.getLocation()) {
-                            showcase.removeSign(loc);
-                            // TODO: working on removing linked signs upon break. Is this done?
-                        }
+                    if (showcase.getSignLocations().contains(block.getLocation())) {
+                        showcase.removeSign(block.getLocation());
                     }
                 }
             }
