@@ -46,7 +46,7 @@ public class Data {
         }
     }
 
-    // Saves hashmap data to files.
+    // Saves showcase data to files.
     public void saveInvs() {
         for (PlayerShowcase showcase : showcases) {
 
@@ -79,7 +79,7 @@ public class Data {
         }
     }
 
-    // Restores file data to hashmap.
+    // Restores file data to showcases list.
     public void restoreInvs() {
         if (dir.length() == 0) {
             return;

@@ -1,7 +1,6 @@
 package dev.naspo.showcase;
 
 import dev.naspo.showcase.commandstuff.Commands;
-import dev.naspo.showcase.commandstuff.OpenShowcase;
 import dev.naspo.showcase.commandstuff.TabCompleter;
 import dev.naspo.showcase.datamanagement.Data;
 import dev.naspo.showcase.datamanagement.Events;
@@ -13,7 +12,6 @@ import java.util.logging.Level;
 public final class Showcase extends JavaPlugin {
     private Utils utils;
     private Data data;
-    private OpenShowcase openShowcase;
     private Commands commands;
     private TabCompleter tabCompleter;
     private Events events;
@@ -62,8 +60,7 @@ public final class Showcase extends JavaPlugin {
     private void instantiateClasses() {
         utils = new Utils(this);
         data = new Data(this);
-        openShowcase = new OpenShowcase(this);
-        commands = new Commands(this, data, openShowcase);
+        commands = new Commands(this);
         tabCompleter = new TabCompleter();
         events = new Events(this);
     }

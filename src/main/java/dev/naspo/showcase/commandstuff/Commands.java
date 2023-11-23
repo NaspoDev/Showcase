@@ -3,12 +3,14 @@ package dev.naspo.showcase.commandstuff;
 import dev.naspo.showcase.datamanagement.Data;
 import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.Utils;
+import dev.naspo.showcase.datamanagement.PlayerShowcase;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +18,8 @@ import java.util.List;
 public class Commands implements CommandExecutor {
 
     private Showcase plugin;
-    private Data data;
-    private OpenShowcase openShowcase;
-    public Commands(Showcase plugin, Data data, OpenShowcase openShowcase) {
+    public Commands(Showcase plugin) {
         this.plugin = plugin;
-        this.data = data;
-        this.openShowcase = openShowcase;
     }
 
     @Override
@@ -69,21 +67,36 @@ public class Commands implements CommandExecutor {
 
                 // --- Open Another Player's Showcase ---
 
-                //Check if player is online.
-                List<Player> players = new ArrayList<Player>();
-                players.addAll(Bukkit.getOnlinePlayers());
-                for (Player p : players) {
-                    if (args[0].equalsIgnoreCase(p.getName().toLowerCase())) {
-                        openShowcase.openOthersOnlineInv(player, p);
+                // If the other player is online, open their showcase.
+                for (Player otherPlayer : Bukkit.getOnlinePlayers()) {
+                    if (args[0].equalsIgnoreCase(otherPlayer.getName().toLowerCase())) {
+                        // if the other player has a showcase, open it.
+                        if (Data.getShowcase(otherPlayer.getUniqueId()) != null) {
+                            Data.getShowcase(otherPlayer.getUniqueId()).openForPlayer(player);
+                            // if they don't have a showcase, send an error message.
+                        } else {
+                            player.sendMessage(Utils.chatColor(Utils.prefix +
+                                    Utils.placeholderPlayer(otherPlayer,
+                                            plugin.getConfig().getString("messages.player-not-created-showcase"))));
+                        }
                         return true;
                     }
                 }
 
-                //Check if player is offline.
+                // If other player is offline, open their showcase.
                 try {
+                    // If the offline player is real and has played before.
                     if (Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore()) {
-                        OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-                        openShowcase.openOthersOfflineInv(player, p);
+                        OfflinePlayer otherPlayer = Bukkit.getOfflinePlayer(args[0]);
+                        // if the other player has a showcase, open it.
+                        if (Data.getShowcase(otherPlayer.getUniqueId()) != null) {
+                            Data.getShowcase(otherPlayer.getUniqueId()).openForPlayer(player);
+                            // if they don't have a showcase, send an error message.
+                        } else {
+                            player.sendMessage(Utils.chatColor(Utils.prefix +
+                                    Utils.placeholderPlayer(otherPlayer,
+                                            plugin.getConfig().getString("messages.player-not-created-showcase"))));
+                        }
                         return true;
                     }
                     OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
@@ -92,7 +105,7 @@ public class Commands implements CommandExecutor {
                                     plugin.getConfig().getString("messages.player-has-never-joined"))));
                     return true;
 
-                    //Player doesn't exist.
+                    // Player doesn't exist.
                 } catch (Exception e) {
                     player.sendMessage(Utils.chatColor(Utils.prefix +
                             plugin.getConfig().getString("messages.unknown-player")));
@@ -100,8 +113,15 @@ public class Commands implements CommandExecutor {
                 return true;
             }
 
-            //Open the player's own showcase.
-            openShowcase.openOwnShowcase(player);
+            // Args length is 0, open the player's own showcase.
+            PlayerShowcase showcase = Data.getShowcase(player.getUniqueId());
+            // if the player already has a showcase, open it.
+            if (showcase != null) {
+                showcase.openForPlayer(player);
+                // if the player does not already have a showcase, create one for them and open it.
+            } else {
+                Data.showcases.add(new PlayerShowcase(player.getUniqueId(), new ItemStack[0]));
+            }
         }
         return false;
     }
