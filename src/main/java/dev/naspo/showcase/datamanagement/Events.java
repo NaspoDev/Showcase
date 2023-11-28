@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,7 +93,7 @@ public class Events implements Listener {
         Block block = event.getBlockPlaced();
 
         if (block.getState() instanceof Sign) {
-            block.setMetadata(METADATA_OWNER_TAG, new FixedMetadataValue(plugin, event.getPlayer().getUniqueId()));
+            block.setMetadata(METADATA_OWNER_TAG, new FixedMetadataValue(plugin, event.getPlayer().getUniqueId().toString()));
         }
     }
 
@@ -130,13 +131,14 @@ public class Events implements Listener {
                     for (String line : ((Sign) block.getState()).getLines()) {
                         if (line.toLowerCase().contains(SIGN_SHOWCASE_LINK.toLowerCase())) {
                             // Get the showcase. (Getting the owner's uuid from the metadata to pass in).
-                            PlayerShowcase showcase = Data.getShowcase(UUID.fromString(
-                                    block.getMetadata(METADATA_OWNER_TAG).get(0).toString()));
+                            event.getPlayer().sendMessage(block.getMetadata(METADATA_OWNER_TAG).get(0).toString());
+//                            PlayerShowcase showcase = Data.getShowcase(UUID.fromString(
+//                                    block.getMetadata(METADATA_OWNER_TAG).get(0).toString()));
 
                             // If there is a showcase associated with that sign, open it.
-                            if (showcase != null) {
-                                showcase.openForPlayer(event.getPlayer());
-                            }
+//                            if (showcase != null) {
+//                                showcase.openForPlayer(event.getPlayer());
+//                            }
                         }
                     }
                 }
