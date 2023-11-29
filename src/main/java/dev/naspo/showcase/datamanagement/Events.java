@@ -131,14 +131,13 @@ public class Events implements Listener {
                     for (String line : ((Sign) block.getState()).getLines()) {
                         if (line.toLowerCase().contains(SIGN_SHOWCASE_LINK.toLowerCase())) {
                             // Get the showcase. (Getting the owner's uuid from the metadata to pass in).
-                            event.getPlayer().sendMessage(block.getMetadata(METADATA_OWNER_TAG).get(0).toString());
-//                            PlayerShowcase showcase = Data.getShowcase(UUID.fromString(
-//                                    block.getMetadata(METADATA_OWNER_TAG).get(0).toString()));
+                            PlayerShowcase showcase = Data.getShowcase(UUID.fromString(
+                                    block.getMetadata(METADATA_OWNER_TAG).get(0).asString()));
 
                             // If there is a showcase associated with that sign, open it.
-//                            if (showcase != null) {
-//                                showcase.openForPlayer(event.getPlayer());
-//                            }
+                            if (showcase != null) {
+                                showcase.openForPlayer(event.getPlayer());
+                            }
                         }
                     }
                 }

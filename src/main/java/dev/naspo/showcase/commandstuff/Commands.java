@@ -44,7 +44,7 @@ public class Commands implements CommandExecutor {
 
             Player player = (Player) sender;
 
-            //Basic permission check.
+            // Basic permission check.
             if (!(player.hasPermission("showcase.use"))) {
                 player.sendMessage(Utils.chatColor(Utils.prefix +
                         plugin.getConfig().getString("messages.no-permission")));
@@ -53,13 +53,13 @@ public class Commands implements CommandExecutor {
 
             if (!(args.length == 0)) {
 
-                //Reload Command.
+                // Reload Command.
                 if (args[0].equalsIgnoreCase("reload")) {
                     reloadCommand(player);
                     return true;
                 }
 
-                //Help command.
+                // Help command.
                 if (args[0].equalsIgnoreCase("help")) {
                     helpCommand(player);
                     return true;
@@ -113,6 +113,7 @@ public class Commands implements CommandExecutor {
                 return true;
             }
 
+            // Open player's own showcase.
             // Args length is 0, open the player's own showcase.
             PlayerShowcase showcase = Data.getShowcase(player.getUniqueId());
             // if the player already has a showcase, open it.
