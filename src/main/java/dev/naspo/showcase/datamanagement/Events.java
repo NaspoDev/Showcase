@@ -122,20 +122,27 @@ public class Events implements Listener {
 
         // If the action was a right click on a block
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Bukkit.broadcastMessage("right click action!");
             // If the block is a sign
             if (block.getState() instanceof Sign) {
                 // If the sign has an "ownerUUD" metadata.
+                Bukkit.broadcastMessage("Block is a sign!");
+                Bukkit.broadcastMessage(block.getMetadata(METADATA_OWNER_TAG).get(0).asString());
                 if (block.hasMetadata(METADATA_OWNER_TAG)) {
-
+                    Bukkit.broadcastMessage("Block has owner tag metadata");
                     // If the sign has "[Showcase]" written on it open the linked showcase.
                     for (String line : ((Sign) block.getState()).getLines()) {
                         if (line.toLowerCase().contains(SIGN_SHOWCASE_LINK.toLowerCase())) {
+                            Bukkit.broadcastMessage("sign contains [showcase]");
                             // Get the showcase. (Getting the owner's uuid from the metadata to pass in).
                             PlayerShowcase showcase = Data.getShowcase(UUID.fromString(
                                     block.getMetadata(METADATA_OWNER_TAG).get(0).asString()));
+                            Bukkit.broadcastMessage("We have the showcase of:");
+                            Bukkit.broadcastMessage(showcase.getOwnerUUID().toString());
 
                             // If there is a showcase associated with that sign, open it.
                             if (showcase != null) {
+                                event.getPlayer().sendMessage("opening their showcase!");
                                 showcase.openForPlayer(event.getPlayer());
                             }
                         }
