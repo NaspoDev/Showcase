@@ -21,19 +21,19 @@ public class Utils {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
-    //Removes filetype extension from file name.
+    // Removes filetype extension from file name.
     public static String removeExtension(String name) {
         return name.substring(0, name.lastIndexOf('.'));
     }
 
     // --- PlaceholderAPI Stuff ---
 
-    //Player expansion, for online players.
+    // Player expansion, for online players.
     public static String placeholderPlayer(Player player, String text) {
         return text = PlaceholderAPI.setPlaceholders(player, text);
     }
 
-    //Player expansion, for offline players.
+    // Player expansion, for offline players.
     public static String placeholderPlayer(OfflinePlayer player, String text) {
         return text = PlaceholderAPI.setPlaceholders(player, text);
     }

@@ -6,7 +6,7 @@
 
     <groupId>dev.naspo</groupId>
     <artifactId>Showcase</artifactId>
-    <version>1.5.1</version>
+    <version>1.6.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Showcase</name>
@@ -39,7 +39,6 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <outputFile>C:\Users\atsub\IdeaProjects\Personal_Projects\MC_Plugins\Showcase\jar\Showcase-${project.version}.jar</outputFile>
                         </configuration>
                     </execution>
                 </executions>

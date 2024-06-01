@@ -7,17 +7,33 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Events implements Listener {
 
-    //Manages edit permissions for a showcase when one is opened.
+    // Creates a showcase for every player when they join, if they don't already have one.
     @EventHandler
-    public void onInvClick(InventoryClickEvent event) {
+    private void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+
+        // If the player does not have a showcase, create one for them.
+        if (!Data.invs.containsKey(player.getUniqueId().toString())) {
+            Data.invs.put(player.getUniqueId().toString(), new ItemStack[0]);
+        }
+    }
+
+    // Manages edit permissions for a showcase when one is opened.
+    @EventHandler
+    private void onInvClick(InventoryClickEvent event) {
         String invTitle = event.getView().getTitle();
+
+        // If it's a showcase inventory.
         if (invTitle.contains("'s Showcase")) {
+            // If the player who clicked the inv is not the owner, or doesn't have edit perms, cancel the event.
             if (!(event.getWhoClicked().getName().equalsIgnoreCase(invTitle.substring(0, invTitle.lastIndexOf("'"))))) {
                 if (!(event.getWhoClicked().hasPermission("showcase.edit"))) {
                     event.setCancelled(true);
@@ -26,21 +42,22 @@ public class Events implements Listener {
         }
     }
 
-    //Saving showcase contents to HashMap on inv close.
+    // Saving showcase contents to HashMap on inv close.
     @EventHandler
-    public void onInvClose(InventoryCloseEvent event) {
+    private void onInvClose(InventoryCloseEvent event) {
         String invTitle = event.getView().getTitle();
 
+        // If it's a showcase inventory.
         if (invTitle.contains("'s Showcase")) {
 
-            //If the owner of the showcase closed it, save the contents.
+            // If the owner of the showcase closed it, save the contents.
             String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));
             if (event.getPlayer().getName().equalsIgnoreCase(invOwnerName)) {
                 Data.invs.put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
                 return;
             }
 
-            //Otherwise, if someone with showcase edit perms closed it, save the contents.
+            // Or, if someone with showcase edit perms closed it, save the contents.
             if (event.getPlayer().hasPermission("showcase.edit")) {
                 String uuid;
                 List<Player> players = new ArrayList<>();

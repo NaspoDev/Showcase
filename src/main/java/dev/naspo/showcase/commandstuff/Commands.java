@@ -46,22 +46,23 @@ public class Commands implements CommandExecutor {
 
             Player player = (Player) sender;
 
-            //Basic permission check.
-            if (!(player.hasPermission("showcase.use"))) {
+            // Base permission check.
+            if (!player.hasPermission("showcase.use") || !player.hasPermission("showcase.use.view")) {
                 player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                         plugin.getConfig().getString("messages.no-permission")));
                 return true;
             }
 
+            // If the command is written with arguments.
             if (!(args.length == 0)) {
 
-                //Reload Command.
+                // Reload Command.
                 if (args[0].equalsIgnoreCase("reload")) {
                     reloadCommand(player);
                     return true;
                 }
 
-                //Help command.
+                // Help command.
                 if (args[0].equalsIgnoreCase("help")) {
                     helpCommand(player);
                     return true;
@@ -69,38 +70,44 @@ public class Commands implements CommandExecutor {
 
                 // --- Open Another Player's Showcase ---
 
-                //Check if player is online.
-                List<Player> players = new ArrayList<Player>();
-                players.addAll(Bukkit.getOnlinePlayers());
-                for (Player p : players) {
+                // Check if player is online.
+                List<Player> onlinePlayers = new ArrayList<>();
+                onlinePlayers.addAll(Bukkit.getOnlinePlayers());
+                for (Player p : onlinePlayers) {
                     if (args[0].equalsIgnoreCase(p.getName().toLowerCase())) {
                         openShowcase.openOthersOnlineInv(player, p);
                         return true;
                     }
                 }
 
-                //Check if player is offline.
+                // Check if player is offline.
                 try {
+                    // If they have played the server before, open their showcase.
                     if (Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore()) {
                         OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
                         openShowcase.openOthersOfflineInv(player, p);
                         return true;
                     }
+
+                    // Otherwise, if they have never played the server before, send
+                    // a player-has-never-joined message.
                     OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
                     player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                             Utils.placeholderPlayer(p,
                                     plugin.getConfig().getString("messages.player-has-never-joined"))));
                     return true;
 
-                    //Player doesn't exist.
+                    // Player doesn't exist error.
                 } catch (Exception e) {
+                    // Send a message to the command sender.
                     player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                             plugin.getConfig().getString("messages.unknown-player")));
                 }
                 return true;
             }
 
-            //Open the player's own showcase.
+            // No argument command.
+            // Open the player's own showcase.
             openShowcase.openOwnShowcase(player);
         }
         return false;
@@ -109,12 +116,15 @@ public class Commands implements CommandExecutor {
     // --- PLAYER INDIVIDUAL COMMAND LOGIC ---
 
     private void reloadCommand(Player player) {
+        // Reload permission check.
         if (!(player.hasPermission("showcase.reload"))) {
 
             player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                     plugin.getConfig().getString("messages.no-permission")));
             return;
         }
+
+        // Reload the plugin.
         plugin.reloadConfig();
         player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                 plugin.getConfig().getString("messages.reload")));

@@ -2,7 +2,6 @@ package dev.naspo.showcase.commandstuff;
 
 import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.datamanagement.Data;
-import dev.naspo.showcase.Utils;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -21,6 +20,7 @@ public class OpenShowcase {
 
 
     private Showcase plugin;
+
     public OpenShowcase(Showcase plugin) {
         this.plugin = plugin;
 
@@ -33,48 +33,39 @@ public class OpenShowcase {
         showcaseSizes.put("showcase.size.6", 54);
     }
 
-    //Open another (online) player's showcase.
+    // Open another (online) player's showcase.
     void openOthersOnlineInv(Player player, Player owner) {
-        if (Data.invs.containsKey(owner.getUniqueId().toString())) {
-            Inventory showcase = Bukkit.createInventory(owner, getShowcaseSize(owner), owner.getName() + "'s Showcase");
-            showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
-            player.openInventory(showcase);
-            return;
-        }
-        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
-                Utils.placeholderPlayer(owner,
-                        plugin.getConfig().getString("messages.player-not-created-showcase"))));
+        // Create a blank showcase inventory with the owner's information.
+        Inventory showcase = Bukkit.createInventory(owner, getShowcaseSize(owner), owner.getName() + "'s Showcase");
+        // Set its content's to the owners showcase contents.
+        showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
+        // Open the owner's showcase for the player.
+        player.openInventory(showcase);
     }
 
-    //Open another (offline) player's showcase.
+    // Open another (offline) player's showcase.
     void openOthersOfflineInv(Player player, OfflinePlayer owner) {
-        if (Data.invs.containsKey(owner.getUniqueId().toString())) {
-            Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(owner),
-                    owner.getName() + "'s Showcase");
-            showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
-            player.openInventory(showcase);
-            return;
-        }
-        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
-                Utils.placeholderPlayer(owner,
-                        plugin.getConfig().getString("messages.player-not-created-showcase"))));
+        // Create a blank showcase inventory with the owner's information.
+        Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(owner),
+                owner.getName() + "'s Showcase");
+        // Set its content's to the owners showcase contents.
+        showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
+        // Open the owner's showcase for the player.
+        player.openInventory(showcase);
     }
 
     //Open player's own showcase.
     void openOwnShowcase(Player player) {
+        // Create a blank showcase inventory with the player's information.
         Inventory showcase = Bukkit.createInventory(player, getShowcaseSize(player),
                 player.getName() + "'s Showcase");
-
-        if (Data.invs.containsKey(player.getUniqueId().toString())) {
-            showcase.setContents(Data.invs.get(player.getUniqueId().toString()));
-        }
-        player.openInventory(showcase);
+        // Set its contents to their showcase's contents.
+        showcase.setContents(Data.invs.get(player.getUniqueId().toString()));
+        player.openInventory(showcase); // Open their showcase.
     }
 
-    // --- Get Player's Showcase Size ---
-    //Returns the size of the player in question's showcase size.
-
-    //(For online player)
+    // Returns the size of an online player's showcase size.
+    // If they have no other showcase size permission, return the default size of 9.
     private int getShowcaseSize(Player player) {
         int showcaseSize = 9;
 
@@ -87,7 +78,8 @@ public class OpenShowcase {
         return showcaseSize;
     }
 
-    //(For offline player)
+    // Returns the size of an offline player's showcase size.
+    // If they have no other showcase size permission, return the default size of 9.
     private int getShowcaseSize(OfflinePlayer player) {
         int showcaseSize = 9;
 
