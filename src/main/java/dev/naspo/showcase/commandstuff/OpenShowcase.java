@@ -41,7 +41,7 @@ public class OpenShowcase {
             player.openInventory(showcase);
             return;
         }
-        player.sendMessage(Utils.chatColor(Utils.prefix +
+        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                 Utils.placeholderPlayer(owner,
                         plugin.getConfig().getString("messages.player-not-created-showcase"))));
     }
@@ -55,7 +55,7 @@ public class OpenShowcase {
             player.openInventory(showcase);
             return;
         }
-        player.sendMessage(Utils.chatColor(Utils.prefix +
+        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                 Utils.placeholderPlayer(owner,
                         plugin.getConfig().getString("messages.player-not-created-showcase"))));
     }

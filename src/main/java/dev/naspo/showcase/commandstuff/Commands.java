@@ -36,7 +36,7 @@ public class Commands implements CommandExecutor {
                     return true;
                 }
                 if (args[0].equalsIgnoreCase("reload")) {
-                    Utils.reloadConfigs();
+                    plugin.reloadConfig();
                     sender.sendMessage("Showcase has been reloaded.");
                 }
                 return true;
@@ -48,7 +48,7 @@ public class Commands implements CommandExecutor {
 
             //Basic permission check.
             if (!(player.hasPermission("showcase.use"))) {
-                player.sendMessage(Utils.chatColor(Utils.prefix +
+                player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                         plugin.getConfig().getString("messages.no-permission")));
                 return true;
             }
@@ -87,14 +87,14 @@ public class Commands implements CommandExecutor {
                         return true;
                     }
                     OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-                    player.sendMessage(Utils.chatColor(Utils.prefix +
+                    player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                             Utils.placeholderPlayer(p,
                                     plugin.getConfig().getString("messages.player-has-never-joined"))));
                     return true;
 
                     //Player doesn't exist.
                 } catch (Exception e) {
-                    player.sendMessage(Utils.chatColor(Utils.prefix +
+                    player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                             plugin.getConfig().getString("messages.unknown-player")));
                 }
                 return true;
@@ -111,12 +111,12 @@ public class Commands implements CommandExecutor {
     private void reloadCommand(Player player) {
         if (!(player.hasPermission("showcase.reload"))) {
 
-            player.sendMessage(Utils.chatColor(Utils.prefix +
+            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                     plugin.getConfig().getString("messages.no-permission")));
             return;
         }
-        Utils.reloadConfigs();
-        player.sendMessage(Utils.chatColor(Utils.prefix +
+        plugin.reloadConfig();
+        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                 plugin.getConfig().getString("messages.reload")));
     }
 
