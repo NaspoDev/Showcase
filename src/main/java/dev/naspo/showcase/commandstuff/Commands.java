@@ -47,7 +47,7 @@ public class Commands implements CommandExecutor {
             Player player = (Player) sender;
 
             // Base permission check.
-            if (!player.hasPermission("showcase.use") || !player.hasPermission("showcase.use.view")) {
+            if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.use.view")) {
                 player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
                         plugin.getConfig().getString("messages.no-permission")));
                 return true;
