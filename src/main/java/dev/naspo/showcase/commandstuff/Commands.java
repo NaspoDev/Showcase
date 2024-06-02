@@ -106,13 +106,8 @@ public class Commands implements CommandExecutor {
             }
 
             // No argument command.
-            // If the player has permission, open their own showcase.
-            if (player.hasPermission("showcase.use")) {
-                openShowcase.openOwnShowcase(player);
-            } else {
-                sendNoPermissionMessage(player);
-                return true;
-            }
+            // Open their own showcase.
+            openShowcase.openOwnShowcase(player);
         }
         return false;
     }
