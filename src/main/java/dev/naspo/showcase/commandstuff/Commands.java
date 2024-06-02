@@ -48,8 +48,7 @@ public class Commands implements CommandExecutor {
 
             // Base permission check.
             if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.use.view")) {
-                player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
-                        plugin.getConfig().getString("messages.no-permission")));
+                sendNoPermissionMessage(player);
                 return true;
             }
 
@@ -107,8 +106,13 @@ public class Commands implements CommandExecutor {
             }
 
             // No argument command.
-            // Open the player's own showcase.
-            openShowcase.openOwnShowcase(player);
+            // If the player has permission, open their own showcase.
+            if (player.hasPermission("showcase.use")) {
+                openShowcase.openOwnShowcase(player);
+            } else {
+                sendNoPermissionMessage(player);
+                return true;
+            }
         }
         return false;
     }
@@ -118,9 +122,7 @@ public class Commands implements CommandExecutor {
     private void reloadCommand(Player player) {
         // Reload permission check.
         if (!(player.hasPermission("showcase.reload"))) {
-
-            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
-                    plugin.getConfig().getString("messages.no-permission")));
+            sendNoPermissionMessage(player);
             return;
         }
 
@@ -143,5 +145,11 @@ public class Commands implements CommandExecutor {
         if (player.hasPermission("showcase.reload")) {
             player.sendMessage(Utils.chatColor(help[3]));
         }
+    }
+
+    // Utility method to send a no-permission message to the player.
+    private void sendNoPermissionMessage(Player player) {
+        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
+                plugin.getConfig().getString("messages.no-permission")));
     }
 }
