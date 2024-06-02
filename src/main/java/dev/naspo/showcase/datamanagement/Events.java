@@ -30,14 +30,20 @@ public class Events implements Listener {
     @EventHandler
     private void onInvClick(InventoryClickEvent event) {
         String invTitle = event.getView().getTitle();
+        Player player = (Player) event.getWhoClicked();
 
         // If it's a showcase inventory.
         if (invTitle.contains("'s Showcase")) {
-            // If the player who clicked the inv is not the owner, or doesn't have edit perms, cancel the event.
-            if (!(event.getWhoClicked().getName().equalsIgnoreCase(invTitle.substring(0, invTitle.lastIndexOf("'"))))) {
-                if (!(event.getWhoClicked().hasPermission("showcase.edit"))) {
+            // If it's the player's own showcase, but they don't have the basic showcase.use permission,
+            // or the moderator showcase.edit permission, cancel the event.
+            if (player.getName().equalsIgnoreCase(invTitle.substring(0, invTitle.lastIndexOf("'")))) {
+                if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.edit")) {
                     event.setCancelled(true);
                 }
+                // Otherwise, it's not their showcase.
+                // But if they don't have the showcase.edit permission, cancel the event.
+            } else if (!(event.getWhoClicked().hasPermission("showcase.edit"))) {
+                event.setCancelled(true);
             }
         }
     }
