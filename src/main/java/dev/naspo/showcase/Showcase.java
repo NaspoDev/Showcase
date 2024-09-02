@@ -3,7 +3,7 @@ package dev.naspo.showcase;
 import dev.naspo.showcase.commandstuff.Commands;
 import dev.naspo.showcase.commandstuff.OpenShowcase;
 import dev.naspo.showcase.commandstuff.TabCompleter;
-import dev.naspo.showcase.datamanagement.Data;
+import dev.naspo.showcase.datamanagement.DataManager;
 import dev.naspo.showcase.datamanagement.Events;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -12,7 +12,7 @@ import java.util.logging.Level;
 
 public final class Showcase extends JavaPlugin {
     private Utils utils;
-    private Data data;
+    private DataManager dataManager;
     private OpenShowcase openShowcase;
     private Commands commands;
     private TabCompleter tabCompleter;
@@ -32,7 +32,7 @@ public final class Showcase extends JavaPlugin {
         registerCommands();
 
         // Call to restore showcase data
-        data.restoreInvs();
+        dataManager.restoreInvs();
         // Start scheduled data saves.
         repeatSaveInvs();
     }
@@ -40,8 +40,8 @@ public final class Showcase extends JavaPlugin {
     @Override
     public void onDisable() {
         this.getLogger().info("Showcase has been disabled!");
-        if (!(Data.invs.isEmpty())) {
-            data.saveInvs();
+        if (!(DataManager.invs.isEmpty())) {
+            dataManager.saveInvs();
         }
     }
 
@@ -63,9 +63,9 @@ public final class Showcase extends JavaPlugin {
     }
 
     private void instantiateClasses() {
-        data = new Data(this);
+        dataManager = new DataManager(this);
         openShowcase = new OpenShowcase(this);
-        commands = new Commands(this, data, openShowcase);
+        commands = new Commands(this, dataManager, openShowcase);
         tabCompleter = new TabCompleter();
         events = new Events();
     }
@@ -84,7 +84,7 @@ public final class Showcase extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
-                data.saveInvs();
+                dataManager.saveInvs();
             }
         }, 6000L, 6000L);
     }

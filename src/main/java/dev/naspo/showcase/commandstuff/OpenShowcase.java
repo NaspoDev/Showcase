@@ -1,7 +1,7 @@
 package dev.naspo.showcase.commandstuff;
 
 import dev.naspo.showcase.Showcase;
-import dev.naspo.showcase.datamanagement.Data;
+import dev.naspo.showcase.datamanagement.DataManager;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -38,7 +38,7 @@ public class OpenShowcase {
         // Create a blank showcase inventory with the owner's information.
         Inventory showcase = Bukkit.createInventory(owner, getShowcaseSize(owner), owner.getName() + "'s Showcase");
         // Set its content's to the owners showcase contents.
-        showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
+        showcase.setContents(DataManager.invs.get(owner.getUniqueId().toString()));
         // Open the owner's showcase for the player.
         player.openInventory(showcase);
     }
@@ -49,7 +49,7 @@ public class OpenShowcase {
         Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(owner),
                 owner.getName() + "'s Showcase");
         // Set its content's to the owners showcase contents.
-        showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
+        showcase.setContents(DataManager.invs.get(owner.getUniqueId().toString()));
         // Open the owner's showcase for the player.
         player.openInventory(showcase);
     }
@@ -60,7 +60,7 @@ public class OpenShowcase {
         Inventory showcase = Bukkit.createInventory(player, getShowcaseSize(player),
                 player.getName() + "'s Showcase");
         // Set its contents to their showcase's contents.
-        showcase.setContents(Data.invs.get(player.getUniqueId().toString()));
+        showcase.setContents(DataManager.invs.get(player.getUniqueId().toString()));
         player.openInventory(showcase); // Open their showcase.
     }
 

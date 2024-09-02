@@ -21,8 +21,8 @@ public class Events implements Listener {
         Player player = event.getPlayer();
 
         // If the player does not have a showcase, create one for them.
-        if (!Data.invs.containsKey(player.getUniqueId().toString())) {
-            Data.invs.put(player.getUniqueId().toString(), new ItemStack[0]);
+        if (!DataManager.invs.containsKey(player.getUniqueId().toString())) {
+            DataManager.invs.put(player.getUniqueId().toString(), new ItemStack[0]);
         }
     }
 
@@ -59,7 +59,7 @@ public class Events implements Listener {
             // If the owner of the showcase closed it, save the contents.
             String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));
             if (event.getPlayer().getName().equalsIgnoreCase(invOwnerName)) {
-                Data.invs.put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
+                DataManager.invs.put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
                 return;
             }
 
@@ -71,13 +71,13 @@ public class Events implements Listener {
                 for (Player p : players) {
                     if (invOwnerName.equalsIgnoreCase(p.getName())) {
                         uuid = Bukkit.getPlayer(invOwnerName).getUniqueId().toString();
-                        Data.invs.put(uuid, event.getInventory().getContents());
+                        DataManager.invs.put(uuid, event.getInventory().getContents());
                         return;
                     }
                 }
                 OfflinePlayer p = Bukkit.getOfflinePlayer(invOwnerName);
                 uuid = p.getUniqueId().toString();
-                Data.invs.put(uuid, event.getInventory().getContents());
+                DataManager.invs.put(uuid, event.getInventory().getContents());
             }
         }
     }

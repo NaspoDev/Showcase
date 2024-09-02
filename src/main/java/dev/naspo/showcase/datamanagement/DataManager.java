@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
-public class Data {
+public class DataManager {
     private File dir;
     private File[] dirListings;
     private File playerFile;
@@ -21,7 +21,7 @@ public class Data {
     public static HashMap<String, ItemStack[]> invs = new HashMap<>();
 
     Showcase plugin;
-    public Data(Showcase plugin) {
+    public DataManager(Showcase plugin) {
         this.plugin = plugin;
 
         mkdirs();
