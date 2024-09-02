@@ -23,13 +23,17 @@ public final class Showcase extends JavaPlugin {
         this.saveDefaultConfig();
         this.getLogger().info("Showcase has been enabled!");
 
+        // initialize utility class
+        Utils.initialize(this);
         dependencyCheck();
         softDependencyCheck();
         instantiateClasses();
         registerEvents();
         registerCommands();
 
+        // Call to restore showcase data
         data.restoreInvs();
+        // Start scheduled data saves.
         repeatSaveInvs();
     }
 
@@ -59,7 +63,6 @@ public final class Showcase extends JavaPlugin {
     }
 
     private void instantiateClasses() {
-        utils = new Utils(this);
         data = new Data(this);
         openShowcase = new OpenShowcase(this);
         commands = new Commands(this, data, openShowcase);

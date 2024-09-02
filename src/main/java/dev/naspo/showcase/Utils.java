@@ -8,8 +8,17 @@ import org.bukkit.entity.Player;
 public class Utils {
 
     private static Showcase plugin;
-    Utils(Showcase plugin) {
-        Utils.plugin = plugin;
+
+    // Private constructor to prevent instantiation.
+    private Utils() {}
+
+    // static method to initialize the plugin variable for the Utils class.
+    // This should be called before any part of this class is used (for thread safety).
+    static void initialize(Showcase plugin) {
+        // Ensure that "plugin" can only be initialized once.
+        if (Utils.plugin == null) {
+            Utils.plugin = plugin;
+        }
     }
 
     // Returns the plugins prefix.
