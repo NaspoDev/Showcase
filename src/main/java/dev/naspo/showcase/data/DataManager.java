@@ -1,7 +1,7 @@
-package dev.naspo.showcase.datamanagement;
+package dev.naspo.showcase.data;
 
 import dev.naspo.showcase.Showcase;
-import dev.naspo.showcase.Utils;
+import dev.naspo.showcase.support.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
+// Contains hashmap that is used to work with data, and data related methods.
 public class DataManager {
     private File dir;
     private File[] dirListings;
@@ -18,12 +19,11 @@ public class DataManager {
 
     // Main working HashMap that stores showcase data in runtime.
     // Player UUID as string : Showcase contents (ItemStack[])
-    public static HashMap<String, ItemStack[]> invs = new HashMap<>();
+    public HashMap<String, ItemStack[]> invs = new HashMap<>();
 
     Showcase plugin;
     public DataManager(Showcase plugin) {
         this.plugin = plugin;
-
         mkdirs();
     }
 

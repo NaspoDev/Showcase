@@ -1,5 +1,6 @@
-package dev.naspo.showcase;
+package dev.naspo.showcase.support;
 
+import dev.naspo.showcase.Showcase;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -14,7 +15,7 @@ public class Utils {
 
     // static method to initialize the plugin variable for the Utils class.
     // This should be called before any part of this class is used (for thread safety).
-    static void initialize(Showcase plugin) {
+    public static void initialize(Showcase plugin) {
         // Ensure that "plugin" can only be initialized once.
         if (Utils.plugin == null) {
             Utils.plugin = plugin;

@@ -1,33 +1,32 @@
 package dev.naspo.showcase;
 
 import dev.naspo.showcase.commandstuff.Commands;
-import dev.naspo.showcase.commandstuff.OpenShowcase;
+import dev.naspo.showcase.support.OpenShowcaseService;
 import dev.naspo.showcase.commandstuff.TabCompleter;
-import dev.naspo.showcase.datamanagement.DataManager;
-import dev.naspo.showcase.datamanagement.Events;
+import dev.naspo.showcase.data.DataManager;
+import dev.naspo.showcase.data.Events;
+import dev.naspo.showcase.support.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
 
 public final class Showcase extends JavaPlugin {
-    private Utils utils;
     private DataManager dataManager;
-    private OpenShowcase openShowcase;
-    private Commands commands;
-    private TabCompleter tabCompleter;
-    private Events events;
+    private OpenShowcaseService openShowcaseService;
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
         this.getLogger().info("Showcase has been enabled!");
 
+        dataManager = new DataManager(this);
+        openShowcaseService = new OpenShowcaseService(this);
+
         // initialize utility class
         Utils.initialize(this);
         dependencyCheck();
         softDependencyCheck();
-        instantiateClasses();
         registerEvents();
         registerCommands();
 
@@ -40,7 +39,7 @@ public final class Showcase extends JavaPlugin {
     @Override
     public void onDisable() {
         this.getLogger().info("Showcase has been disabled!");
-        if (!(DataManager.invs.isEmpty())) {
+        if (!(dataManager.invs.isEmpty())) {
             dataManager.saveInvs();
         }
     }
@@ -62,21 +61,13 @@ public final class Showcase extends JavaPlugin {
         }
     }
 
-    private void instantiateClasses() {
-        dataManager = new DataManager(this);
-        openShowcase = new OpenShowcase(this);
-        commands = new Commands(this, dataManager, openShowcase);
-        tabCompleter = new TabCompleter();
-        events = new Events();
-    }
-
     private void registerEvents() {
-        this.getServer().getPluginManager().registerEvents(events, this);
+        this.getServer().getPluginManager().registerEvents(new Events(), this);
     }
 
     private void registerCommands() {
-        this.getCommand("showcase").setExecutor(commands);
-        this.getCommand("showcase").setTabCompleter(tabCompleter);
+        this.getCommand("showcase").setExecutor(new Commands(this, dataManager, openShowcaseService));
+        this.getCommand("showcase").setTabCompleter(new TabCompleter());
     }
 
     //Saves invs from hashmap to file every 5 minutes to prevent data loss on server crash.

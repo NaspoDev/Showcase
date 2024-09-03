@@ -1,8 +1,9 @@
 package dev.naspo.showcase.commandstuff;
 
-import dev.naspo.showcase.datamanagement.DataManager;
+import dev.naspo.showcase.data.DataManager;
 import dev.naspo.showcase.Showcase;
-import dev.naspo.showcase.Utils;
+import dev.naspo.showcase.support.Utils;
+import dev.naspo.showcase.support.OpenShowcaseService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -17,11 +18,11 @@ public class Commands implements CommandExecutor {
 
     private Showcase plugin;
     private DataManager data;
-    private OpenShowcase openShowcase;
-    public Commands(Showcase plugin, DataManager data, OpenShowcase openShowcase) {
+    private OpenShowcaseService openShowcaseService;
+    public Commands(Showcase plugin, DataManager data, OpenShowcaseService openShowcaseService) {
         this.plugin = plugin;
         this.data = data;
-        this.openShowcase = openShowcase;
+        this.openShowcaseService = openShowcaseService;
     }
 
     @Override
@@ -74,7 +75,7 @@ public class Commands implements CommandExecutor {
                 onlinePlayers.addAll(Bukkit.getOnlinePlayers());
                 for (Player p : onlinePlayers) {
                     if (args[0].equalsIgnoreCase(p.getName().toLowerCase())) {
-                        openShowcase.openOthersOnlineInv(player, p);
+                        openShowcaseService.openOthersOnlineInv(player, p);
                         return true;
                     }
                 }
@@ -84,7 +85,7 @@ public class Commands implements CommandExecutor {
                     // If they have played the server before, open their showcase.
                     if (Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore()) {
                         OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-                        openShowcase.openOthersOfflineInv(player, p);
+                        openShowcaseService.openOthersOfflineInv(player, p);
                         return true;
                     }
 
@@ -107,7 +108,7 @@ public class Commands implements CommandExecutor {
 
             // No argument command.
             // Open their own showcase.
-            openShowcase.openOwnShowcase(player);
+            openShowcaseService.openOwnShowcase(player);
         }
         return false;
     }
