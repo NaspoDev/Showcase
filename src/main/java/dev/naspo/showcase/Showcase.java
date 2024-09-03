@@ -21,7 +21,7 @@ public final class Showcase extends JavaPlugin {
         this.getLogger().info("Showcase has been enabled!");
 
         dataManager = new DataManager(this);
-        openShowcaseService = new OpenShowcaseService(this);
+        openShowcaseService = new OpenShowcaseService(this, dataManager);
 
         // initialize utility class
         Utils.initialize(this);

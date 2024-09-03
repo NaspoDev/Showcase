@@ -18,11 +18,12 @@ public class OpenShowcaseService {
     private Permission vaultPerms; //Vault permission API handler.
     private HashMap<String, Integer> showcaseSizes = new HashMap<>(); //Showcase size perms and inv value equivalent.
 
+    private final Showcase plugin;
+    private DataManager dataManager;
 
-    private Showcase plugin;
-
-    public OpenShowcaseService(Showcase plugin) {
+    public OpenShowcaseService(Showcase plugin, DataManager dataManager) {
         this.plugin = plugin;
+        this.dataManager = dataManager;
 
         vaultPerms = null;
 
@@ -34,33 +35,33 @@ public class OpenShowcaseService {
     }
 
     // Open another (online) player's showcase.
-    void openOthersOnlineInv(Player player, Player owner) {
+    public void openOthersOnlineInv(Player player, Player owner) {
         // Create a blank showcase inventory with the owner's information.
         Inventory showcase = Bukkit.createInventory(owner, getShowcaseSize(owner), owner.getName() + "'s Showcase");
         // Set its content's to the owners showcase contents.
-        showcase.setContents(DataManager.invs.get(owner.getUniqueId().toString()));
+        showcase.setContents(dataManager.invs.get(owner.getUniqueId().toString()));
         // Open the owner's showcase for the player.
         player.openInventory(showcase);
     }
 
     // Open another (offline) player's showcase.
-    void openOthersOfflineInv(Player player, OfflinePlayer owner) {
+    public void openOthersOfflineInv(Player player, OfflinePlayer owner) {
         // Create a blank showcase inventory with the owner's information.
         Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(owner),
                 owner.getName() + "'s Showcase");
         // Set its content's to the owners showcase contents.
-        showcase.setContents(DataManager.invs.get(owner.getUniqueId().toString()));
+        showcase.setContents(dataManager.invs.get(owner.getUniqueId().toString()));
         // Open the owner's showcase for the player.
         player.openInventory(showcase);
     }
 
     //Open player's own showcase.
-    void openOwnShowcase(Player player) {
+    public void openOwnShowcase(Player player) {
         // Create a blank showcase inventory with the player's information.
         Inventory showcase = Bukkit.createInventory(player, getShowcaseSize(player),
                 player.getName() + "'s Showcase");
         // Set its contents to their showcase's contents.
-        showcase.setContents(DataManager.invs.get(player.getUniqueId().toString()));
+        showcase.setContents(dataManager.invs.get(player.getUniqueId().toString()));
         player.openInventory(showcase); // Open their showcase.
     }
 

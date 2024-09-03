@@ -17,11 +17,11 @@ import java.util.List;
 public class Commands implements CommandExecutor {
 
     private Showcase plugin;
-    private DataManager data;
+    private DataManager dataManager;
     private OpenShowcaseService openShowcaseService;
-    public Commands(Showcase plugin, DataManager data, OpenShowcaseService openShowcaseService) {
+    public Commands(Showcase plugin, DataManager dataManager, OpenShowcaseService openShowcaseService) {
         this.plugin = plugin;
-        this.data = data;
+        this.dataManager = dataManager;
         this.openShowcaseService = openShowcaseService;
     }
 
