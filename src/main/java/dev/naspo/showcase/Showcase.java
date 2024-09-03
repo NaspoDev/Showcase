@@ -31,7 +31,7 @@ public final class Showcase extends JavaPlugin {
         registerCommands();
 
         // Call to restore showcase data
-        dataManager.restoreInvs();
+        dataManager.restoreData();
         // Start scheduled data saves.
         repeatSaveInvs();
     }
@@ -39,8 +39,8 @@ public final class Showcase extends JavaPlugin {
     @Override
     public void onDisable() {
         this.getLogger().info("Showcase has been disabled!");
-        if (!(dataManager.invs.isEmpty())) {
-            dataManager.saveInvs();
+        if (dataManager.getAmountOfShowcases() > 0) {
+            dataManager.saveData();
         }
     }
 
@@ -62,7 +62,7 @@ public final class Showcase extends JavaPlugin {
     }
 
     private void registerEvents() {
-        this.getServer().getPluginManager().registerEvents(new Events(), this);
+        this.getServer().getPluginManager().registerEvents(new Events(dataManager), this);
     }
 
     private void registerCommands() {
@@ -75,7 +75,7 @@ public final class Showcase extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
-                dataManager.saveInvs();
+                dataManager.saveData();
             }
         }, 6000L, 6000L);
     }

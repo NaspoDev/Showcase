@@ -14,6 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Events implements Listener {
+    private DataManager dataManager;
+
+    public Events(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
 
     // Creates a showcase for every player when they join, if they don't already have one.
     @EventHandler
@@ -21,8 +26,8 @@ public class Events implements Listener {
         Player player = event.getPlayer();
 
         // If the player does not have a showcase, create one for them.
-        if (!DataManager.invs.containsKey(player.getUniqueId().toString())) {
-            DataManager.invs.put(player.getUniqueId().toString(), new ItemStack[0]);
+        if (!dataManager.playerHasShowcase(player.getUniqueId())) {
+            dataManager.putPlayerShowcase(player.getUniqueId(), new ShowcaseItem[0]);
         }
     }
 
@@ -59,7 +64,7 @@ public class Events implements Listener {
             // If the owner of the showcase closed it, save the contents.
             String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));
             if (event.getPlayer().getName().equalsIgnoreCase(invOwnerName)) {
-                DataManager.invs.put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
+                dataManager.invs.put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
                 return;
             }
 
@@ -71,13 +76,13 @@ public class Events implements Listener {
                 for (Player p : players) {
                     if (invOwnerName.equalsIgnoreCase(p.getName())) {
                         uuid = Bukkit.getPlayer(invOwnerName).getUniqueId().toString();
-                        DataManager.invs.put(uuid, event.getInventory().getContents());
+                        dataManager.invs.put(uuid, event.getInventory().getContents());
                         return;
                     }
                 }
                 OfflinePlayer p = Bukkit.getOfflinePlayer(invOwnerName);
                 uuid = p.getUniqueId().toString();
-                DataManager.invs.put(uuid, event.getInventory().getContents());
+                dataManager.invs.put(uuid, event.getInventory().getContents());
             }
         }
     }

@@ -18,16 +18,18 @@ public class DataManager {
     private YamlConfiguration playerConfig;
 
     // Main working HashMap that stores showcase data in runtime.
-    // Player UUID as string : Showcase contents (ItemStack[])
-    public HashMap<String, ItemStack[]> invs = new HashMap<>();
+    // Player UUID : Showcase contents (ShowcaseItem[])
+    private final HashMap<UUID, ShowcaseItem[]> playerShowcases;
 
     Showcase plugin;
     public DataManager(Showcase plugin) {
         this.plugin = plugin;
+        this.playerShowcases = new HashMap<>();
+
         mkdirs();
     }
 
-    //Creates the PlayerData folder.
+    // Creates the PlayerData folder.
     private void mkdirs() {
         dir = new File(plugin.getDataFolder(), "PlayerData");
         if (!(dir.exists())) {
@@ -48,8 +50,8 @@ public class DataManager {
     }
 
     // Saves hashmap data to files.
-    public void saveInvs() {
-        for (Map.Entry<String, ItemStack[]> entry : invs.entrySet()) {
+    public void saveData() {
+        for (Map.Entry<String, ItemStack[]> entry : playerShowcases.entrySet()) {
 
             playerFile = new File(dir, entry.getKey() + ".yml");
             if (!(playerFile.exists())) {
@@ -74,7 +76,7 @@ public class DataManager {
     }
 
     // Restores file data to hashmap.
-    public void restoreInvs() {
+    public void restoreData() {
         if (dir.length() == 0) {
             return;
         }
@@ -82,9 +84,29 @@ public class DataManager {
             playerConfig = YamlConfiguration.loadConfiguration(file);
             List<ItemStack> content = new ArrayList<>();
             playerConfig.getList("data").stream().forEach(item -> content.add((ItemStack) item));
-            invs.put(Utils.removeExtension(file.getName()), content.toArray(new ItemStack[0]));
+            playerShowcases.put(Utils.removeExtension(file.getName()), content.toArray(new ItemStack[0]));
         }
     }
 
+    // --- Methods for working with playerShowcases (data hashmap). ---
 
+    // Returns true if the player has a showcase.
+    public boolean playerHasShowcase(UUID uuid) {
+        return playerShowcases.containsKey(uuid);
+    }
+
+    // Puts a player into the showcase hashmap.
+    public void putPlayerShowcase(UUID playerUUID, ShowcaseItem[] showcaseItems) {
+        playerShowcases.put(playerUUID, showcaseItems);
+    }
+
+    // Returns the players showcase data.
+    public ShowcaseItem[] getPlayerShowcase(UUID playerUUID) {
+        return playerShowcases.getOrDefault(playerUUID, null);
+    }
+
+    // Returns the size of the showcases hashmap.
+    public int getAmountOfShowcases() {
+        return playerShowcases.size();
+    }
 }
