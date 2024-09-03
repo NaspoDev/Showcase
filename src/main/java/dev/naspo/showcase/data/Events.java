@@ -57,13 +57,14 @@ public class Events implements Listener {
     @EventHandler
     private void onInvClose(InventoryCloseEvent event) {
         String invTitle = event.getView().getTitle();
+        Player player = (Player) event.getPlayer();
 
         // If it's a showcase inventory.
         if (invTitle.contains("'s Showcase")) {
 
             // If the owner of the showcase closed it, save the contents.
             String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));
-            if (event.getPlayer().getName().equalsIgnoreCase(invOwnerName)) {
+            if (player.getName().equalsIgnoreCase(invOwnerName)) {
                 dataManager.invs.put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
                 return;
             }
