@@ -72,7 +72,7 @@ public final class Showcase extends JavaPlugin {
 
     //Saves invs from hashmap to file every 5 minutes to prevent data loss on server crash.
     private void repeatSaveInvs() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Runnable() {
             @Override
             public void run() {
                 dataManager.saveData();
