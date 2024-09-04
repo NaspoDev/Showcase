@@ -61,7 +61,7 @@ public class OpenShowcaseService {
         Inventory showcase = Bukkit.createInventory(player, getShowcaseSize(player),
                 player.getName() + "'s Showcase");
         // Set its contents to their showcase's contents.
-        showcase.setContents(dataManager.invs.get(player.getUniqueId().toString()));
+        showcase.setContents(dataManager.getShowcaseItems(player.getUniqueId()));
         player.openInventory(showcase); // Open their showcase.
     }
 

@@ -107,14 +107,18 @@ public class DataManager {
 
     // Return the actual items in a player's showcase. (ItemStack list).
     public ItemStack[] getShowcaseItems(UUID playerUUID) {
+        // If the player doesn't have a showcase, return null.
         if (!playerShowcases.containsKey(playerUUID)) {
             return null;
         }
 
-        ItemStack[] items = new ItemStack[playerShowcases.get(playerUUID).length];
-        for (int i = 0; i < playerShowcases.get(playerUUID).length) {
-            items
+        // Extract the ItemStacks from the ShowcaseItems and return that.
+        ShowcaseItem[] showcaseItems = playerShowcases.get(playerUUID);
+        ItemStack[] items = new ItemStack[showcaseItems.length];
+        for (int i = 0; i < showcaseItems.length; i++) {
+            items[i] = showcaseItems[i].getItem();
         }
+        return items;
     }
 
     // Returns the size of the showcases hashmap.

@@ -19,6 +19,10 @@ public class ShowcaseItem {
         this.timeAddedEpoch = timeAddedEpoch;
     }
 
+    public ItemStack getItem() {
+        return item;
+    }
+
     // Returns true if the item can be removed based on the cooldown.
     public boolean canRemove() {
         // Getting the amount of time (ms) that has elapsed since the item was first stored,
