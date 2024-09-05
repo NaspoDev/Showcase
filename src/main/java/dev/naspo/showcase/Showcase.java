@@ -1,10 +1,10 @@
 package dev.naspo.showcase;
 
 import dev.naspo.showcase.commandstuff.Commands;
-import dev.naspo.showcase.support.OpenShowcaseService;
 import dev.naspo.showcase.commandstuff.TabCompleter;
 import dev.naspo.showcase.data.DataManager;
 import dev.naspo.showcase.data.Events;
+import dev.naspo.showcase.support.OpenShowcaseService;
 import dev.naspo.showcase.support.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -70,13 +70,9 @@ public final class Showcase extends JavaPlugin {
         this.getCommand("showcase").setTabCompleter(new TabCompleter());
     }
 
-    //Saves invs from hashmap to file every 5 minutes to prevent data loss on server crash.
+    // Saves showcases to data file (asynchronously) every 5 minutes to prevent data loss on server crash.
     private void repeatSaveInvs() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Runnable() {
-            @Override
-            public void run() {
-                dataManager.saveData();
-            }
-        }, 6000L, 6000L);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, (() -> dataManager.saveData()),
+                6000L, 6000L);
     }
 }
