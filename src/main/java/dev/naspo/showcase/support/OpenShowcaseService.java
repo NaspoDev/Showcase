@@ -39,7 +39,7 @@ public class OpenShowcaseService {
         // Create a blank showcase inventory with the owner's information.
         Inventory showcase = Bukkit.createInventory(owner, getShowcaseSize(owner), owner.getName() + "'s Showcase");
         // Set its content's to the owners showcase contents.
-        showcase.setContents(dataManager.invs.get(owner.getUniqueId().toString()));
+        showcase.setContents(dataManager.getShowcaseItems(owner.getUniqueId()));
         // Open the owner's showcase for the player.
         player.openInventory(showcase);
     }
@@ -50,7 +50,7 @@ public class OpenShowcaseService {
         Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(owner),
                 owner.getName() + "'s Showcase");
         // Set its content's to the owners showcase contents.
-        showcase.setContents(dataManager.invs.get(owner.getUniqueId().toString()));
+        showcase.setContents(dataManager.getShowcaseItems(owner.getUniqueId()));
         // Open the owner's showcase for the player.
         player.openInventory(showcase);
     }
