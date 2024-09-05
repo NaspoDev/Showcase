@@ -43,9 +43,12 @@ public class Events implements Listener {
             if (player.getName().equalsIgnoreCase(invTitle.substring(0, invTitle.lastIndexOf("'")))) {
                 if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.edit")) {
                     event.setCancelled(true);
+                } else {
+                    // Otherwise it's their showcase, and they have permission to edit it.
+                    if ()
                 }
-                // Otherwise, it's not their showcase.
-                // But if they don't have the showcase.edit permission, cancel the event.
+            // Otherwise, it's not their showcase.
+            // But if they don't have the showcase.edit permission, cancel the event.
             } else if (!(event.getWhoClicked().hasPermission("showcase.edit"))) {
                 event.setCancelled(true);
             }
