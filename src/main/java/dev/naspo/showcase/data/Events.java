@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,18 +36,30 @@ public class Events implements Listener {
     private void onInvClick(InventoryClickEvent event) {
         String invTitle = event.getView().getTitle();
         Player player = (Player) event.getWhoClicked();
+        ItemStack clickedItem = event.getCurrentItem();
 
         // If it's a showcase inventory.
         if (invTitle.contains("'s Showcase")) {
-            // If it's the player's own showcase, but they don't have the basic showcase.use permission,
-            // or the moderator showcase.edit permission, cancel the event.
+            // If they didn't click an actual item, exit.
+            if (clickedItem == null) {
+                return;
+            }
+
+            // If it's the player's own showcase.
             if (player.getName().equalsIgnoreCase(invTitle.substring(0, invTitle.lastIndexOf("'")))) {
-                if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.edit")) {
-                    event.setCancelled(true);
-                } else {
-                    // Otherwise it's their showcase, and they have permission to edit it.
-                    if ()
+                // If they are able to edit it.
+                if (player.hasPermission("showcase.use")) {
+                    // If a cooldown is active, cancel the event. Unless they have showcase.edit permission
+                    // which bypasses cooldowns. Then allow the removal and remove the cooldown.
+                    if (ShowcaseItem.cooldownIsActive(clickedItem)) {
+                        if (player.hasPermission("showcase.edit")) {
+
+                        }
+                    }
+
                 }
+
+
             // Otherwise, it's not their showcase.
             // But if they don't have the showcase.edit permission, cancel the event.
             } else if (!(event.getWhoClicked().hasPermission("showcase.edit"))) {
