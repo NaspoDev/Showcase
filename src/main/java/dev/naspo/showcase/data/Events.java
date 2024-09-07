@@ -53,7 +53,7 @@ public class Events implements Listener {
                     // which bypasses cooldowns. Then allow the removal and remove the cooldown.
                     if (ShowcaseItem.cooldownIsActive(clickedItem)) {
                         if (player.hasPermission("showcase.edit")) {
-
+                            // TODO: left off here. I have to be able to get the ShowcaseItem object somehow
                         }
                     }
 
