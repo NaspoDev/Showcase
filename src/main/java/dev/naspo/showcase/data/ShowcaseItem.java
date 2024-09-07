@@ -2,11 +2,14 @@ package dev.naspo.showcase.data;
 
 import dev.naspo.showcase.Showcase;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 // Showcase Item data class.
@@ -17,6 +20,8 @@ public class ShowcaseItem {
     private final int initialCooldownSeconds;
     // The epoch time when this showcase item was added to the showcase.
     private long timeAddedEpoch;
+    // Each showcase item should have a unique ID which is attached to it's itemstack.
+    private UUID showcaseItemId;
     private final Showcase plugin;
     // The prefix for the cooldown lore that every showcase item with a cooldown will have.
     public static final String COOLDOWN_LORE_PREFIX = "Cooldown:";
@@ -27,10 +32,24 @@ public class ShowcaseItem {
         this.initialCooldownSeconds = cooldownSeconds;
         this.timeAddedEpoch = timeAddedEpoch;
         this.plugin = plugin;
+        this.showcaseItemId = UUID.randomUUID();
 
         // If there is a cooldown, start/continue updating the lore with the correct cooldown value.
         if (initialCooldownSeconds > 0) {
             repeatUpdateCooldownLore();
+        }
+    }
+
+    // Set the showcase item id to the item's ItemMeta (as a Persistent Data Container).
+    // Persistent data containers are saved when the entity unloads, hence "persistent".
+    private void attachShowcaseItemId() {
+        // The key for the Persistent Data. (SIID stands for showcase item ID).
+        NamespacedKey key = new NamespacedKey(plugin, "SIID");
+        ItemMeta meta = item.getItemMeta();
+        // If it doesn't already have an SIID, assign one.
+        if (!meta.getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
+            meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, showcaseItemId.toString());
+            item.setItemMeta(meta);
         }
     }
 
