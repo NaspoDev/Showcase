@@ -23,12 +23,12 @@ public class ShowcaseItem {
     private long timeAddedEpoch;
     // Each showcase item should have a unique ID which is attached to it's itemstack.
     private UUID showcaseItemId;
-    private final Showcase plugin;
     // The prefix for the cooldown lore that every showcase item with a cooldown will have.
     public static final String COOLDOWN_LORE_PREFIX = "Cooldown:";
     // The key used for the showcase item ID in the item's Persistent Data Container.
     public static final String SIID_KEY = "SIID";
     private BukkitTask cooldownLoreTask;
+    private final Showcase plugin;
 
     public ShowcaseItem(ItemStack item, int cooldownSeconds, long timeAddedEpoch,
                         UUID showcaseItemId, Showcase plugin) {

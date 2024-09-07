@@ -44,4 +44,13 @@ public class PlayerShowcase {
             showcaseItems.remove(SSID);
         }
     }
+
+    public ShowcaseItem[] getShowcaseItems() {
+        return showcaseItems.values().toArray(new ShowcaseItem[0]);
+    }
+
+    // Returns the actual items (ItemStack) of the showcase items.
+    public ItemStack[] getShowcaseItemsRaw() {
+
+    }
 }

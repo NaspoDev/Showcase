@@ -1,6 +1,7 @@
 package dev.naspo.showcase.data;
 
 import dev.naspo.showcase.Showcase;
+import dev.naspo.showcase.models.PlayerShowcase;
 import dev.naspo.showcase.models.ShowcaseItem;
 import dev.naspo.showcase.support.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,10 +20,10 @@ public class DataManager {
     private YamlConfiguration playerConfig;
 
     // Main working HashMap that stores showcase data in runtime.
-    // Player UUID : Showcase contents (ShowcaseItem[])
-    private final HashMap<UUID, ShowcaseItem[]> playerShowcases;
+    // Player UUID : PlayerShowcase
+    private final HashMap<UUID, PlayerShowcase> playerShowcases;
 
-    Showcase plugin;
+    private final Showcase plugin;
     public DataManager(Showcase plugin) {
         this.plugin = plugin;
         this.playerShowcases = new HashMap<>();
@@ -97,15 +98,16 @@ public class DataManager {
     }
 
     // Puts a player into the showcase hashmap.
-    public void putPlayerShowcase(UUID playerUUID, ShowcaseItem[] showcaseItems) {
-        playerShowcases.put(playerUUID, showcaseItems);
+    public void putPlayerShowcase(UUID playerUUID, PlayerShowcase showcase) {
+        playerShowcases.put(playerUUID, showcase);
     }
 
     // Returns the players showcase data.
-    public ShowcaseItem[] getPlayerShowcase(UUID playerUUID) {
+    public PlayerShowcase getPlayerShowcase(UUID playerUUID) {
         return playerShowcases.getOrDefault(playerUUID, null);
     }
 
+    // TODO: moving this function to PlayerShowcase
     // Return the actual items in a player's showcase. (ItemStack list).
     public ItemStack[] getShowcaseItems(UUID playerUUID) {
         // If the player doesn't have a showcase, return null.
