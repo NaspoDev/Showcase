@@ -1,6 +1,7 @@
 package dev.naspo.showcase.data;
 
 import dev.naspo.showcase.Showcase;
+import dev.naspo.showcase.models.ShowcaseItem;
 import dev.naspo.showcase.support.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;

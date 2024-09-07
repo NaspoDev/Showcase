@@ -1,5 +1,6 @@
 package dev.naspo.showcase.data;
 
+import dev.naspo.showcase.models.ShowcaseItem;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
