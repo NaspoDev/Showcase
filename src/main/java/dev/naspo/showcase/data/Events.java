@@ -115,10 +115,12 @@ public class Events implements Listener {
                 // Filter for the added items.
                 List<ItemStack> addedItems = new ArrayList<>();
                 for (ItemStack item : event.getInventory().getContents()) {
-                    ItemMeta meta = item.getItemMeta();
-                    PersistentDataContainer pdc = meta.getPersistentDataContainer();
-                    if (pdc.has(new NamespacedKey(plugin, ShowcaseItem.SIID_KEY))) {
-                        addedItems.add(item);
+                    if (item != null) {
+                        ItemMeta meta = item.getItemMeta();
+                        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+                        if (pdc.has(new NamespacedKey(plugin, ShowcaseItem.SIID_KEY))) {
+                            addedItems.add(item);
+                        }
                     }
                 }
 
