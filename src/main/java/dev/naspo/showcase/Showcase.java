@@ -8,12 +8,14 @@ import dev.naspo.showcase.support.OpenShowcaseService;
 import dev.naspo.showcase.support.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.logging.Level;
 
 public final class Showcase extends JavaPlugin {
     private DataManager dataManager;
     private OpenShowcaseService openShowcaseService;
+    private BukkitTask repeatSaveInvsTask;
 
     @Override
     public void onEnable() {
@@ -38,10 +40,11 @@ public final class Showcase extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        this.getLogger().info("Showcase has been disabled!");
+        repeatSaveInvsTask.cancel();
         if (dataManager.getAmountOfShowcases() > 0) {
             dataManager.saveData();
         }
+        this.getLogger().info("Showcase has been disabled!");
     }
 
     private void dependencyCheck() {
@@ -72,7 +75,7 @@ public final class Showcase extends JavaPlugin {
 
     // Saves showcases to data file (asynchronously) every 5 minutes to prevent data loss on server crash.
     private void repeatSaveInvs() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, (() -> dataManager.saveData()),
-                6000L, 6000L);
+        repeatSaveInvsTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                this, (() -> dataManager.saveData()), 6000L, 6000L);
     }
 }
