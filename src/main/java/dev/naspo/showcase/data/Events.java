@@ -5,6 +5,7 @@ import dev.naspo.showcase.models.PlayerShowcase;
 import dev.naspo.showcase.models.ShowcaseItem;
 import dev.naspo.showcase.support.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,9 +14,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class Events implements Listener {
     private final Showcase plugin;
@@ -93,30 +100,60 @@ public class Events implements Listener {
 
         // If it's a showcase inventory.
         if (invTitle.contains("'s Showcase")) {
-
-            // If the owner of the showcase closed it, save the contents.
             String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));
-            if (player.getName().equalsIgnoreCase(invOwnerName)) {
-                dataManager.invs.put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
-                return;
-            }
 
-            // Or, if someone with showcase edit perms closed it, save the contents.
-            if (event.getPlayer().hasPermission("showcase.edit")) {
-                String uuid;
-                List<Player> players = new ArrayList<>();
-                players.addAll(Bukkit.getOnlinePlayers());
-                for (Player p : players) {
-                    if (invOwnerName.equalsIgnoreCase(p.getName())) {
-                        uuid = Bukkit.getPlayer(invOwnerName).getUniqueId().toString();
-                        dataManager.invs.put(uuid, event.getInventory().getContents());
-                        return;
+            // If the owner of the showcase or someone with the showcase.edit permission closed it,
+            // save any added items to the player's showcase.
+            // (Added item's can be identified as the ones without Showcase Item IDs).
+            if (player.getName().equalsIgnoreCase(invOwnerName) || player.hasPermission("showcase.edit")) {
+                UUID showcaseOwnerUUID = getPlayerUUIDFromName(invOwnerName);
+                // If the UUID for the showcase owner could not be retrieved, log an error then return.
+                if (showcaseOwnerUUID == null) {
+                    plugin.getLogger().severe("Failed to save changes to " + invOwnerName + "'s showcase!" +
+                            "\nThis occurred because the UUID for this player could not be found.");
+                    return;
+                }
+
+                PlayerShowcase playerShowcase = dataManager.getPlayerShowcase(player.getUniqueId());
+                // Filter for the added items.
+                List<ItemStack> addedItems = new ArrayList<>();
+                for (ItemStack item : event.getInventory().getContents()) {
+                    ItemMeta meta = item.getItemMeta();
+                    PersistentDataContainer pdc = meta.getPersistentDataContainer();
+                    if (pdc.has(new NamespacedKey(plugin, ShowcaseItem.SIID_KEY))) {
+                        addedItems.add(item);
                     }
                 }
-                OfflinePlayer p = Bukkit.getOfflinePlayer(invOwnerName);
-                uuid = p.getUniqueId().toString();
-                dataManager.invs.put(uuid, event.getInventory().getContents());
+
+                // Get cooldown configuration.
+                int cooldownSeconds;
+                if (plugin.getConfig().getBoolean("cooldown.enabled")) {
+                    cooldownSeconds = plugin.getConfig().getInt("cooldown.cooldown-period");
+                } else {
+                    cooldownSeconds = 0;
+                }
+
+                // For each added item, properly add it to the player's showcase.
+                addedItems.forEach(item -> playerShowcase.addShowcaseItem(item, cooldownSeconds));
+                return;
             }
         }
+    }
+
+    // Will try to find and return the UUID of a player from their name. Checks for online and offline players.
+    private UUID getPlayerUUIDFromName(String playerName) {
+        // Check online player
+        Player onlinePlayer = plugin.getServer().getPlayer(playerName);
+        if (onlinePlayer != null) {
+            return onlinePlayer.getUniqueId();
+        }
+
+        // Check offline player
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerName);
+        if (offlinePlayer != null) {
+            return offlinePlayer.getUniqueId();
+        }
+
+        return null;
     }
 }
