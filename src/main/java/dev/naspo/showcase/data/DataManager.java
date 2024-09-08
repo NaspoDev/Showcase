@@ -2,8 +2,10 @@ package dev.naspo.showcase.data;
 
 import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.models.PlayerShowcase;
+import dev.naspo.showcase.models.ShowcaseItem;
 import dev.naspo.showcase.support.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -52,25 +54,28 @@ public class DataManager {
 
     // Saves hashmap data to files.
     public void saveData() {
-        for (Map.Entry<String, ItemStack[]> entry : playerShowcases.entrySet()) {
+        for (Map.Entry<UUID, PlayerShowcase> entry : playerShowcases.entrySet()) {
+            playerFile = new File(dir, entry.getKey().toString() + ".yml");
+            playerConfig = YamlConfiguration.loadConfiguration(playerFile);
 
-            playerFile = new File(dir, entry.getKey() + ".yml");
-            if (!(playerFile.exists())) {
-                try {
-                    playerFile.createNewFile();
-                } catch (IOException e) {
-                    plugin.getLogger().log(Level.WARNING, "Could not create playerdata file for player uuid " + entry.getKey());
-                    e.printStackTrace();
-                    return;
-                }
+            // Collect the showcase data to write to the player's data file.
+            List<Map<String, Object>> dataList = new ArrayList<>();
+            for (ShowcaseItem showcaseItem : entry.getValue().getShowcaseItems()) {
+                Map<String, Object> dataValue = new HashMap<>();
+                dataValue.put("itemStack", showcaseItem.getItem());
+                dataValue.put("cooldownSeconds", showcaseItem.getInitialCooldownSeconds());
+                dataValue.put("timeAddedEpoch", showcaseItem.getTimeAddedEpoch());
+                dataList.add(dataValue);
             }
 
-            playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-            playerConfig.set("data", entry.getValue());
+            // Write the data to the player's yml data file.
+            playerConfig.set("items", dataList);
+
+            // Save the file.
             try {
                 playerConfig.save(playerFile);
             } catch (IOException e) {
-                plugin.getLogger().log(Level.WARNING, "Could not save playerdata for player uuid " + entry.getKey());
+                plugin.getLogger().log(Level.WARNING, "Could not save player data for player uuid " + entry.getKey().toString());
                 e.printStackTrace();
             }
         }
@@ -81,10 +86,13 @@ public class DataManager {
         if (dir.length() == 0) {
             return;
         }
+
         for (File file : dirListings) {
             playerConfig = YamlConfiguration.loadConfiguration(file);
-            List<ItemStack> content = new ArrayList<>();
-            playerConfig.getList("data").stream().forEach(item -> content.add((ItemStack) item));
+            PlayerShowcase playerShowcase = new PlayerShowcase(plugin);
+            playerConfig.getList("items").stream().forEach(item -> {
+                playerShowcase.addShowcaseItem(item);
+            });
             playerShowcases.put(Utils.removeExtension(file.getName()), content.toArray(new ItemStack[0]));
         }
     }

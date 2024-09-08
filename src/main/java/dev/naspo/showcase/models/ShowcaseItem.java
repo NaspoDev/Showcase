@@ -68,6 +68,10 @@ public class ShowcaseItem {
         }
     }
 
+    public UUID getShowcaseItemId() {
+        return showcaseItemId;
+    }
+
     // Adds and continuously updates a cooldown countdown to the lore of the item.
     // Using Bukkit Scheduler to repeatedly update the lore every second.
     private void repeatUpdateCooldownLore() {
@@ -152,6 +156,14 @@ public class ShowcaseItem {
         } else {
             return initialCooldownSeconds - (int) timeElapsedInSeconds;
         }
+    }
+
+    public int getInitialCooldownSeconds() {
+        return initialCooldownSeconds;
+    }
+
+    public long getTimeAddedEpoch() {
+        return timeAddedEpoch;
     }
 
     // Removes any applicable showcase related lore, IDs, etc.
