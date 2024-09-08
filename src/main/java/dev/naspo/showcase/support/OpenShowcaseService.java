@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,8 @@ public class OpenShowcaseService {
         // Create a blank showcase inventory with the owner's information.
         Inventory showcase = Bukkit.createInventory(owner, getShowcaseSize(owner), owner.getName() + "'s Showcase");
         // Set its content's to the owners showcase contents.
-        showcase.setContents(dataManager.getShowcaseItems(owner.getUniqueId()));
+        showcase.setContents(dataManager.getPlayerShowcase(owner.getUniqueId()).getShowcaseItemsRaw()
+                .toArray(new ItemStack[0]));
         // Open the owner's showcase for the player.
         player.openInventory(showcase);
     }
@@ -50,7 +52,8 @@ public class OpenShowcaseService {
         Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(owner),
                 owner.getName() + "'s Showcase");
         // Set its content's to the owners showcase contents.
-        showcase.setContents(dataManager.getShowcaseItems(owner.getUniqueId()));
+        showcase.setContents(dataManager.getPlayerShowcase(owner.getUniqueId()).getShowcaseItemsRaw()
+                .toArray(new ItemStack[0]));
         // Open the owner's showcase for the player.
         player.openInventory(showcase);
     }
@@ -61,7 +64,8 @@ public class OpenShowcaseService {
         Inventory showcase = Bukkit.createInventory(player, getShowcaseSize(player),
                 player.getName() + "'s Showcase");
         // Set its contents to their showcase's contents.
-        showcase.setContents(dataManager.getShowcaseItems(player.getUniqueId()));
+        showcase.setContents(dataManager.getPlayerShowcase(player.getUniqueId()).getShowcaseItemsRaw()
+                .toArray(new ItemStack[0]));
         player.openInventory(showcase); // Open their showcase.
     }
 
