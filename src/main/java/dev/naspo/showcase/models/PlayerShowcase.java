@@ -6,10 +6,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.checkerframework.checker.units.qual.N;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 // The PlayerShowcase object class.
 // Holds and manages ShowcaseItems.
@@ -45,12 +47,12 @@ public class PlayerShowcase {
         }
     }
 
-    public ShowcaseItem[] getShowcaseItems() {
-        return showcaseItems.values().toArray(new ShowcaseItem[0]);
+    public List<ShowcaseItem> getShowcaseItems() {
+        return new ArrayList<>(showcaseItems.values());
     }
 
     // Returns the actual items (ItemStack) of the showcase items.
-    public ItemStack[] getShowcaseItemsRaw() {
-
+    public List<ItemStack> getShowcaseItemsRaw() {
+        return showcaseItems.values().stream().map(ShowcaseItem::getItem).collect(Collectors.toList());
     }
 }

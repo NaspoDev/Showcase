@@ -93,8 +93,8 @@ public class DataManager {
     // --- Methods for working with playerShowcases (data hashmap). ---
 
     // Returns true if the player has a showcase.
-    public boolean playerHasShowcase(UUID uuid) {
-        return playerShowcases.containsKey(uuid);
+    public boolean playerHasShowcase(UUID playerUuid) {
+        return playerShowcases.containsKey(playerUuid);
     }
 
     // Puts a player into the showcase hashmap.
@@ -105,23 +105,6 @@ public class DataManager {
     // Returns the players showcase data.
     public PlayerShowcase getPlayerShowcase(UUID playerUUID) {
         return playerShowcases.getOrDefault(playerUUID, null);
-    }
-
-    // TODO: moving this function to PlayerShowcase
-    // Return the actual items in a player's showcase. (ItemStack list).
-    public ItemStack[] getShowcaseItems(UUID playerUUID) {
-        // If the player doesn't have a showcase, return null.
-        if (!playerShowcases.containsKey(playerUUID)) {
-            return null;
-        }
-
-        // Extract the ItemStacks from the ShowcaseItems and return that.
-        ShowcaseItem[] showcaseItems = playerShowcases.get(playerUUID);
-        ItemStack[] items = new ItemStack[showcaseItems.length];
-        for (int i = 0; i < showcaseItems.length; i++) {
-            items[i] = showcaseItems[i].getItem();
-        }
-        return items;
     }
 
     // Returns the size of the showcases hashmap.
