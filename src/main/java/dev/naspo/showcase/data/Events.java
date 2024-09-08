@@ -19,10 +19,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class Events implements Listener {
     private final Showcase plugin;

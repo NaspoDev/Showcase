@@ -17,11 +17,12 @@ import java.util.stream.Collectors;
 // Holds and manages ShowcaseItems.
 public class PlayerShowcase {
     // Holds this showcase's showcase items and their Showcase Item ID as the key.
-    private HashMap<UUID, ShowcaseItem> showcaseItems;
     private final Showcase plugin;
+    private HashMap<UUID, ShowcaseItem> showcaseItems;
 
     public PlayerShowcase(Showcase plugin) {
         this.plugin = plugin;
+        showcaseItems = new HashMap<>();
     }
 
     // Add a new showcase item to this showcase.
