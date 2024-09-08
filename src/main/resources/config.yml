@@ -15,3 +15,4 @@ messages:
   no-permission: "&cYou do not have permission."
   player-has-never-joined: "&7%player_name% has never played on the server before."
   unknown-player: "&7Unknown player."
+  cooldown-active: "&cThis item has an active cooldown and cannot be removed yet."

@@ -1,6 +1,9 @@
 package dev.naspo.showcase.data;
 
+import dev.naspo.showcase.Showcase;
+import dev.naspo.showcase.models.PlayerShowcase;
 import dev.naspo.showcase.models.ShowcaseItem;
+import dev.naspo.showcase.support.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -15,9 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Events implements Listener {
+    private final Showcase plugin;
     private DataManager dataManager;
 
-    public Events(DataManager dataManager) {
+    public Events(Showcase plugin, DataManager dataManager) {
+        this.plugin = plugin;
         this.dataManager = dataManager;
     }
 
@@ -28,7 +33,7 @@ public class Events implements Listener {
 
         // If the player does not have a showcase, create one for them.
         if (!dataManager.playerHasShowcase(player.getUniqueId())) {
-            dataManager.putPlayerShowcase(player.getUniqueId(), new ShowcaseItem[0]);
+            dataManager.putPlayerShowcase(player.getUniqueId(), new PlayerShowcase(plugin));
         }
     }
 
@@ -38,6 +43,7 @@ public class Events implements Listener {
         String invTitle = event.getView().getTitle();
         Player player = (Player) event.getWhoClicked();
         ItemStack clickedItem = event.getCurrentItem();
+        PlayerShowcase playerShowcase = dataManager.getPlayerShowcase(player.getUniqueId());
 
         // If it's a showcase inventory.
         if (invTitle.contains("'s Showcase")) {
@@ -50,21 +56,31 @@ public class Events implements Listener {
             if (player.getName().equalsIgnoreCase(invTitle.substring(0, invTitle.lastIndexOf("'")))) {
                 // If they are able to edit it.
                 if (player.hasPermission("showcase.use")) {
-                    // If a cooldown is active, cancel the event. Unless they have showcase.edit permission
-                    // which bypasses cooldowns. Then allow the removal and remove the cooldown.
+                    // If a cooldown is active on the item they clicked, cancel the event.
                     if (ShowcaseItem.cooldownIsActive(clickedItem)) {
+                        // Unless they have showcase.edit permission which bypasses cooldowns,
+                        // then allow the removal and properly remove it.
                         if (player.hasPermission("showcase.edit")) {
-                            // TODO: left off here. I have to be able to get the ShowcaseItem object somehow
+                            playerShowcase.removeShowcaseItem(clickedItem);
+                        } else {
+                            event.setCancelled(true);
+                            // Also send a message to the player with a cooldown message.
+                            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
+                                    plugin.getConfig().getString("messages.cooldown-active")));
+                            return;
                         }
                     }
-
+                    // Then a cooldown is not active, allow the removal and properly remove it.
+                    playerShowcase.removeShowcaseItem(clickedItem);
+                    return;
                 }
-
-
-            // Otherwise, it's not their showcase.
-            // But if they don't have the showcase.edit permission, cancel the event.
-            } else if (!(event.getWhoClicked().hasPermission("showcase.edit"))) {
+            }
+            // If the player doesn't have the showcase.edit permission, cancel the event.
+            if (!(player.hasPermission("showcase.edit"))) {
                 event.setCancelled(true);
+            } else {
+                // If they do, allow the removal and properly remove it.
+                playerShowcase.removeShowcaseItem(clickedItem);
             }
         }
     }

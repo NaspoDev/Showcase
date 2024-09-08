@@ -62,7 +62,7 @@ public final class Showcase extends JavaPlugin {
     }
 
     private void registerEvents() {
-        this.getServer().getPluginManager().registerEvents(new Events(dataManager), this);
+        this.getServer().getPluginManager().registerEvents(new Events(this, dataManager), this);
     }
 
     private void registerCommands() {
