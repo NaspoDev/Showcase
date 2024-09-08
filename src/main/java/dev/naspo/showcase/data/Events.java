@@ -49,8 +49,9 @@ public class Events implements Listener {
         ItemStack clickedItem = event.getCurrentItem();
         PlayerShowcase playerShowcase = dataManager.getPlayerShowcase(player.getUniqueId());
 
-        // If it's a showcase inventory.
-        if (invTitle.contains("'s Showcase")) {
+        // If it's a showcase inventory that was clicked.
+        // (Second check is making sure that it's not their inventory that they clicked).
+        if (invTitle.contains("'s Showcase") && (event.getClickedInventory() != event.getView().getBottomInventory())) {
             // If they didn't click an actual item, exit.
             if (clickedItem == null) {
                 return;
@@ -118,7 +119,7 @@ public class Events implements Listener {
                     if (item != null) {
                         ItemMeta meta = item.getItemMeta();
                         PersistentDataContainer pdc = meta.getPersistentDataContainer();
-                        if (pdc.has(new NamespacedKey(plugin, ShowcaseItem.SIID_KEY))) {
+                        if (!pdc.has(new NamespacedKey(plugin, ShowcaseItem.SIID_KEY))) {
                             addedItems.add(item);
                         }
                     }
@@ -134,7 +135,6 @@ public class Events implements Listener {
 
                 // For each added item, properly add it to the player's showcase.
                 addedItems.forEach(item -> playerShowcase.addShowcaseItem(item, cooldownSeconds));
-                return;
             }
         }
     }

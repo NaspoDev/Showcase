@@ -103,18 +103,23 @@ public class ShowcaseItem {
 
     // Call to manually remove cooldown lore and cancel lore update task.
     private void removeCooldownLore() {
-        cooldownLoreTask.cancel();
-        ItemMeta meta = item.getItemMeta();
-        List<String> lore = meta.getLore();
-
-        for (int i = 0; i < lore.size(); i++) {
-            if (lore.get(i).contains(COOLDOWN_LORE_PREFIX)) {
-                lore.remove(i);
-                break;
-            }
+        if (cooldownLoreTask != null) {
+            cooldownLoreTask.cancel();
         }
 
-        meta.setLore(lore);
+        ItemMeta meta = item.getItemMeta();
+
+        if (meta.hasLore()) {
+            List<String> lore = meta.getLore();
+
+            for (int i = 0; i < lore.size(); i++) {
+                if (lore.get(i).contains(COOLDOWN_LORE_PREFIX)) {
+                    lore.remove(i);
+                    break;
+                }
+            }
+            meta.setLore(lore);
+        }
         item.setItemMeta(meta);
     }
 
@@ -139,9 +144,11 @@ public class ShowcaseItem {
     // will happen if it isn't as we're just checking for lore contents).
     public static boolean cooldownIsActive(ItemStack item) {
         ItemMeta itemMeta = item.getItemMeta();
-        List<String> lore = itemMeta.getLore();
-        if (lore.contains(COOLDOWN_LORE_PREFIX)) {
-            return true;
+        if (itemMeta.hasLore()) {
+            List<String> lore = itemMeta.getLore();
+            if (lore.contains(COOLDOWN_LORE_PREFIX)) {
+                return true;
+            }
         }
         return false;
     }
