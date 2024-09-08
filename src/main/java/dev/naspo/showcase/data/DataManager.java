@@ -90,10 +90,13 @@ public class DataManager {
         for (File file : dirListings) {
             playerConfig = YamlConfiguration.loadConfiguration(file);
             PlayerShowcase playerShowcase = new PlayerShowcase(plugin);
-            playerConfig.getList("items").stream().forEach(item -> {
-                playerShowcase.addShowcaseItem(item);
+
+            playerConfig.getMapList("items").forEach(entry -> {
+                ItemStack itemStack = (ItemStack) entry.get("itemStack");
+                int cooldownSeconds = (int) entry.get("cooldownSeconds");
+                long timeAddedEpoch = (long) entry.get("timeAddedEpoch");
+                playerShowcase.addShowcaseItem(itemStack, cooldownSeconds, timeAddedEpoch);
             });
-            playerShowcases.put(Utils.removeExtension(file.getName()), content.toArray(new ItemStack[0]));
         }
     }
 

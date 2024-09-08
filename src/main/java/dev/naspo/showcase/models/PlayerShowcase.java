@@ -32,6 +32,15 @@ public class PlayerShowcase {
         showcaseItems.put(showcaseItemId, showcaseItem);
     }
 
+    // Adds a showcase item with a specified time added.
+    // Typically used when restoring data from player data file.
+    public void addShowcaseItem(ItemStack item, int cooldownSeconds, long timeAddedEpoch) {
+        UUID showcaseItemId = UUID.randomUUID();
+        ShowcaseItem showcaseItem = new ShowcaseItem(item, cooldownSeconds,
+                timeAddedEpoch, showcaseItemId, plugin);
+        showcaseItems.put(showcaseItemId, showcaseItem);
+    }
+
     // Remove a showcase item from the showcase.
     public void removeShowcaseItem(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
