@@ -65,7 +65,7 @@ public class ShowcaseItem {
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         if (pdc.has(key)) {
             pdc.remove(key);
-//            item.setItemMeta(meta);
+            item.setItemMeta(meta);
         }
     }
 
