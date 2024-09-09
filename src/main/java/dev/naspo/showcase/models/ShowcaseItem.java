@@ -9,6 +9,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -51,9 +52,10 @@ public class ShowcaseItem {
         // The key for the Persistent Data. (SIID stands for showcase item ID).
         NamespacedKey key = new NamespacedKey(plugin, SIID_KEY);
         ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
         // If it doesn't already have an SIID, assign one.
-        if (!meta.getPersistentDataContainer().has(key, PersistentDataType.STRING)) {
-            meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, showcaseItemId.toString());
+        if (!pdc.has(key)) {
+            pdc.set(key, PersistentDataType.STRING, showcaseItemId.toString());
             item.setItemMeta(meta);
         }
     }

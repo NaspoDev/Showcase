@@ -52,7 +52,7 @@ public class Events implements Listener {
         // If it's a showcase inventory that was clicked.
         // (Second check is making sure that it's not their inventory that they clicked).
         if (invTitle.contains("'s Showcase") && (event.getClickedInventory() != event.getView().getBottomInventory())) {
-            // If they didn't click an actual item, exit.
+            // If they didn't click an actual item, return.
             if (clickedItem == null) {
                 return;
             }
@@ -119,7 +119,8 @@ public class Events implements Listener {
                     if (item != null) {
                         ItemMeta meta = item.getItemMeta();
                         PersistentDataContainer pdc = meta.getPersistentDataContainer();
-                        if (!pdc.has(new NamespacedKey(plugin, ShowcaseItem.SIID_KEY))) {
+                        NamespacedKey key = new NamespacedKey(plugin, ShowcaseItem.SIID_KEY);
+                        if (!pdc.has(key)) {
                             addedItems.add(item);
                         }
                     }
