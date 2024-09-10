@@ -8,9 +8,9 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 // The PlayerShowcase object class.
@@ -18,28 +18,23 @@ import java.util.stream.Collectors;
 public class PlayerShowcase {
     // Holds this showcase's showcase items and their Showcase Item ID as the key.
     private final Showcase plugin;
-    private HashMap<UUID, ShowcaseItem> showcaseItems;
+    private List<ShowcaseItem> showcaseItems;
 
     public PlayerShowcase(Showcase plugin) {
         this.plugin = plugin;
-        showcaseItems = new HashMap<>();
+        showcaseItems = new ArrayList<>();
     }
 
     // Add a new showcase item to this showcase.
     public void addShowcaseItem(ItemStack item, int cooldownSeconds) {
-        UUID showcaseItemId = UUID.randomUUID();
-        ShowcaseItem showcaseItem = new ShowcaseItem(item, cooldownSeconds,
-                System.currentTimeMillis(), showcaseItemId, plugin);
-        showcaseItems.put(showcaseItemId, showcaseItem);
+        long cooldownEndsEpoch = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(cooldownSeconds);
+        showcaseItems.add(new ShowcaseItem(item, cooldownEndsEpoch, plugin));
     }
 
-    // Adds a showcase item with a specified time added.
+    // Adds a showcase item with a specified ending cooldown time.
     // Typically used when restoring data from player data file.
-    public void addShowcaseItem(ItemStack item, int cooldownSeconds, long timeAddedEpoch) {
-        UUID showcaseItemId = UUID.randomUUID();
-        ShowcaseItem showcaseItem = new ShowcaseItem(item, cooldownSeconds,
-                timeAddedEpoch, showcaseItemId, plugin);
-        showcaseItems.put(showcaseItemId, showcaseItem);
+    public void addShowcaseItem(ItemStack item, long cooldownEndsEpoch) {
+        showcaseItems.add(new ShowcaseItem(item, cooldownEndsEpoch, plugin));
     }
 
     // Remove a showcase item from the showcase.
@@ -58,11 +53,11 @@ public class PlayerShowcase {
     }
 
     public List<ShowcaseItem> getShowcaseItems() {
-        return new ArrayList<>(showcaseItems.values());
+        return showcaseItems;
     }
 
     // Returns the actual items (ItemStack) of the showcase items.
     public List<ItemStack> getShowcaseItemsRaw() {
-        return showcaseItems.values().stream().map(ShowcaseItem::getItem).collect(Collectors.toList());
+        return showcaseItems.stream().map(ShowcaseItem::getItem).collect(Collectors.toList());
     }
 }

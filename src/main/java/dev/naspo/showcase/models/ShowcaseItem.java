@@ -17,12 +17,12 @@ import java.util.concurrent.TimeUnit;
 public class ShowcaseItem {
     // The actual Minecraft item.
     private ItemStack item;
-    // The initial time set (in seconds) before this item can be removed from the showcase.
-    private final int initialCooldownSeconds;
-    // The epoch time when this showcase item was added to the showcase.
-    private long timeAddedEpoch;
     // Each showcase item should have a unique ID which is attached to it's itemstack.
-    private UUID showcaseItemId;
+    private final UUID showcaseItemId;
+    // The epoch time when the cooldown should end for this showcase item.
+    private final long cooldownEndsEpoch;
+
+
     // The prefix for the cooldown lore that every showcase item with a cooldown will have.
     public static final String COOLDOWN_LORE_PREFIX = "Cooldown:";
     // The key used for the showcase item ID in the item's Persistent Data Container.
@@ -30,19 +30,31 @@ public class ShowcaseItem {
     private BukkitTask cooldownLoreTask;
     private final Showcase plugin;
 
-    public ShowcaseItem(ItemStack item, int cooldownSeconds, long timeAddedEpoch,
-                        UUID showcaseItemId, Showcase plugin) {
+    public ShowcaseItem(ItemStack item, long cooldownEndsEpoch, Showcase plugin) {
         this.item = item;
-        this.initialCooldownSeconds = cooldownSeconds;
-        this.timeAddedEpoch = timeAddedEpoch;
+        this.showcaseItemId = UUID.randomUUID();
         this.plugin = plugin;
-        this.showcaseItemId = showcaseItemId;
         attachShowcaseItemId();
 
-        // If there is a cooldown, start/continue updating the lore with the correct cooldown value.
-        if (initialCooldownSeconds > 0) {
+        // If there is a cooldown, set the end time and start the lore updating task.
+        if (cooldownSeconds > 0) {
+            this.cooldownEndsEpoch = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(cooldownSeconds);
             repeatUpdateCooldownLore();
+        } else {
+            this.cooldownEndsEpoch = System.currentTimeMillis();
         }
+    }
+
+    public void setItem(ItemStack item) {
+        this.item = item;
+    }
+
+    public ItemStack getItem() {
+        return item;
+    }
+
+    public UUID getShowcaseItemId() {
+        return showcaseItemId;
     }
 
     // Set the showcase item id to the item's ItemMeta (as a Persistent Data Container).
@@ -68,10 +80,6 @@ public class ShowcaseItem {
             pdc.remove(key);
             item.setItemMeta(meta);
         }
-    }
-
-    public UUID getShowcaseItemId() {
-        return showcaseItemId;
     }
 
     // Adds and continuously updates a cooldown countdown to the lore of the item.
@@ -125,19 +133,9 @@ public class ShowcaseItem {
         item.setItemMeta(meta);
     }
 
-    public ItemStack getItem() {
-        return item;
-    }
-
     // Returns true if the item's cooldown still has time remaining.
     public boolean cooldownIsActive() {
-        // Getting the amount of time (ms) that has elapsed since the item was first stored,
-        // then converting to seconds.
-        long timeElapsedInSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - timeAddedEpoch);
-        if (timeElapsedInSeconds >= initialCooldownSeconds) {
-            return false;
-        }
-        return true;
+        return System.currentTimeMillis() < cooldownEndsEpoch;
     }
 
     // Utility function that returns true if the provided ItemStack has a cooldown remaining.
@@ -157,22 +155,12 @@ public class ShowcaseItem {
 
     // Returns the amount of seconds remaining on the cooldown. (Returns 0 if none).
     public int getActiveCooldownValue() {
-        // Getting the amount of time (ms) that has elapsed since the item was first stored,
-        // then converting to seconds.
-        long timeElapsedInSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - timeAddedEpoch);
-        if (timeElapsedInSeconds >= initialCooldownSeconds) {
-            return 0;
-        } else {
-            return initialCooldownSeconds - (int) timeElapsedInSeconds;
-        }
+        int activeCooldownValue = (int) TimeUnit.MILLISECONDS.toSeconds(cooldownEndsEpoch - System.currentTimeMillis());
+        return (activeCooldownValue > 0) ? activeCooldownValue : 0;
     }
 
-    public int getInitialCooldownSeconds() {
-        return initialCooldownSeconds;
-    }
-
-    public long getTimeAddedEpoch() {
-        return timeAddedEpoch;
+    public long getCooldownEndsEpoch() {
+        return cooldownEndsEpoch;
     }
 
     // Removes any applicable showcase related lore, IDs, etc.
