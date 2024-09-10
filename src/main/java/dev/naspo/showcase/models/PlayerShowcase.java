@@ -52,7 +52,7 @@ public class PlayerShowcase {
             // Get the ShowcaseItem
             UUID SSID = UUID.fromString(pdc.get(key, PersistentDataType.STRING));
             ShowcaseItem showcaseItem = showcaseItems.get(SSID);
-            showcaseItem.cleanup();
+            showcaseItem.cleanup(item);
             showcaseItems.remove(SSID);
         }
     }

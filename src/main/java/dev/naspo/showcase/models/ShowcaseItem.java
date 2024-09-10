@@ -60,7 +60,7 @@ public class ShowcaseItem {
     }
 
     // Remove the showcase item id from the item's Persistent Data Container.
-    private void removeShowcaseItemId() {
+    private void removeShowcaseItemId(ItemStack item) {
         NamespacedKey key = new NamespacedKey(plugin, SIID_KEY);
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
@@ -177,8 +177,8 @@ public class ShowcaseItem {
 
     // Removes any applicable showcase related lore, IDs, etc.
     // Typically used when the ShowcaseItem is being removed.
-    public void cleanup() {
+    public void cleanup(ItemStack item) {
         removeCooldownLore();
-        removeShowcaseItemId();
+        removeShowcaseItemId(item);
     }
 }
