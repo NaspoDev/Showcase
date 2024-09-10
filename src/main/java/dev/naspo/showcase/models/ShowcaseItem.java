@@ -17,31 +17,26 @@ import java.util.concurrent.TimeUnit;
 public class ShowcaseItem {
     // The actual Minecraft item.
     private ItemStack item;
-    // Each showcase item should have a unique ID which is attached to it's itemstack.
-    private final UUID showcaseItemId;
     // The epoch time when the cooldown should end for this showcase item.
     private final long cooldownEndsEpoch;
 
 
     // The prefix for the cooldown lore that every showcase item with a cooldown will have.
     public static final String COOLDOWN_LORE_PREFIX = "Cooldown:";
-    // The key used for the showcase item ID in the item's Persistent Data Container.
-    public static final String SIID_KEY = "SIID";
+    // The key used for the cooldown ends time in the item's Persistent Data Container.
+    public static final String COOLDOWN_ENDS_EPOCH_KEY = "cooldownEnds";
     private BukkitTask cooldownLoreTask;
     private final Showcase plugin;
 
     public ShowcaseItem(ItemStack item, long cooldownEndsEpoch, Showcase plugin) {
         this.item = item;
-        this.showcaseItemId = UUID.randomUUID();
+        this.cooldownEndsEpoch = cooldownEndsEpoch;
         this.plugin = plugin;
-        attachShowcaseItemId();
+        attachCooldownEndsKey();
 
-        // If there is a cooldown, set the end time and start the lore updating task.
-        if (cooldownSeconds > 0) {
-            this.cooldownEndsEpoch = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(cooldownSeconds);
+        // If there is a cooldown, start the lore updating task.
+        if (System.currentTimeMillis() < cooldownEndsEpoch) {
             repeatUpdateCooldownLore();
-        } else {
-            this.cooldownEndsEpoch = System.currentTimeMillis();
         }
     }
 
@@ -53,27 +48,22 @@ public class ShowcaseItem {
         return item;
     }
 
-    public UUID getShowcaseItemId() {
-        return showcaseItemId;
-    }
-
-    // Set the showcase item id to the item's ItemMeta (as a Persistent Data Container).
+    // Set cooldown ends value to the item's Persistent Data Container.
     // Persistent data containers are saved when the entity unloads, hence "persistent".
-    private void attachShowcaseItemId() {
-        // The key for the Persistent Data. (SIID stands for showcase item ID).
-        NamespacedKey key = new NamespacedKey(plugin, SIID_KEY);
+    private void attachCooldownEndsKey() {
+        NamespacedKey key = new NamespacedKey(plugin, COOLDOWN_ENDS_EPOCH_KEY);
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         // If it doesn't already have an SIID, assign one.
         if (!pdc.has(key)) {
-            pdc.set(key, PersistentDataType.STRING, showcaseItemId.toString());
+            pdc.set(key, PersistentDataType.LONG, cooldownEndsEpoch);
             item.setItemMeta(meta);
         }
     }
 
-    // Remove the showcase item id from the item's Persistent Data Container.
-    private void removeShowcaseItemId(ItemStack item) {
-        NamespacedKey key = new NamespacedKey(plugin, SIID_KEY);
+    // Remove the cooldown ends value from the item's Persistent Data Container.
+    private void removeCooldownEndsKey(ItemStack item) {
+        NamespacedKey key = new NamespacedKey(plugin, COOLDOWN_ENDS_EPOCH_KEY);
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
         if (pdc.has(key)) {
@@ -129,8 +119,8 @@ public class ShowcaseItem {
                 }
             }
             meta.setLore(lore);
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
     }
 
     // Returns true if the item's cooldown still has time remaining.
@@ -144,11 +134,10 @@ public class ShowcaseItem {
     // will happen if it isn't as we're just checking for lore contents).
     public static boolean cooldownIsActive(ItemStack item) {
         ItemMeta itemMeta = item.getItemMeta();
-        if (itemMeta.hasLore()) {
-            List<String> lore = itemMeta.getLore();
-            if (lore.contains(COOLDOWN_LORE_PREFIX)) {
-                return true;
-            }
+        PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
+        NamespacedKey key = new NamespacedKey(plugin, COOLDOWN_ENDS_EPOCH_KEY);
+        if (pdc.has(key)) {
+            return System.currentTimeMillis() < pdc.get(key, PersistentDataType.LONG);
         }
         return false;
     }
@@ -163,10 +152,10 @@ public class ShowcaseItem {
         return cooldownEndsEpoch;
     }
 
-    // Removes any applicable showcase related lore, IDs, etc.
+    // Removes any applicable showcase related lore, keys, etc.
     // Typically used when the ShowcaseItem is being removed.
     public void cleanup(ItemStack item) {
         removeCooldownLore();
-        removeShowcaseItemId(item);
+        removeCooldownEndsKey(item);
     }
 }

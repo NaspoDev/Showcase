@@ -39,17 +39,8 @@ public class PlayerShowcase {
 
     // Remove a showcase item from the showcase.
     public void removeShowcaseItem(ItemStack item) {
-        ItemMeta meta = item.getItemMeta();
-        PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(plugin, ShowcaseItem.SIID_KEY);
-        // Get the showcase item ID. If it doesn't have one, it's not a showcase item.
-        if (pdc.has(key)) {
-            // Get the ShowcaseItem
-            UUID SSID = UUID.fromString(pdc.get(key, PersistentDataType.STRING));
-            ShowcaseItem showcaseItem = showcaseItems.get(SSID);
-            showcaseItem.cleanup(item);
-            showcaseItems.remove(SSID);
-        }
+        showcaseItem.cleanup(item);
+        showcaseItems.remove(SSID);
     }
 
     public List<ShowcaseItem> getShowcaseItems() {
