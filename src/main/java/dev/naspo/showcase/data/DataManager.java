@@ -63,8 +63,7 @@ public class DataManager {
             for (ShowcaseItem showcaseItem : entry.getValue().getShowcaseItems()) {
                 Map<String, Object> dataValue = new HashMap<>();
                 dataValue.put("itemStack", showcaseItem.getItem());
-                dataValue.put("cooldownSeconds", showcaseItem.getInitialCooldownSeconds());
-                dataValue.put("timeAddedEpoch", showcaseItem.getTimeAddedEpoch());
+                dataValue.put("cooldownEndsEpoch", showcaseItem.getCooldownEndsEpoch());
                 dataList.add(dataValue);
             }
 
@@ -93,9 +92,8 @@ public class DataManager {
 
             playerConfig.getMapList("items").forEach(entry -> {
                 ItemStack itemStack = (ItemStack) entry.get("itemStack");
-                int cooldownSeconds = (int) entry.get("cooldownSeconds");
-                long timeAddedEpoch = (long) entry.get("timeAddedEpoch");
-                playerShowcase.addShowcaseItem(itemStack, cooldownSeconds, timeAddedEpoch);
+                int cooldownEndsEpoch = (int) entry.get("cooldownEndsEpoch");
+                playerShowcase.addShowcaseItem(itemStack, cooldownEndsEpoch);
             });
         }
     }

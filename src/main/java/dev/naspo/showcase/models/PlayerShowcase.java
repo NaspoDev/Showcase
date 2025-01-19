@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 // The PlayerShowcase object class.
@@ -39,8 +40,28 @@ public class PlayerShowcase {
 
     // Remove a showcase item from the showcase.
     public void removeShowcaseItem(ItemStack item) {
-        showcaseItem.cleanup(item);
-        showcaseItems.remove(SSID);
+        // First we have to find the showcase item out of all the showcase items in the list.
+        // We can do this by matching the ItemStacks and the cooldown end time.
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        NamespacedKey key = new NamespacedKey(plugin, ShowcaseItem.COOLDOWN_ENDS_EPOCH_KEY);
+        if (pdc.has(key)) {
+            long cooldownEndsEpoch = pdc.get(key, PersistentDataType.LONG);
+
+            for (int i = 0; i < showcaseItems.size(); i++) {
+                ShowcaseItem showcaseItem = showcaseItems[i];
+                if (showcaseItem.getItem().equals(item)) {
+                    if (showcaseItem.getCooldownEndsEpoch() == cooldownEndsEpoch) {
+                        showcaseItem.cleanup(item);
+                        showcaseItems.remove(i);
+                    }
+                }
+            }
+        } else {
+            // Log an error to the console if a cooldown ends key could not be found.
+            plugin.getLogger().severe("Could not remove a showcase item from the showcase " +
+                    "because it doesn't have a cooldown ending key in it's Persistent Data Container!");
+        }
     }
 
     public List<ShowcaseItem> getShowcaseItems() {

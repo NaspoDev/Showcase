@@ -102,7 +102,7 @@ public class Events implements Listener {
 
             // If the owner of the showcase or someone with the showcase.edit permission closed it,
             // save any added items to the player's showcase.
-            // (Added item's can be identified as the ones without Showcase Item IDs).
+            // (Added item's can be identified as the ones without cooldown ending keys in their PDC).
             if (player.getName().equalsIgnoreCase(invOwnerName) || player.hasPermission("showcase.edit")) {
                 UUID showcaseOwnerUUID = getPlayerUUIDFromName(invOwnerName);
                 // If the UUID for the showcase owner could not be retrieved, log an error then return.
@@ -119,7 +119,7 @@ public class Events implements Listener {
                     if (item != null) {
                         ItemMeta meta = item.getItemMeta();
                         PersistentDataContainer pdc = meta.getPersistentDataContainer();
-                        NamespacedKey key = new NamespacedKey(plugin, ShowcaseItem.SIID_KEY);
+                        NamespacedKey key = new NamespacedKey(plugin, ShowcaseItem.COOLDOWN_ENDS_EPOCH_KEY);
                         if (!pdc.has(key)) {
                             addedItems.add(item);
                         }

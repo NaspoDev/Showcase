@@ -54,7 +54,7 @@ public class ShowcaseItem {
         NamespacedKey key = new NamespacedKey(plugin, COOLDOWN_ENDS_EPOCH_KEY);
         ItemMeta meta = item.getItemMeta();
         PersistentDataContainer pdc = meta.getPersistentDataContainer();
-        // If it doesn't already have an SIID, assign one.
+        // If it doesn't already have a cooldown ends value, assign one.
         if (!pdc.has(key)) {
             pdc.set(key, PersistentDataType.LONG, cooldownEndsEpoch);
             item.setItemMeta(meta);
