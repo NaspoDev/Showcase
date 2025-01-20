@@ -9,8 +9,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 // Showcase Item data class.
@@ -76,7 +76,7 @@ public class ShowcaseItem {
     // Using Bukkit Scheduler to repeatedly update the lore every second.
     private void repeatUpdateCooldownLore() {
         ItemMeta itemMeta = item.getItemMeta();
-        List<String> lore = itemMeta.getLore();
+        final List<String> lore = new ArrayList<>();
 
         // adding the countdown to the lore initially.
         lore.add(COOLDOWN_LORE_PREFIX + " " + getActiveCooldownValue() + "s");
@@ -94,8 +94,32 @@ public class ShowcaseItem {
                 this.cooldownLoreTask.cancel();
             }
 
+            // Format time remaining on cooldown.
+            int activeCooldownValue = getActiveCooldownValue();
+            int days = (int) TimeUnit.SECONDS.toDays(activeCooldownValue);
+            // Subtraction at the end is done to account to time values already calculate for, as the first
+            // step just converts the full time amount to the desired TimeUnit.
+            long hours = TimeUnit.SECONDS.toHours(activeCooldownValue) - ((long) days * 24);
+            long minutes = TimeUnit.SECONDS.toMinutes(activeCooldownValue) - (TimeUnit.SECONDS.toHours(activeCooldownValue) * 60);
+            long seconds = activeCooldownValue - (TimeUnit.SECONDS.toMinutes(activeCooldownValue) * 60);
+
+            String formattedCooldownTime = "";
+            if (days > 0) {
+                formattedCooldownTime += days + "d" + " ";
+            }
+            if (hours > 0) {
+                formattedCooldownTime += hours + "h" + " ";
+            }
+            if (minutes > 0) {
+                formattedCooldownTime += minutes + "m" + " ";
+            }
+            if (seconds > 0) {
+                formattedCooldownTime += seconds + "s" + " ";
+            }
+            formattedCooldownTime = formattedCooldownTime.trim();
+
             // Update the lore with the current cooldown value.
-            lore.set(loreIndex, COOLDOWN_LORE_PREFIX + " " + getActiveCooldownValue() + "s");
+            lore.set(loreIndex, COOLDOWN_LORE_PREFIX + " " + formattedCooldownTime);
             itemMeta.setLore(lore);
             item.setItemMeta(itemMeta);
         }, 20L, 20L);

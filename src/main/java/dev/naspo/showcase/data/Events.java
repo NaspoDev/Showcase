@@ -67,6 +67,7 @@ public class Events implements Listener {
                         // then allow the removal and properly remove it.
                         if (player.hasPermission("showcase.edit")) {
                             playerShowcase.removeShowcaseItem(clickedItem);
+                            return;
                         } else {
                             event.setCancelled(true);
                             // Also send a message to the player with a cooldown message.

@@ -50,7 +50,8 @@ public class PlayerShowcase {
 
             for (int i = 0; i < showcaseItems.size(); i++) {
                 ShowcaseItem showcaseItem = showcaseItems.get(i);
-                if (showcaseItem.getItem().equals(item)) {
+                if (showcaseItem.getItem().getType() == item.getType() &&
+                        showcaseItem.getItem().getAmount() == item.getAmount()) {
                     if (showcaseItem.getCooldownEndsEpoch() == cooldownEndsEpoch) {
                         showcaseItem.cleanup(item);
                         showcaseItems.remove(i);
