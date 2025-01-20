@@ -49,7 +49,7 @@ public class PlayerShowcase {
             long cooldownEndsEpoch = pdc.get(key, PersistentDataType.LONG);
 
             for (int i = 0; i < showcaseItems.size(); i++) {
-                ShowcaseItem showcaseItem = showcaseItems[i];
+                ShowcaseItem showcaseItem = showcaseItems.get(i);
                 if (showcaseItem.getItem().equals(item)) {
                     if (showcaseItem.getCooldownEndsEpoch() == cooldownEndsEpoch) {
                         showcaseItem.cleanup(item);

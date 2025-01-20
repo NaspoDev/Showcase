@@ -134,10 +134,12 @@ public class ShowcaseItem {
     // will happen if it isn't as we're just checking for lore contents).
     public static boolean cooldownIsActive(ItemStack item) {
         ItemMeta itemMeta = item.getItemMeta();
-        PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
-        NamespacedKey key = new NamespacedKey(plugin, COOLDOWN_ENDS_EPOCH_KEY);
-        if (pdc.has(key)) {
-            return System.currentTimeMillis() < pdc.get(key, PersistentDataType.LONG);
+        if (itemMeta.hasLore()) {
+            for (String s : itemMeta.getLore()) {
+                if (s.contains(COOLDOWN_LORE_PREFIX)) {
+                    return true;
+                }
+            }
         }
         return false;
     }

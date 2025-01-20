@@ -32,8 +32,8 @@ public class Utils {
     }
 
     // Removes filetype extension from file name.
-    public static String removeExtension(String name) {
-        return name.substring(0, name.lastIndexOf('.'));
+    public static String removeExtension(String fileName) {
+        return fileName.substring(0, fileName.lastIndexOf('.'));
     }
 
     // --- PlaceholderAPI Stuff ---

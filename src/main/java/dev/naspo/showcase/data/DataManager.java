@@ -95,6 +95,9 @@ public class DataManager {
                 int cooldownEndsEpoch = (int) entry.get("cooldownEndsEpoch");
                 playerShowcase.addShowcaseItem(itemStack, cooldownEndsEpoch);
             });
+
+            UUID playerUUID = UUID.fromString(Utils.removeExtension(file.getName()));
+            playerShowcases.put(playerUUID, playerShowcase);
         }
     }
 
