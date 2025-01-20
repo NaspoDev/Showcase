@@ -27,6 +27,7 @@ public class DataManager {
     private final Showcase plugin;
     public DataManager(Showcase plugin) {
         this.plugin = plugin;
+        this.dir = new File(plugin.getDataFolder(), "PlayerData");
         this.playerShowcases = new HashMap<>();
 
         mkdirs();
@@ -34,7 +35,6 @@ public class DataManager {
 
     // Creates the PlayerData folder.
     private void mkdirs() {
-        dir = new File(plugin.getDataFolder(), "PlayerData");
         if (!(dir.exists())) {
             try {
                 dir.mkdirs();
@@ -82,17 +82,18 @@ public class DataManager {
 
     // Restores file data to hashmap.
     public void restoreData() {
-        if (dir.length() == 0) {
+        File[] files = dir.listFiles();
+        if (files == null) {
             return;
         }
 
-        for (File file : dirListings) {
+        for (File file : files) {
             playerConfig = YamlConfiguration.loadConfiguration(file);
             PlayerShowcase playerShowcase = new PlayerShowcase(plugin);
 
             playerConfig.getMapList("items").forEach(entry -> {
                 ItemStack itemStack = (ItemStack) entry.get("itemStack");
-                int cooldownEndsEpoch = (int) entry.get("cooldownEndsEpoch");
+                long cooldownEndsEpoch = (long) entry.get("cooldownEndsEpoch");
                 playerShowcase.addShowcaseItem(itemStack, cooldownEndsEpoch);
             });
 
