@@ -79,7 +79,7 @@ public class ShowcaseItem {
         final List<String> lore = itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>();
 
         // adding the countdown to the lore initially.
-        lore.add(COOLDOWN_LORE_PREFIX + " " + getActiveCooldownValue() + "s");
+        lore.add(COOLDOWN_LORE_PREFIX + " " + getActiveCooldownTimeFormatted());
         itemMeta.setLore(lore);
         item.setItemMeta(itemMeta);
 
@@ -94,32 +94,8 @@ public class ShowcaseItem {
                 this.cooldownLoreTask.cancel();
             }
 
-            // Format time remaining on cooldown.
-            int activeCooldownValue = getActiveCooldownValue();
-            int days = (int) TimeUnit.SECONDS.toDays(activeCooldownValue);
-            // Subtraction at the end is done to account to time values already calculate for, as the first
-            // step just converts the full time amount to the desired TimeUnit.
-            long hours = TimeUnit.SECONDS.toHours(activeCooldownValue) - ((long) days * 24);
-            long minutes = TimeUnit.SECONDS.toMinutes(activeCooldownValue) - (TimeUnit.SECONDS.toHours(activeCooldownValue) * 60);
-            long seconds = activeCooldownValue - (TimeUnit.SECONDS.toMinutes(activeCooldownValue) * 60);
-
-            String formattedCooldownTime = "";
-            if (days > 0) {
-                formattedCooldownTime += days + "d" + " ";
-            }
-            if (hours > 0) {
-                formattedCooldownTime += hours + "h" + " ";
-            }
-            if (minutes > 0) {
-                formattedCooldownTime += minutes + "m" + " ";
-            }
-            if (seconds > 0) {
-                formattedCooldownTime += seconds + "s" + " ";
-            }
-            formattedCooldownTime = formattedCooldownTime.trim();
-
             // Update the lore with the current cooldown value.
-            lore.set(loreIndex, COOLDOWN_LORE_PREFIX + " " + formattedCooldownTime);
+            lore.set(loreIndex, COOLDOWN_LORE_PREFIX + " " + getActiveCooldownTimeFormatted());
             itemMeta.setLore(lore);
             item.setItemMeta(itemMeta);
         }, 20L, 20L);
@@ -172,6 +148,34 @@ public class ShowcaseItem {
     public int getActiveCooldownValue() {
         int activeCooldownValue = (int) TimeUnit.MILLISECONDS.toSeconds(cooldownEndsEpoch - System.currentTimeMillis());
         return (activeCooldownValue > 0) ? activeCooldownValue : 0;
+    }
+
+    // Returns the amount of time remaining on the cooldown formatted "<D>d <H>h <M>m <S>s" .
+    public String getActiveCooldownTimeFormatted() {
+        int activeCooldownValue = getActiveCooldownValue();
+        int days = (int) TimeUnit.SECONDS.toDays(activeCooldownValue);
+        // Subtraction at the end is done to account to time values already calculate for, as the first
+        // step just converts the full time amount to the desired TimeUnit.
+        long hours = TimeUnit.SECONDS.toHours(activeCooldownValue) - ((long) days * 24);
+        long minutes = TimeUnit.SECONDS.toMinutes(activeCooldownValue) - (TimeUnit.SECONDS.toHours(activeCooldownValue) * 60);
+        long seconds = activeCooldownValue - (TimeUnit.SECONDS.toMinutes(activeCooldownValue) * 60);
+
+        String formattedCooldownTime = "";
+        if (days > 0) {
+            formattedCooldownTime += days + "d" + " ";
+        }
+        if (hours > 0) {
+            formattedCooldownTime += hours + "h" + " ";
+        }
+        if (minutes > 0) {
+            formattedCooldownTime += minutes + "m" + " ";
+        }
+        if (seconds > 0) {
+            formattedCooldownTime += seconds + "s" + " ";
+        }
+        formattedCooldownTime = formattedCooldownTime.trim();
+
+        return formattedCooldownTime;
     }
 
     public long getCooldownEndsEpoch() {
