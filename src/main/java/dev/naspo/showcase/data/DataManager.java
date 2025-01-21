@@ -5,7 +5,6 @@ import dev.naspo.showcase.models.PlayerShowcase;
 import dev.naspo.showcase.models.ShowcaseItem;
 import dev.naspo.showcase.support.Utils;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -25,6 +24,7 @@ public class DataManager {
     private final HashMap<UUID, PlayerShowcase> playerShowcases;
 
     private final Showcase plugin;
+
     public DataManager(Showcase plugin) {
         this.plugin = plugin;
         this.dir = new File(plugin.getDataFolder(), "PlayerData");
@@ -57,6 +57,12 @@ public class DataManager {
         for (Map.Entry<UUID, PlayerShowcase> entry : playerShowcases.entrySet()) {
             playerFile = new File(dir, entry.getKey().toString() + ".yml");
             playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+
+            // Backwards compatibility for before v1.7.0.
+            // Checks for config list "data" and deletes it.
+            if (playerConfig.getList("data") != null) {
+                playerConfig.set("data", null);
+            }
 
             // Collect the showcase data to write to the player's data file.
             List<Map<String, Object>> dataList = new ArrayList<>();
@@ -91,11 +97,22 @@ public class DataManager {
             playerConfig = YamlConfiguration.loadConfiguration(file);
             PlayerShowcase playerShowcase = new PlayerShowcase(plugin);
 
-            playerConfig.getMapList("items").forEach(entry -> {
-                ItemStack itemStack = (ItemStack) entry.get("itemStack");
-                long cooldownEndsEpoch = (long) entry.get("cooldownEndsEpoch");
-                playerShowcase.addShowcaseItem(itemStack, cooldownEndsEpoch);
-            });
+            // Backwards compatibility for before v1.7.0.
+            // Checks for config list "data" and restores from there.
+            if (playerConfig.getList("data") != null) {
+                playerConfig.getList("data").forEach(itemStack -> {
+                    if (itemStack != null) {
+                        playerShowcase.addShowcaseItem((ItemStack) itemStack, 0);
+                    }
+                });
+            } else {
+                // Otherwise there is no old "data" list of items, so restore using the post 1.7.0 way.
+                playerConfig.getMapList("items").forEach(entry -> {
+                    ItemStack itemStack = (ItemStack) entry.get("itemStack");
+                    long cooldownEndsEpoch = (long) entry.get("cooldownEndsEpoch");
+                    playerShowcase.addShowcaseItem(itemStack, cooldownEndsEpoch);
+                });
+            }
 
             UUID playerUUID = UUID.fromString(Utils.removeExtension(file.getName()));
             playerShowcases.put(playerUUID, playerShowcase);
