@@ -76,7 +76,7 @@ public class ShowcaseItem {
     // Using Bukkit Scheduler to repeatedly update the lore every second.
     private void repeatUpdateCooldownLore() {
         ItemMeta itemMeta = item.getItemMeta();
-        final List<String> lore = new ArrayList<>();
+        final List<String> lore = itemMeta.hasLore() ? itemMeta.getLore() : new ArrayList<>();
 
         // adding the countdown to the lore initially.
         lore.add(COOLDOWN_LORE_PREFIX + " " + getActiveCooldownValue() + "s");
@@ -126,7 +126,7 @@ public class ShowcaseItem {
     }
 
     // Call to manually remove cooldown lore and cancel lore update task.
-    private void removeCooldownLore() {
+    public void removeCooldownLore() {
         if (cooldownLoreTask != null) {
             cooldownLoreTask.cancel();
         }

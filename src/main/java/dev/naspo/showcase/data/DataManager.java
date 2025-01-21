@@ -123,4 +123,8 @@ public class DataManager {
     public int getAmountOfShowcases() {
         return playerShowcases.size();
     }
+
+    public List<PlayerShowcase> getPlayerShowcases() {
+        return new ArrayList<>(playerShowcases.values());
+    }
 }

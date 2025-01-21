@@ -4,6 +4,8 @@ import dev.naspo.showcase.commandstuff.Commands;
 import dev.naspo.showcase.commandstuff.TabCompleter;
 import dev.naspo.showcase.data.DataManager;
 import dev.naspo.showcase.data.Events;
+import dev.naspo.showcase.models.PlayerShowcase;
+import dev.naspo.showcase.models.ShowcaseItem;
 import dev.naspo.showcase.support.OpenShowcaseService;
 import dev.naspo.showcase.support.Utils;
 import org.bukkit.Bukkit;
@@ -40,8 +42,18 @@ public final class Showcase extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        repeatSaveInvsTask.cancel();
+        repeatSaveInvsTask.cancel(); // stop the repeat save invs task.
+
+        // If there are showcases...
         if (dataManager.getAmountOfShowcases() > 0) {
+            // Remove the cooldown lore from all showcase items in all player showcases.
+            // (We don't want to save the cooldown countdown in their lore).
+            for (PlayerShowcase playerShowcase : dataManager.getPlayerShowcases()) {
+                for (ShowcaseItem showcaseItem : playerShowcase.getShowcaseItems()) {
+                    showcaseItem.removeCooldownLore();
+                }
+            }
+            // Save data.
             dataManager.saveData();
         }
         this.getLogger().info("Showcase has been disabled!");
