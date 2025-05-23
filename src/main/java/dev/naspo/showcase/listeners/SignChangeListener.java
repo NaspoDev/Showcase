@@ -12,7 +12,7 @@ public class SignChangeListener implements Listener {
 
     // Checks if "[Showcase]" is written on a sign. Creates a showcase sign if it is.
     @EventHandler
-    private void onBlockPlace(SignChangeEvent event) {
+    private void onSignChange(SignChangeEvent event) {
         Sign sign = (Sign) event.getBlock();
         String[] lines = event.getLines();
 
