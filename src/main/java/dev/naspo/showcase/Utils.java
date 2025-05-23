@@ -1,19 +1,11 @@
 package dev.naspo.showcase;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 public class Utils {
 
-    private static Showcase plugin;
-    Utils(Showcase plugin) {
-        Utils.plugin = plugin;
-    }
-
     // Returns the plugins prefix.
-    public static String getPluginPrefix() {
+    public static String getPluginPrefix(Showcase plugin) {
         return plugin.getConfig().getString("messages.prefix");
     }
 

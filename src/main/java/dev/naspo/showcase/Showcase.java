@@ -11,7 +11,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Level;
 
 public final class Showcase extends JavaPlugin {
-    private Utils utils;
     private Data data;
     private OpenShowcase openShowcase;
     private Commands commands;
@@ -59,7 +58,6 @@ public final class Showcase extends JavaPlugin {
     }
 
     private void instantiateClasses() {
-        utils = new Utils(this);
         data = new Data(this);
         openShowcase = new OpenShowcase(this);
         commands = new Commands(this, data, openShowcase);

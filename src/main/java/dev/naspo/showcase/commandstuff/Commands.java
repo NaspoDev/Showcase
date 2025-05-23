@@ -76,7 +76,7 @@ public class Commands implements CommandExecutor {
 
         // Reload the plugin.
         plugin.reloadConfig();
-        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
+        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix(plugin) +
                 plugin.getConfig().getString("messages.reload")));
     }
 
@@ -120,21 +120,21 @@ public class Commands implements CommandExecutor {
             // a player-has-never-joined message.
             OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
             player.sendMessage(
-                    Utils.chatColor(Utils.getPluginPrefix() +
+                    Utils.chatColor(Utils.getPluginPrefix(plugin) +
                     plugin.getConfig().getString("messages.player-has-never-joined")
                             .replace("%player_name%", target.getName())));
 
         // Player doesn't exist error.
         } catch (Exception e) {
             // Send a message to the command sender.
-            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
+            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix(plugin) +
                     plugin.getConfig().getString("messages.unknown-player")));
         }
     }
 
     // Utility method to send a no-permission message to the player.
     private void sendNoPermissionMessage(Player player) {
-        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
+        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix(plugin) +
                 plugin.getConfig().getString("messages.no-permission")));
     }
 }
