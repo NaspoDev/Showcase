@@ -27,14 +27,13 @@ public class Commands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
-        // --- CONSOLE COMMAND STUFF ---
-
+        // Console command stuff.
         if (!(sender instanceof Player)) {
             if (args.length == 0) {
                 sender.sendMessage("Did you mean /showcase reload?");
                 return true;
             }
+            // reload command.
             if (args[0].equalsIgnoreCase("reload")) {
                 plugin.reloadConfig();
                 sender.sendMessage("Showcase has been reloaded.");
@@ -42,8 +41,8 @@ public class Commands implements CommandExecutor {
             return true;
         }
 
-        // --- PLAYER COMMAND STUFF ---
-
+        // Player command stuff.
+        // Capturing the player.
         Player player = (Player) sender;
 
         // Base permission check.
@@ -55,70 +54,20 @@ public class Commands implements CommandExecutor {
         // If there are no args, have the player open their own showcase.
         if (args.length == 0) {
             openShowcase.openOwnShowcase(player);
+        } else {
+            // Handle arguments.
+            switch (args[0].toLowerCase()) {
+                case "reload" -> handleReloadCommand(player);
+                case "help" -> handleHelpCommand(player);
+                default -> handleOpenOtherShowcaseCommand(player, args[0]);
+            };
         }
-
-        // Handle arguments.
-        switch (args[0].toLowerCase()) {
-            case "reload" -> handleReload(player);
-            case ""
-        };
-        if (!(args.length == 0)) {
-
-            // Reload Command.
-            if (args[0].equalsIgnoreCase("reload")) {
-                reloadCommand(player);
-                return true;
-            }
-
-            // Help command.
-            if (args[0].equalsIgnoreCase("help")) {
-                helpCommand(player);
-                return true;
-            }
-
-            // --- Open Another Player's Showcase ---
-
-            // Check if player is online.
-            List<Player> onlinePlayers = new ArrayList<>();
-            onlinePlayers.addAll(Bukkit.getOnlinePlayers());
-            for (Player p : onlinePlayers) {
-                if (args[0].equalsIgnoreCase(p.getName().toLowerCase())) {
-                    openShowcase.openOthersOnlineInv(player, p);
-                    return true;
-                }
-            }
-
-            // Check if player is offline.
-            try {
-                // If they have played the server before, open their showcase.
-                if (Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore()) {
-                    OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-                    openShowcase.openOthersOfflineInv(player, p);
-                    return true;
-                }
-
-                // Otherwise, if they have never played the server before, send
-                // a player-has-never-joined message.
-                OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-                player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
-                        Utils.placeholderPlayer(p,
-                                plugin.getConfig().getString("messages.player-has-never-joined"))));
-                return true;
-
-                // Player doesn't exist error.
-            } catch (Exception e) {
-                // Send a message to the command sender.
-                player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
-                        plugin.getConfig().getString("messages.unknown-player")));
-            }
-            return true;
-        }
-        return false;
+        return true;
     }
 
     // --- PLAYER INDIVIDUAL COMMAND LOGIC ---
 
-    private void handleReload(Player player) {
+    private void handleReloadCommand(Player player) {
         // Reload permission check.
         if (!(player.hasPermission("showcase.reload"))) {
             sendNoPermissionMessage(player);
@@ -131,7 +80,7 @@ public class Commands implements CommandExecutor {
                 plugin.getConfig().getString("messages.reload")));
     }
 
-    private void handleHelp(Player player) {
+    private void handleHelpCommand(Player player) {
         String[] help = {
                 "&5&lShowcase Help",
                 "&5/showcase &7- Open your showcase.",
@@ -143,6 +92,42 @@ public class Commands implements CommandExecutor {
         }
         if (player.hasPermission("showcase.reload")) {
             player.sendMessage(Utils.chatColor(help[3]));
+        }
+    }
+
+    // Try to find a player with the specified name, then call to open their showcase.
+    private void handleOpenOtherShowcaseCommand(Player player, String targetPlayerName) {
+        // Check if player is online.
+        List<Player> onlinePlayers = new ArrayList<>();
+        onlinePlayers.addAll(Bukkit.getOnlinePlayers());
+        for (Player target : onlinePlayers) {
+            if (targetPlayerName.equalsIgnoreCase(target.getName().toLowerCase())) {
+                openShowcase.openOthersOnlineInv(player, target);
+                return;
+            }
+        }
+
+        // Check if target player is offline.
+        try {
+            // If they have played the server before, open their showcase.
+            if (Bukkit.getOfflinePlayer(targetPlayerName).hasPlayedBefore()) {
+                OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
+                openShowcase.openOthersOfflineInv(player, target);
+                return;
+            }
+
+            // Otherwise, if they have never played the server before, send
+            // a player-has-never-joined message.
+            OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
+            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
+                    Utils.placeholderPlayer(target,
+                            plugin.getConfig().getString("messages.player-has-never-joined"))));
+
+        // Player doesn't exist error.
+        } catch (Exception e) {
+            // Send a message to the command sender.
+            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
+                    plugin.getConfig().getString("messages.unknown-player")));
         }
     }
 
