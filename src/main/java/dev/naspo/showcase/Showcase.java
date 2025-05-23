@@ -4,7 +4,9 @@ import dev.naspo.showcase.commandstuff.Commands;
 import dev.naspo.showcase.commandstuff.OpenShowcase;
 import dev.naspo.showcase.commandstuff.TabCompleter;
 import dev.naspo.showcase.datamanagement.Data;
-import dev.naspo.showcase.datamanagement.Events;
+import dev.naspo.showcase.listeners.InventoryListener;
+import dev.naspo.showcase.listeners.PlayerInteractListener;
+import dev.naspo.showcase.listeners.PlayerJoinListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,7 +17,6 @@ public final class Showcase extends JavaPlugin {
     private OpenShowcase openShowcase;
     private Commands commands;
     private TabCompleter tabCompleter;
-    private Events events;
 
     @Override
     public void onEnable() {
@@ -62,11 +63,12 @@ public final class Showcase extends JavaPlugin {
         openShowcase = new OpenShowcase(this);
         commands = new Commands(this, data, openShowcase);
         tabCompleter = new TabCompleter();
-        events = new Events();
     }
 
     private void registerEvents() {
-        this.getServer().getPluginManager().registerEvents(events, this);
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
     }
 
     private void registerCommands() {
