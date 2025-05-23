@@ -1,7 +1,7 @@
 package dev.naspo.showcase.commandstuff;
 
 import dev.naspo.showcase.Showcase;
-import dev.naspo.showcase.Utils;
+import dev.naspo.showcase.utils.Utils;
 import dev.naspo.showcase.datamanagement.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

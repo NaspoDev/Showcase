@@ -1,5 +1,6 @@
-package dev.naspo.showcase;
+package dev.naspo.showcase.utils;
 
+import dev.naspo.showcase.Showcase;
 import org.bukkit.ChatColor;
 
 public class Utils {
