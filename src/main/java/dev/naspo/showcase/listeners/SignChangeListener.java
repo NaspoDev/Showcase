@@ -2,7 +2,7 @@ package dev.naspo.showcase.listeners;
 
 import dev.naspo.showcase.utils.Constants;
 import dev.naspo.showcase.utils.Utils;
-import org.bukkit.block.data.type.Sign;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,7 +50,7 @@ public class SignChangeListener implements Listener {
         // (A sign can have up 15 characters per line, while a player name can have 16 characters. 12 is our max
         // because we also need to account for the "&" and "'s").
         if (playerName.length() > 12) {
-            lines[0] = "&" + playerName.substring(0, 11) + "-";
+            lines[0] = "&" + playerName.substring(0, 11);
             lines[1] = "&" + playerName.substring(11) + "'s";
             lines[2] = "&Showcase";
             lines[3] = "";
