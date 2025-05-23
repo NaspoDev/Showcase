@@ -8,8 +8,5 @@ description: Show off your prized possessions.
 depend:
   - Vault
 
-softdepend:
-  - PlaceholderAPI
-
 commands:
   showcase:

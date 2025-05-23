@@ -119,9 +119,10 @@ public class Commands implements CommandExecutor {
             // Otherwise, if they have never played the server before, send
             // a player-has-never-joined message.
             OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
-            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix() +
-                    Utils.placeholderPlayer(target,
-                            plugin.getConfig().getString("messages.player-has-never-joined"))));
+            player.sendMessage(
+                    Utils.chatColor(Utils.getPluginPrefix() +
+                    plugin.getConfig().getString("messages.player-has-never-joined")
+                            .replace("%player_name%", target.getName())));
 
         // Player doesn't exist error.
         } catch (Exception e) {
