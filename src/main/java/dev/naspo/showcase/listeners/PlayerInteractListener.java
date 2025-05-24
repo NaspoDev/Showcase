@@ -1,5 +1,6 @@
 package dev.naspo.showcase.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
@@ -8,10 +9,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class PlayerInteractListener implements Listener {
+
+    // A showcase sign will always end with this text.
+    private final String SHOWCASE_SIGN_ENDING = "'sShowcase";
 
     // Checks and handles when a showcase sign is right-clicked.
     @EventHandler
@@ -27,7 +30,6 @@ public class PlayerInteractListener implements Listener {
 
                 /*
                 TODO:
-                - Check if its a showcase sign (text is "'s Showcase")
                 - Get the player's name from the sign and validate it.
                 - Then open the showcase for the player who clicked.
                 - If any errors, display.
@@ -36,19 +38,22 @@ public class PlayerInteractListener implements Listener {
         }
     }
 
-    private boolean isShowcaseSign(Sign sign) {
-        final String SHOWCASE_SIGN_ENDING = "'sShowcase";
+    // Will return the Player on the showcase sign if the sign is a showcase sign, and a player can be found.
+    private Player getPlayerFromShowcaseSign(Sign sign) {
         String[] lines = sign.getSide(Side.FRONT).getLines();
-        // Concatenate all lines into one string (no delimiter).
+        // Concatenate all lines into one string.
         String concatenatedLines = String.join("", lines);
 
-        // If the sign ends with "'sShowcase", try getting the player's name.
+        // If the sign ends with the SHOWCASE_SING_ENDING, we can assume it is a showcase sign.
         if (concatenatedLines.endsWith(SHOWCASE_SIGN_ENDING)) {
-            // The player name should be everything before "'sShowcase".
+            // We can assume that text before the SHOWCASE_SIGN_ENDING is the player's name.
             String playerName = concatenatedLines.substring(0, concatenatedLines.indexOf(SHOWCASE_SIGN_ENDING));
 
-            // TODO: try getting the player, be it offline or online.
+            // Check if the player is online.
+            List<Player> onlinePlayers = Bukkit.getOnlinePlayers();
+            
         }
+        return null;
     }
 }
 
