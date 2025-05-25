@@ -2,6 +2,7 @@ package dev.naspo.showcase.listeners;
 
 import dev.naspo.showcase.utils.Constants;
 import dev.naspo.showcase.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,8 +14,13 @@ public class SignChangeListener implements Listener {
     // Checks if "[Showcase]" is written on a sign. Creates a showcase sign if it is.
     @EventHandler
     private void onSignChange(SignChangeEvent event) {
-        Sign sign = (Sign) event.getBlock();
         String[] lines = event.getLines();
+
+        // DEBUGGING:
+        Bukkit.broadcastMessage("Sign change event fired! Lines:");
+        for (String line : lines) {
+            Bukkit.broadcastMessage(line);
+        }
 
         // Check if the sign contains "[Showcase]" (not case-sensitive).
         boolean hasShowcaseSignKeyword = false;
@@ -34,14 +40,15 @@ public class SignChangeListener implements Listener {
 
         // If the sign is eligible to be a showcase sign, cancel the change event and make it one.
         if (hasShowcaseSignKeyword) {
-            event.setCancelled(true);
-            setShowcaseSignFor(event.getPlayer(), sign, event);
+            Bukkit.broadcastMessage("has showcase sign keyword!");
+//            event.setCancelled(true);
+            setShowcaseSignFor(event.getPlayer(), event);
         }
     }
 
     // Sets a sign as a showcase sign for the specified player.
     // This is done by setting the sign's text as: "Player Name's Showcase" (in color).
-    private void setShowcaseSignFor(Player player, Sign sign, SignChangeEvent event) {
+    private void setShowcaseSignFor(Player player, SignChangeEvent event) {
         String[] lines = new String[4];
         String playerName = player.getName();
 

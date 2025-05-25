@@ -7,6 +7,7 @@ import dev.naspo.showcase.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,12 +16,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.security.InvalidParameterException;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class PlayerInteractListener implements Listener {
 
     // A showcase sign will always end with this text.
-    private final String SHOWCASE_SIGN_ENDING = "'sShowcase";
+    private final String SHOWCASE_SIGN_ENDING = "'s Showcase";
     private Showcase plugin;
     private OpenShowcaseService openShowcase;
 
@@ -31,12 +33,22 @@ public class PlayerInteractListener implements Listener {
 
     // Checks and handles when a showcase sign is right-clicked.
     @EventHandler
-    private void onBlockClick(PlayerInteractEvent event) {
+    private void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
+        // DEBUGGING
+        Bukkit.broadcastMessage("player interact event fired!");
+
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (event.getClickedBlock() instanceof Sign) {
-                Sign sign = (Sign) event.getClickedBlock();
+            // DEBUGGING
+            Bukkit.broadcastMessage("action right click block!");
+
+            if (event.getClickedBlock().getState() instanceof Sign) {
+
+                // DEBUGGING
+                Bukkit.broadcastMessage("block is a sign");
+
+                Sign sign = (Sign) event.getClickedBlock().getState();
 
                 if (!isShowcaseSign(sign)) {
                     return;
@@ -65,6 +77,13 @@ public class PlayerInteractListener implements Listener {
     // the SHOWCASE_SIGN_ENDING constant).
     private boolean isShowcaseSign(Sign sign) {
         String[] lines = sign.getSide(Side.FRONT).getLines();
+
+        // DEBUGGING:
+        plugin.getServer().broadcastMessage("Printing sign lines from isShowcaseSign() method");
+        for (String line : lines) {
+            plugin.getServer().broadcastMessage(line);
+        }
+
         // Concatenate all lines into one string.
         String concatenatedLines = String.join("", lines);
 
