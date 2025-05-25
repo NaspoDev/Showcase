@@ -1,6 +1,7 @@
 package dev.naspo.showcase.commandstuff;
 
 import dev.naspo.showcase.Showcase;
+import dev.naspo.showcase.services.OpenShowcaseService;
 import dev.naspo.showcase.utils.Utils;
 import dev.naspo.showcase.datamanagement.Data;
 import org.bukkit.Bukkit;
@@ -17,9 +18,9 @@ public class Commands implements CommandExecutor {
 
     private Showcase plugin;
     private Data data;
-    private OpenShowcase openShowcase;
+    private OpenShowcaseService openShowcase;
 
-    public Commands(Showcase plugin, Data data, OpenShowcase openShowcase) {
+    public Commands(Showcase plugin, Data data, OpenShowcaseService openShowcase) {
         this.plugin = plugin;
         this.data = data;
         this.openShowcase = openShowcase;

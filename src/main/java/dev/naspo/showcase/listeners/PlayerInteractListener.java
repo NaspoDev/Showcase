@@ -1,7 +1,8 @@
 package dev.naspo.showcase.listeners;
 
 import dev.naspo.showcase.Showcase;
-import dev.naspo.showcase.commandstuff.OpenShowcase;
+import dev.naspo.showcase.services.OpenShowcaseService;
+import dev.naspo.showcase.utils.PlayerUtils;
 import dev.naspo.showcase.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -12,6 +13,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.security.InvalidParameterException;
 import java.util.Optional;
 
 public class PlayerInteractListener implements Listener {
@@ -19,9 +22,9 @@ public class PlayerInteractListener implements Listener {
     // A showcase sign will always end with this text.
     private final String SHOWCASE_SIGN_ENDING = "'sShowcase";
     private Showcase plugin;
-    private OpenShowcase openShowcase;
+    private OpenShowcaseService openShowcase;
 
-    public PlayerInteractListener(Showcase plugin, OpenShowcase openShowcase) {
+    public PlayerInteractListener(Showcase plugin, OpenShowcaseService openShowcase) {
         this.plugin = plugin;
         this.openShowcase = openShowcase;
     }
@@ -35,64 +38,52 @@ public class PlayerInteractListener implements Listener {
             if (event.getClickedBlock() instanceof Sign) {
                 Sign sign = (Sign) event.getClickedBlock();
 
-                Player onlineTarget = getOnlinePlayerFromShowcaseSign(sign);
-                if (onlineTarget != null) {
-                    event.setCancelled(true); // Stop the player from editing the sign.
-                    openShowcase.openOthersOnlineInv(player, onlineTarget);
+                if (!isShowcaseSign(sign)) {
                     return;
                 }
 
-                OfflinePlayer offlineTarget = getOfflinePlayerFromShowcaseSign(sign);
-                if (offlineTarget != null) {
-                    event.setCancelled(true); // Stop the player from editing the sign.
-                    openShowcase.openOthersOfflineInv(player, offlineTarget);
-                    return;
-                }
+                // Because it's a Showcase sign, stop the player from editing the sign.
+                event.setCancelled(true);
 
-                player.sendMessage(Utils.chatColor(
-                        Utils.getPluginPrefix(plugin) + "Could not open showcase for target player."
-                ));
+                // Get the target player's name from the showcase sign.
+                String targetPlayerName = getPlayerNameFromShowcaseSign(sign);
+                // If they are online, open their showcase.
+                if (PlayerUtils.isOnline(targetPlayerName)) {
+                    openShowcase.openOthersOnlineInv(player, PlayerUtils.getOnlinePlayer(targetPlayerName));
+                } else {
+                    // Otherwise if they are offline (and have played the server before), open their showcase.
+                    OfflinePlayer offlinePlayer = PlayerUtils.getOfflinePlayer(targetPlayerName);
+                    if (offlinePlayer.hasPlayedBefore()) {
+                        openShowcase.openOthersOfflineInv(player, offlinePlayer);
+                    }
+                }
             }
         }
     }
 
-    // Will return the Player on the showcase sign if the sign is a showcase sign, and a player can be found.
-    private Player getOnlinePlayerFromShowcaseSign(Sign sign) {
+    // Returns true if a sign is a showcase sign. (Showcase sign's end with the value of
+    // the SHOWCASE_SIGN_ENDING constant).
+    private boolean isShowcaseSign(Sign sign) {
         String[] lines = sign.getSide(Side.FRONT).getLines();
         // Concatenate all lines into one string.
         String concatenatedLines = String.join("", lines);
 
         // If the sign ends with the SHOWCASE_SING_ENDING, we can assume it is a showcase sign.
-        if (concatenatedLines.endsWith(SHOWCASE_SIGN_ENDING)) {
-            // We can assume that text before the SHOWCASE_SIGN_ENDING is the player's name.
-            String playerName = concatenatedLines.substring(0, concatenatedLines.indexOf(SHOWCASE_SIGN_ENDING));
-
-            // Check if the player is online.
-            Optional<Player> target = Bukkit.getOnlinePlayers().stream()
-                    .filter(p -> p.getName().equals(playerName))
-                    .findFirst()
-                    .map(p -> (Player) p);
-
-            // If they are, return them.
-            if (target.isPresent()) {
-                return target.get();
-            }
-        }
-        return null;
+        return concatenatedLines.endsWith(SHOWCASE_SIGN_ENDING);
     }
 
-    private OfflinePlayer getOfflinePlayerFromShowcaseSign(Sign sign) {
+    private String getPlayerNameFromShowcaseSign(Sign sign) throws InvalidParameterException {
+        if (!isShowcaseSign(sign)) {
+            throw new InvalidParameterException("The passed in sign is not a Showcase sign!");
+        }
+
         String[] lines = sign.getSide(Side.FRONT).getLines();
         // Concatenate all lines into one string.
         String concatenatedLines = String.join("", lines);
 
-        // If the sign ends with the SHOWCASE_SING_ENDING, we can assume it is a showcase sign.
-        if (concatenatedLines.endsWith(SHOWCASE_SIGN_ENDING)) {
-            // We can assume that text before the SHOWCASE_SIGN_ENDING is the player's name.
-            String playerName = concatenatedLines.substring(0, concatenatedLines.indexOf(SHOWCASE_SIGN_ENDING));
-            return Bukkit.getOfflinePlayer(playerName);
-        }
-        return null;
+        // We can assume that text before the SHOWCASE_SIGN_ENDING is the player's name.
+        String playerName = concatenatedLines.substring(0, concatenatedLines.indexOf(SHOWCASE_SIGN_ENDING));
+        return playerName;
     }
 }
 

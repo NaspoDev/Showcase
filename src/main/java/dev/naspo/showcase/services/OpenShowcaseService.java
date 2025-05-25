@@ -1,4 +1,4 @@
-package dev.naspo.showcase.commandstuff;
+package dev.naspo.showcase.services;
 
 import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.datamanagement.Data;
@@ -11,9 +11,9 @@ import org.bukkit.inventory.Inventory;
 import java.util.HashMap;
 import java.util.Map;
 
-//Open showcase logic for all types of showcase opens. (Self-open, other online player open,
-// other offline player open.
-public class OpenShowcase {
+// Open showcase logic for all types of showcase opens. (Self-open, other online player open,
+// other offline player open).
+public class OpenShowcaseService {
 
     private Permission vaultPerms; //Vault permission API handler.
     private HashMap<String, Integer> showcaseSizes = new HashMap<>(); //Showcase size perms and inv value equivalent.
@@ -21,7 +21,7 @@ public class OpenShowcase {
 
     private Showcase plugin;
 
-    public OpenShowcase(Showcase plugin) {
+    public OpenShowcaseService(Showcase plugin) {
         this.plugin = plugin;
 
         vaultPerms = null;
