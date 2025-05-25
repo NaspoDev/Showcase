@@ -34,7 +34,7 @@ public class OpenShowcase {
     }
 
     // Open another (online) player's showcase.
-    void openOthersOnlineInv(Player player, Player owner) {
+    public void openOthersOnlineInv(Player player, Player owner) {
         // Create a blank showcase inventory with the owner's information.
         Inventory showcase = Bukkit.createInventory(owner, getShowcaseSize(owner), owner.getName() + "'s Showcase");
         // Set its content's to the owners showcase contents.
@@ -44,7 +44,7 @@ public class OpenShowcase {
     }
 
     // Open another (offline) player's showcase.
-    void openOthersOfflineInv(Player player, OfflinePlayer owner) {
+    public void openOthersOfflineInv(Player player, OfflinePlayer owner) {
         // Create a blank showcase inventory with the owner's information.
         Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(owner),
                 owner.getName() + "'s Showcase");
@@ -55,7 +55,7 @@ public class OpenShowcase {
     }
 
     //Open player's own showcase.
-    void openOwnShowcase(Player player) {
+    public void openOwnShowcase(Player player) {
         // Create a blank showcase inventory with the player's information.
         Inventory showcase = Bukkit.createInventory(player, getShowcaseSize(player),
                 player.getName() + "'s Showcase");
