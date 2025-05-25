@@ -36,18 +36,9 @@ public class PlayerInteractListener implements Listener {
     private void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        // DEBUGGING
-        Bukkit.broadcastMessage("player interact event fired!");
-
-        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            // DEBUGGING
-            Bukkit.broadcastMessage("action right click block!");
-
+        // If the action is left-clicking on a block...
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
             if (event.getClickedBlock().getState() instanceof Sign) {
-
-                // DEBUGGING
-                Bukkit.broadcastMessage("block is a sign");
-
                 Sign sign = (Sign) event.getClickedBlock().getState();
 
                 if (!isShowcaseSign(sign)) {
@@ -77,12 +68,6 @@ public class PlayerInteractListener implements Listener {
     // the SHOWCASE_SIGN_ENDING constant).
     private boolean isShowcaseSign(Sign sign) {
         String[] lines = sign.getSide(Side.FRONT).getLines();
-
-        // DEBUGGING:
-        plugin.getServer().broadcastMessage("Printing sign lines from isShowcaseSign() method");
-        for (String line : lines) {
-            plugin.getServer().broadcastMessage(line);
-        }
 
         // Concatenate all lines into one string.
         String concatenatedLines = String.join("", lines);

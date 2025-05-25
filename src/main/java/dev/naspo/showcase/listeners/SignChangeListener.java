@@ -16,12 +16,6 @@ public class SignChangeListener implements Listener {
     private void onSignChange(SignChangeEvent event) {
         String[] lines = event.getLines();
 
-        // DEBUGGING:
-        Bukkit.broadcastMessage("Sign change event fired! Lines:");
-        for (String line : lines) {
-            Bukkit.broadcastMessage(line);
-        }
-
         // Check if the sign contains "[Showcase]" (not case-sensitive).
         boolean hasShowcaseSignKeyword = false;
         for (String line : lines) {
@@ -40,7 +34,6 @@ public class SignChangeListener implements Listener {
 
         // If the sign is eligible to be a showcase sign, cancel the change event and make it one.
         if (hasShowcaseSignKeyword) {
-            Bukkit.broadcastMessage("has showcase sign keyword!");
 //            event.setCancelled(true);
             setShowcaseSignFor(event.getPlayer(), event);
         }
