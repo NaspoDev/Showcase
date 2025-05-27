@@ -59,7 +59,7 @@ public class PlayerUtils {
      */
     public static void sendFormattedMessage(Showcase plugin, Player player, String message) {
         player.sendMessage(
-                Utils.getPluginPrefix(plugin) + Utils.chatColor(message)
+                 Utils.chatColor(Utils.getPluginPrefix(plugin) + message)
         );
     }
 }
