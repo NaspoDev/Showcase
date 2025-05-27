@@ -15,10 +15,10 @@ import java.util.Map;
 // other offline player open).
 public class OpenShowcaseService {
 
-    private Permission vaultPerms; //Vault permission API handler.
-    private HashMap<String, Integer> showcaseSizes = new HashMap<>(); //Showcase size perms and inv value equivalent.
-
-
+    // Vault permission API.
+    private Permission vaultPerms;
+    // Showcase size permissions to their respective inventory size.
+    private final HashMap<String, Integer> permissionToSize = new HashMap<>();
     private Showcase plugin;
 
     public OpenShowcaseService(Showcase plugin) {
@@ -26,11 +26,12 @@ public class OpenShowcaseService {
 
         vaultPerms = null;
 
-        showcaseSizes.put("showcase.size.2", 18);
-        showcaseSizes.put("showcase.size.3", 27);
-        showcaseSizes.put("showcase.size.4", 36);
-        showcaseSizes.put("showcase.size.5", 46);
-        showcaseSizes.put("showcase.size.6", 54);
+        // Defining showcase size permissions and values.
+        permissionToSize.put("showcase.size.2", 18);
+        permissionToSize.put("showcase.size.3", 27);
+        permissionToSize.put("showcase.size.4", 36);
+        permissionToSize.put("showcase.size.5", 46);
+        permissionToSize.put("showcase.size.6", 54);
     }
 
     // Open another (online) player's showcase.
@@ -54,7 +55,10 @@ public class OpenShowcaseService {
         player.openInventory(showcase);
     }
 
-    //Open player's own showcase.
+    /**
+     * Open a player's own Showcase.
+     * @param player The player that will open their own showcase.
+     */
     public void openOwnShowcase(Player player) {
         // Create a blank showcase inventory with the player's information.
         Inventory showcase = Bukkit.createInventory(player, getShowcaseSize(player),
@@ -69,7 +73,7 @@ public class OpenShowcaseService {
     private int getShowcaseSize(Player player) {
         int showcaseSize = 9;
 
-        for (Map.Entry<String, Integer> entry : showcaseSizes.entrySet()) {
+        for (Map.Entry<String, Integer> entry : permissionToSize.entrySet()) {
             if (player.hasPermission(entry.getKey())) {
                 showcaseSize = entry.getValue();
             }
@@ -83,7 +87,7 @@ public class OpenShowcaseService {
     private int getShowcaseSize(OfflinePlayer player) {
         int showcaseSize = 9;
 
-        for (Map.Entry<String, Integer> entry : showcaseSizes.entrySet()) {
+        for (Map.Entry<String, Integer> entry : permissionToSize.entrySet()) {
             if (vaultPerms.playerHas(null, player, entry.getKey())) {
                 showcaseSize = entry.getValue();
             }
