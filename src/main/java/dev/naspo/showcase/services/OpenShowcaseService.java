@@ -34,25 +34,34 @@ public class OpenShowcaseService {
         permissionToSize.put("showcase.size.6", 54);
     }
 
-    // Open another (online) player's showcase.
-    public void openOthersOnlineInv(Player player, Player owner) {
-        // Create a blank showcase inventory with the owner's information.
-        Inventory showcase = Bukkit.createInventory(owner, getShowcaseSize(owner), owner.getName() + "'s Showcase");
-        // Set its content's to the owners showcase contents.
-        showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
-        // Open the owner's showcase for the player.
-        player.openInventory(showcase);
+
+    /**
+     * Opens another online player's showcase for the viewer.
+     * @param viewer The player that will be opening the target's showcase.
+     * @param target The player's showcase of which to open.
+     */
+    public void openOtherPlayerShowcase(Player viewer, Player target) {
+        // Create a blank showcase inventory with the target's information.
+        Inventory showcase = Bukkit.createInventory(target, getShowcaseSize(target), target.getName() + "'s Showcase");
+        // Set its content's to the targets showcase contents.
+        showcase.setContents(Data.invs.get(target.getUniqueId().toString()));
+        // Open the target's showcase for the viewer.
+        viewer.openInventory(showcase);
     }
 
-    // Open another (offline) player's showcase.
-    public void openOthersOfflineInv(Player player, OfflinePlayer owner) {
-        // Create a blank showcase inventory with the owner's information.
-        Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(owner),
-                owner.getName() + "'s Showcase");
-        // Set its content's to the owners showcase contents.
-        showcase.setContents(Data.invs.get(owner.getUniqueId().toString()));
-        // Open the owner's showcase for the player.
-        player.openInventory(showcase);
+    /**
+     * Opens another offline player's showcase for the viewer.
+     * @param viewer The player that will be opening the target's showcase.
+     * @param target The offline player's showcase of which to open.
+     */
+    public void openOtherPlayerShowcase(Player viewer, OfflinePlayer target) {
+        // Create a blank showcase inventory with the target's information.
+        Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(target),
+                target.getName() + "'s Showcase");
+        // Set its content's to the targets showcase contents.
+        showcase.setContents(Data.invs.get(target.getUniqueId().toString()));
+        // Open the target's showcase for the viewer.
+        viewer.openInventory(showcase);
     }
 
     /**

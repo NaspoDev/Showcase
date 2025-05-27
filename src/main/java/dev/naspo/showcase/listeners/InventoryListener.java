@@ -15,6 +15,9 @@ import java.util.List;
 // Event listener for inventory related events.
 public class InventoryListener implements Listener {
 
+    // A showcase inventory will always end with this text.
+    private final String SHOWCASE_INVENTORY_TITLE_ENDING = "'s Showcase";
+
     // Manages edit permissions for a showcase when one is opened.
     @EventHandler
     private void onInvClick(InventoryClickEvent event) {
@@ -22,7 +25,7 @@ public class InventoryListener implements Listener {
         Player player = (Player) event.getWhoClicked();
 
         // If it's a showcase inventory.
-        if (invTitle.contains("'s Showcase")) {
+        if (invTitle.contains(SHOWCASE_INVENTORY_TITLE_ENDING)) {
             // If it's the player's own showcase, but they don't have the basic showcase.use permission,
             // or the moderator showcase.edit permission, cancel the event.
             if (player.getName().equalsIgnoreCase(invTitle.substring(0, invTitle.lastIndexOf("'")))) {
@@ -43,7 +46,7 @@ public class InventoryListener implements Listener {
         String invTitle = event.getView().getTitle();
 
         // If it's a showcase inventory.
-        if (invTitle.contains("'s Showcase")) {
+        if (invTitle.contains(SHOWCASE_INVENTORY_TITLE_ENDING)) {
 
             // If the owner of the showcase closed it, save the contents.
             String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));

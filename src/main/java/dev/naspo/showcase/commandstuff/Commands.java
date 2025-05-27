@@ -102,13 +102,13 @@ public class Commands implements CommandExecutor {
     private void handleOpenOtherShowcaseCommand(Player player, String targetPlayerName) {
         // If the player is online, open their showcase.
         if (PlayerUtils.isOnline(targetPlayerName)) {
-            openShowcase.openOthersOnlineInv(player, PlayerUtils.getOnlinePlayer(targetPlayerName));
+            openShowcase.openOtherPlayerShowcase(player, PlayerUtils.getOnlinePlayer(targetPlayerName));
         } else {
             // Otherwise try for an offline player.
             OfflinePlayer offlinePlayer = PlayerUtils.getOfflinePlayer(targetPlayerName);
             // If they have played before, open their showcase.
             if (offlinePlayer.hasPlayedBefore()) {
-                openShowcase.openOthersOfflineInv(player, PlayerUtils.getOfflinePlayer(targetPlayerName));
+                openShowcase.openOtherPlayerShowcase(player, PlayerUtils.getOfflinePlayer(targetPlayerName));
             } else {
                 // Otherwise, if they have never played the server before, send
                 // a player-has-never-joined message.
@@ -123,7 +123,7 @@ public class Commands implements CommandExecutor {
 //        onlinePlayers.addAll(Bukkit.getOnlinePlayers());
 //        for (Player target : onlinePlayers) {
 //            if (targetPlayerName.equalsIgnoreCase(target.getName().toLowerCase())) {
-//                openShowcase.openOthersOnlineInv(player, target);
+//                openShowcase.openOtherPlayerShowcase(player, target);
 //                return;
 //            }
 //        }
@@ -133,7 +133,7 @@ public class Commands implements CommandExecutor {
 //            // If they have played the server before, open their showcase.
 //            if (Bukkit.getOfflinePlayer(targetPlayerName).hasPlayedBefore()) {
 //                OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
-//                openShowcase.openOthersOfflineInv(player, target);
+//                openShowcase.openOtherPlayerShowcase(player, target);
 //                return;
 //            }
 //
