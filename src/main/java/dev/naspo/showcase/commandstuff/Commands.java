@@ -2,6 +2,7 @@ package dev.naspo.showcase.commandstuff;
 
 import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.services.OpenShowcaseService;
+import dev.naspo.showcase.utils.PlayerUtils;
 import dev.naspo.showcase.utils.Utils;
 import dev.naspo.showcase.datamanagement.Data;
 import org.bukkit.Bukkit;
@@ -77,10 +78,10 @@ public class Commands implements CommandExecutor {
 
         // Reload the plugin.
         plugin.reloadConfig();
-        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix(plugin) +
-                plugin.getConfig().getString("messages.reload")));
+        PlayerUtils.sendFormattedMessage(plugin, player, plugin.getConfig().getString("messages.reload"));
     }
 
+    // Handles when a player runs the help command. Displays plugin commands available to them.
     private void handleHelpCommand(Player player) {
         String[] help = {
                 "&5&lShowcase Help",
@@ -91,6 +92,7 @@ public class Commands implements CommandExecutor {
         for (int i = 0; i <= 2; i++) {
             player.sendMessage(Utils.chatColor(help[i]));
         }
+        // If they have the reload permission, also display the reload command.
         if (player.hasPermission("showcase.reload")) {
             player.sendMessage(Utils.chatColor(help[3]));
         }
@@ -98,44 +100,61 @@ public class Commands implements CommandExecutor {
 
     // Try to find a player with the specified name, then call to open their showcase.
     private void handleOpenOtherShowcaseCommand(Player player, String targetPlayerName) {
-        // Check if player is online.
-        List<Player> onlinePlayers = new ArrayList<>();
-        onlinePlayers.addAll(Bukkit.getOnlinePlayers());
-        for (Player target : onlinePlayers) {
-            if (targetPlayerName.equalsIgnoreCase(target.getName().toLowerCase())) {
-                openShowcase.openOthersOnlineInv(player, target);
-                return;
+        // If the player is online, open their showcase.
+        if (PlayerUtils.isOnline(targetPlayerName)) {
+            openShowcase.openOthersOnlineInv(player, PlayerUtils.getOnlinePlayer(targetPlayerName));
+        } else {
+            // Otherwise try for an offline player.
+            OfflinePlayer offlinePlayer = PlayerUtils.getOfflinePlayer(targetPlayerName);
+            // If they have played before, open their showcase.
+            if (offlinePlayer.hasPlayedBefore()) {
+                openShowcase.openOthersOfflineInv(player, PlayerUtils.getOfflinePlayer(targetPlayerName));
+            } else {
+                // Otherwise, if they have never played the server before, send
+                // a player-has-never-joined message.
+                PlayerUtils.sendFormattedMessage(plugin, player,
+                        plugin.getConfig().getString("messages.player-has-never-joined")
+                        .replace("%player_name%", offlinePlayer.getName()));
             }
         }
-
-        // Check if target player is offline.
-        try {
-            // If they have played the server before, open their showcase.
-            if (Bukkit.getOfflinePlayer(targetPlayerName).hasPlayedBefore()) {
-                OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
-                openShowcase.openOthersOfflineInv(player, target);
-                return;
-            }
-
-            // Otherwise, if they have never played the server before, send
-            // a player-has-never-joined message.
-            OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
-            player.sendMessage(
-                    Utils.chatColor(Utils.getPluginPrefix(plugin) +
-                    plugin.getConfig().getString("messages.player-has-never-joined")
-                            .replace("%player_name%", target.getName())));
-
-        // Player doesn't exist error.
-        } catch (Exception e) {
-            // Send a message to the command sender.
-            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix(plugin) +
-                    plugin.getConfig().getString("messages.unknown-player")));
-        }
+            // TODO: Remove this stuff below if my refactoring passes testing
+//        // Check if player is online.
+//        List<Player> onlinePlayers = new ArrayList<>();
+//        onlinePlayers.addAll(Bukkit.getOnlinePlayers());
+//        for (Player target : onlinePlayers) {
+//            if (targetPlayerName.equalsIgnoreCase(target.getName().toLowerCase())) {
+//                openShowcase.openOthersOnlineInv(player, target);
+//                return;
+//            }
+//        }
+//
+//        // Check if target player is offline.
+//        try {
+//            // If they have played the server before, open their showcase.
+//            if (Bukkit.getOfflinePlayer(targetPlayerName).hasPlayedBefore()) {
+//                OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
+//                openShowcase.openOthersOfflineInv(player, target);
+//                return;
+//            }
+//
+//            // Otherwise, if they have never played the server before, send
+//            // a player-has-never-joined message.
+//            OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
+//            player.sendMessage(
+//                    Utils.chatColor(Utils.getPluginPrefix(plugin) +
+//                    plugin.getConfig().getString("messages.player-has-never-joined")
+//                            .replace("%player_name%", target.getName())));
+//
+//        // Player doesn't exist error.
+//        } catch (Exception e) {
+//            // Send a message to the command sender.
+//            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix(plugin) +
+//                    plugin.getConfig().getString("messages.unknown-player")));
+//        }
     }
 
     // Utility method to send a no-permission message to the player.
     private void sendNoPermissionMessage(Player player) {
-        player.sendMessage(Utils.chatColor(Utils.getPluginPrefix(plugin) +
-                plugin.getConfig().getString("messages.no-permission")));
+        PlayerUtils.sendFormattedMessage(plugin, player, plugin.getConfig().getString("messages.no-permission"));
     }
 }

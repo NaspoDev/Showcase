@@ -57,7 +57,7 @@ public class PlayerUtils {
      * @param player The player to send the message to.
      * @param message The message to send.
      */
-    public static void sendMessage(Showcase plugin, Player player, String message) {
+    public static void sendFormattedMessage(Showcase plugin, Player player, String message) {
         player.sendMessage(
                 Utils.getPluginPrefix(plugin) + Utils.chatColor(message)
         );

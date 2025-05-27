@@ -3,6 +3,7 @@ package dev.naspo.showcase.utils;
 import dev.naspo.showcase.Showcase;
 import org.bukkit.ChatColor;
 
+// General plugin utils.
 public class Utils {
 
     // Returns the plugins prefix.
