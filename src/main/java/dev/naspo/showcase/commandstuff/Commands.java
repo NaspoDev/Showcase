@@ -117,40 +117,6 @@ public class Commands implements CommandExecutor {
                         .replace("%player_name%", offlinePlayer.getName()));
             }
         }
-            // TODO: Remove this stuff below if my refactoring passes testing
-//        // Check if player is online.
-//        List<Player> onlinePlayers = new ArrayList<>();
-//        onlinePlayers.addAll(Bukkit.getOnlinePlayers());
-//        for (Player target : onlinePlayers) {
-//            if (targetPlayerName.equalsIgnoreCase(target.getName().toLowerCase())) {
-//                openShowcase.openOtherPlayerShowcase(player, target);
-//                return;
-//            }
-//        }
-//
-//        // Check if target player is offline.
-//        try {
-//            // If they have played the server before, open their showcase.
-//            if (Bukkit.getOfflinePlayer(targetPlayerName).hasPlayedBefore()) {
-//                OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
-//                openShowcase.openOtherPlayerShowcase(player, target);
-//                return;
-//            }
-//
-//            // Otherwise, if they have never played the server before, send
-//            // a player-has-never-joined message.
-//            OfflinePlayer target = Bukkit.getOfflinePlayer(targetPlayerName);
-//            player.sendMessage(
-//                    Utils.chatColor(Utils.getPluginPrefix(plugin) +
-//                    plugin.getConfig().getString("messages.player-has-never-joined")
-//                            .replace("%player_name%", target.getName())));
-//
-//        // Player doesn't exist error.
-//        } catch (Exception e) {
-//            // Send a message to the command sender.
-//            player.sendMessage(Utils.chatColor(Utils.getPluginPrefix(plugin) +
-//                    plugin.getConfig().getString("messages.unknown-player")));
-//        }
     }
 
     // Utility method to send a no-permission message to the player.

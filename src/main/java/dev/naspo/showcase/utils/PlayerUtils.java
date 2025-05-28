@@ -44,7 +44,7 @@ public class PlayerUtils {
     public static boolean isOnline(String playerName) {
         Optional<Player> player = Bukkit.getOnlinePlayers()
                 .stream()
-                .filter(p -> p.getName().equals(playerName))
+                .filter(p -> p.getName().equalsIgnoreCase(playerName))
                 .findFirst()
                 .map(p -> (Player) p);
 

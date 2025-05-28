@@ -2,11 +2,14 @@ package dev.naspo.showcase.services;
 
 import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.datamanagement.Data;
+import dev.naspo.showcase.utils.PlayerUtils;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import java.util.logging.Level;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +44,19 @@ public class OpenShowcaseService {
      * @param target The player's showcase of which to open.
      */
     public void openOtherPlayerShowcase(Player viewer, Player target) {
+        int showcaseSize = getShowcaseSize(target);
+        ItemStack[] showcaseItems = Data.invs.get(target.getUniqueId().toString());
+
+        // If there is a showcase mismatch error, log errors and exit.
+        if (showcaseSizeMismatchExists(showcaseItems, showcaseSize)) {
+            sendShowcaseSizeMismatchError(viewer, target.getName());
+            return;
+        }
+
+        // Otherwise continue with the creation and opening of the inventory.
         // Create a blank showcase inventory with the target's information.
-        Inventory showcase = Bukkit.createInventory(target, getShowcaseSize(target), target.getName() + "'s Showcase");
+        Inventory showcase = Bukkit.createInventory(target, getShowcaseSize(target),
+                target.getName() + "'s Showcase");
         // Set its content's to the targets showcase contents.
         showcase.setContents(Data.invs.get(target.getUniqueId().toString()));
         // Open the target's showcase for the viewer.
@@ -55,6 +69,16 @@ public class OpenShowcaseService {
      * @param target The offline player's showcase of which to open.
      */
     public void openOtherPlayerShowcase(Player viewer, OfflinePlayer target) {
+        ItemStack[] showcaseItems = Data.invs.get(target.getUniqueId().toString());
+        int showcaseSize = getShowcaseSize(target);
+
+        // If there is a showcase mismatch error, log errors and exit.
+        if (showcaseSizeMismatchExists(showcaseItems, showcaseSize)) {
+            sendShowcaseSizeMismatchError(viewer, target.getName());
+            return;
+        }
+
+        // Otherwise continue with the creation and opening of the inventory.
         // Create a blank showcase inventory with the target's information.
         Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(target),
                 target.getName() + "'s Showcase");
@@ -69,9 +93,20 @@ public class OpenShowcaseService {
      * @param player The player that will open their own showcase.
      */
     public void openOwnShowcase(Player player) {
+        ItemStack[] showcaseItems = Data.invs.get(player.getUniqueId().toString());
+        int showcaseSize = getShowcaseSize(player);
+
+        // If there is a showcase mismatch error, log errors and exit.
+        if (showcaseSizeMismatchExists(showcaseItems, showcaseSize)) {
+            sendShowcaseSizeMismatchError(player, player.getName());
+            return;
+        }
+
+        // Otherwise continue with the creation and opening of the inventory.
         // Create a blank showcase inventory with the player's information.
-        Inventory showcase = Bukkit.createInventory(player, getShowcaseSize(player),
+        Inventory showcase = Bukkit.createInventory(player, showcaseSize,
                 player.getName() + "'s Showcase");
+
         // Set its contents to their showcase's contents.
         showcase.setContents(Data.invs.get(player.getUniqueId().toString()));
         player.openInventory(showcase); // Open their showcase.
@@ -103,5 +138,45 @@ public class OpenShowcaseService {
         }
 
         return showcaseSize;
+    }
+
+    // Returns true if there are too many showcase items for the allotted showcase inventory size.
+    private boolean showcaseSizeMismatchExists(ItemStack[] showcaseItems, int showcaseSize) {
+        return showcaseItems.length > showcaseSize;
+    }
+
+    /**
+     * Sends a showcase size mismatch error message to the player, and
+     * logs a detailed error message to the console.
+     * <p>
+     * The showcase size mismatch error occurs when a player had their showcase size reduced,
+     * causing an error when too many items are trying to be put into an inventory too small.
+     * @param viewer The player trying to view the showcase.
+     * @param targetPlayerName The name of the player with the showcase size mismatch. (Can be same as viewer if
+     *                         the player is trying to open their own showcase).
+     */
+    private void sendShowcaseSizeMismatchError(Player viewer, String targetPlayerName) {
+        // Send brief error message to the viewer.
+        // Send a slightly differently worded message if the viewer is also the target.
+        if (viewer.getName().equalsIgnoreCase(targetPlayerName)) {
+            PlayerUtils.sendFormattedMessage(plugin, viewer,
+                    "Error opening your showcase. Contact a server administrator for help.");
+        } else {
+            PlayerUtils.sendFormattedMessage(plugin, viewer,
+                    "Error opening " + targetPlayerName + "'s showcase. " +
+                            "Contact a server administrator for help.");
+        }
+
+        // Console error logging.
+        String showcaseSizeMismatchErrorMsg = """
+                Cannot open showcase for player %s because they have too many things saved in their showcase and 
+                not a big enough showcase to contain them! 
+                
+                This probably happened because their 'showcase.size' permission was reduced.
+                
+                To fix this, either re-increase their 'showcase.size' or manually delete enough items
+                from their Showcase data file.
+                """.formatted(targetPlayerName);
+        plugin.getLogger().log(Level.SEVERE, showcaseSizeMismatchErrorMsg);
     }
 }
