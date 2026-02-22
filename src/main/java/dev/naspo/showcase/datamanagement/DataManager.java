@@ -24,9 +24,14 @@ public class DataManager {
     // Player UUID as string : Showcase contents (ItemStack[])
     private final HashMap<String, ItemStack[]> playerShowcases;
 
+    // temporary hashmap to store cooldowns for proof of concept for this new way to implement cooldowns.
+    // player uuid (string) : <slot : cooldown end time epoch>
+    private final HashMap<String, HashMap<Integer, Long>> playerShowcaseSlotCooldowns;
+
     public DataManager(Showcase plugin) {
         this.plugin = plugin;
         playerShowcases = new HashMap<>();
+        playerShowcaseSlotCooldowns = new HashMap<>();
 
         createPlayerDataFolder();
     }
@@ -95,6 +100,12 @@ public class DataManager {
             yamlConfig.getList("data").forEach(item -> content.add((ItemStack) item));
             // Add the data to the hashmap.
             playerShowcases.put(Utils.removeFileExtension(file.getName()), content.toArray(new ItemStack[0]));
+
+            // add cooldowns (none on everything for now)
+            String playerUUID = Utils.removeFileExtension(file.getName());
+            for (int i = 0; i < 54; i++) {
+                playerShowcaseSlotCooldowns.computeIfAbsent(playerUUID, k -> new HashMap<>()).put(i, 0L);
+            }
         }
     }
 
@@ -114,4 +125,7 @@ public class DataManager {
         return playerShowcases;
     }
 
+    public HashMap<String, HashMap<Integer, Long>> getPlayerShowcaseSlotCooldowns() {
+        return playerShowcaseSlotCooldowns;
+    }
 }

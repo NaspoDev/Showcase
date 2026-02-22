@@ -2,14 +2,17 @@ package dev.naspo.showcase.listeners;
 
 import dev.naspo.showcase.datamanagement.DataManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 // Event listener for inventory related events.
@@ -31,11 +34,24 @@ public class InventoryListener implements Listener {
 
         // If it's a showcase inventory.
         if (invTitle.contains(SHOWCASE_INVENTORY_TITLE_ENDING)) {
-            // If it's the player's own showcase, but they don't have the basic showcase.use permission,
-            // or the moderator showcase.edit permission, cancel the event.
+            // If it's the player's own showcase...
             if (player.getName().equalsIgnoreCase(invTitle.substring(0, invTitle.lastIndexOf("'")))) {
-                if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.edit")) {
-                    event.setCancelled(true);
+                // If they are trying to remove an item...
+                if (event.getCurrentItem() != null && event.getCursor().getType() == Material.AIR) {
+                    player.sendMessage("You are trying to remove an item");
+
+                    // If the slot is on cooldown...
+                    if (dataManager.getPlayerShowcaseSlotCooldowns().get(player.getUniqueId().toString()).get(event.getSlot()) >
+                            System.currentTimeMillis()) {
+                        player.sendMessage("This item is currently on cooldown.");
+                        event.setCancelled(true);
+                        return;
+                    }
+                    player.sendMessage("This item is not on cooldown.");
+
+                    if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.edit")) {
+                        event.setCancelled(true);
+                    }
                 }
                 // Otherwise, it's not their showcase.
                 // But if they don't have the showcase.edit permission, cancel the event.
@@ -56,6 +72,28 @@ public class InventoryListener implements Listener {
             // If the owner of the showcase closed it, save the contents.
             String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));
             if (event.getPlayer().getName().equalsIgnoreCase(invOwnerName)) {
+
+                // NEW COOLDOWN STUFF
+                // diff the contents and apply a cooldown to slots with newly added items
+                ItemStack[] itemsBefore = dataManager.getPlayerShowcases().get(event.getPlayer().getUniqueId().toString());
+                ItemStack[] itemsAfter = event.getInventory().getContents();
+
+                for (int i = 0; i < itemsBefore.length; i++) {
+                    ItemStack itemBefore = itemsBefore[i];
+                    ItemStack itemAfter = itemsAfter[i];
+
+                    if (itemBefore == null || itemBefore.getType().isAir()) {
+                        if (itemAfter != null && !itemAfter.getType().isAir()) {
+                            // Something has been added. Apply cooldown to the slot.
+                            long unlockTime = System.currentTimeMillis() + 300000L;
+                            dataManager.getPlayerShowcaseSlotCooldowns().computeIfAbsent(
+                                    event.getPlayer().getUniqueId().toString(), k -> new HashMap<>())
+                                    .put(i, unlockTime);
+                        }
+                    }
+                }
+
+                // Save new showcase content.
                 dataManager.getPlayerShowcases().put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
                 return;
             }
