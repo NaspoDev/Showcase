@@ -9,6 +9,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import javax.xml.crypto.Data;
 import java.util.logging.Level;
 
 import java.util.HashMap;
@@ -23,10 +25,11 @@ public class OpenShowcaseService {
     // Showcase size permissions to their respective inventory size.
     private final HashMap<String, Integer> permissionToSize = new HashMap<>();
     private Showcase plugin;
+    private DataManager dataManager;
 
-    public OpenShowcaseService(Showcase plugin) {
+    public OpenShowcaseService(Showcase plugin,DataManager dataManager) {
         this.plugin = plugin;
-
+        this.dataManager = dataManager;
         vaultPerms = null;
 
         // Defining showcase size permissions and values.
@@ -45,7 +48,7 @@ public class OpenShowcaseService {
      */
     public void openOtherPlayerShowcase(Player viewer, Player target) {
         int showcaseSize = getShowcaseSize(target);
-        ItemStack[] showcaseItems = DataManager.invs.get(target.getUniqueId().toString());
+        ItemStack[] showcaseItems = dataManager.getPlayerShowcases().get(target.getUniqueId().toString());
 
         // If there is a showcase mismatch error, log errors and exit.
         if (showcaseSizeMismatchExists(showcaseItems, showcaseSize)) {
@@ -58,7 +61,7 @@ public class OpenShowcaseService {
         Inventory showcase = Bukkit.createInventory(target, getShowcaseSize(target),
                 target.getName() + "'s Showcase");
         // Set its content's to the targets showcase contents.
-        showcase.setContents(DataManager.invs.get(target.getUniqueId().toString()));
+        showcase.setContents(dataManager.getPlayerShowcases().get(target.getUniqueId().toString()));
         // Open the target's showcase for the viewer.
         viewer.openInventory(showcase);
     }
@@ -69,7 +72,7 @@ public class OpenShowcaseService {
      * @param target The offline player's showcase of which to open.
      */
     public void openOtherPlayerShowcase(Player viewer, OfflinePlayer target) {
-        ItemStack[] showcaseItems = DataManager.invs.get(target.getUniqueId().toString());
+        ItemStack[] showcaseItems = dataManager.getPlayerShowcases().get(target.getUniqueId().toString());
         int showcaseSize = getShowcaseSize(target);
 
         // If there is a showcase mismatch error, log errors and exit.
@@ -83,7 +86,7 @@ public class OpenShowcaseService {
         Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(target),
                 target.getName() + "'s Showcase");
         // Set its content's to the targets showcase contents.
-        showcase.setContents(DataManager.invs.get(target.getUniqueId().toString()));
+        showcase.setContents(dataManager.getPlayerShowcases().get(target.getUniqueId().toString()));
         // Open the target's showcase for the viewer.
         viewer.openInventory(showcase);
     }
@@ -93,7 +96,7 @@ public class OpenShowcaseService {
      * @param player The player that will open their own showcase.
      */
     public void openOwnShowcase(Player player) {
-        ItemStack[] showcaseItems = DataManager.invs.get(player.getUniqueId().toString());
+        ItemStack[] showcaseItems = dataManager.getPlayerShowcases().get(player.getUniqueId().toString());
         int showcaseSize = getShowcaseSize(player);
 
         // If there is a showcase mismatch error, log errors and exit.
@@ -108,7 +111,7 @@ public class OpenShowcaseService {
                 player.getName() + "'s Showcase");
 
         // Set its contents to their showcase's contents.
-        showcase.setContents(DataManager.invs.get(player.getUniqueId().toString()));
+        showcase.setContents(dataManager.getPlayerShowcases().get(player.getUniqueId().toString()));
         player.openInventory(showcase); // Open their showcase.
     }
 

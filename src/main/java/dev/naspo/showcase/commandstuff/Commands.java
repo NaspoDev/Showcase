@@ -14,12 +14,10 @@ import org.bukkit.entity.Player;
 public class Commands implements CommandExecutor {
 
     private Showcase plugin;
-    private DataManager dataManager;
     private OpenShowcaseService openShowcase;
 
-    public Commands(Showcase plugin, DataManager dataManager, OpenShowcaseService openShowcase) {
+    public Commands(Showcase plugin, OpenShowcaseService openShowcase) {
         this.plugin = plugin;
-        this.dataManager = dataManager;
         this.openShowcase = openShowcase;
     }
 

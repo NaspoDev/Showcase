@@ -8,6 +8,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerJoinListener implements Listener {
+    private final DataManager dataManager;
+
+    public PlayerJoinListener(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
 
     // Creates a showcase for every player when they join, if they don't already have one.
     @EventHandler
@@ -15,8 +20,8 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         // If the player does not have a showcase, create one for them.
-        if (!DataManager.invs.containsKey(player.getUniqueId().toString())) {
-            DataManager.invs.put(player.getUniqueId().toString(), new ItemStack[0]);
+        if (!dataManager.getPlayerShowcases().containsKey(player.getUniqueId().toString())) {
+            dataManager.getPlayerShowcases().put(player.getUniqueId().toString(), new ItemStack[0]);
         }
     }
 }

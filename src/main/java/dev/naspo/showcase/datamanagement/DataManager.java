@@ -111,4 +111,10 @@ public class DataManager {
         // Start task.
         autoSaveTask = Bukkit.getScheduler().runTaskTimer(plugin, this::saveShowcaseData, 6000L, 6000L);
     }
+
+    // Getters
+    public HashMap<String, ItemStack[]> getPlayerShowcases() {
+        return playerShowcases;
+    }
+
 }

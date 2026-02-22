@@ -17,6 +17,11 @@ public class InventoryListener implements Listener {
 
     // A showcase inventory will always end with this text.
     private final String SHOWCASE_INVENTORY_TITLE_ENDING = "'s Showcase";
+    private final DataManager dataManager;
+
+    public InventoryListener(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
 
     // Manages edit permissions for a showcase when one is opened.
     @EventHandler
@@ -51,7 +56,7 @@ public class InventoryListener implements Listener {
             // If the owner of the showcase closed it, save the contents.
             String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));
             if (event.getPlayer().getName().equalsIgnoreCase(invOwnerName)) {
-                DataManager.invs.put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
+                dataManager.getPlayerShowcases().put(event.getPlayer().getUniqueId().toString(), event.getInventory().getContents());
                 return;
             }
 
@@ -63,13 +68,13 @@ public class InventoryListener implements Listener {
                 for (Player p : players) {
                     if (invOwnerName.equalsIgnoreCase(p.getName())) {
                         uuid = Bukkit.getPlayer(invOwnerName).getUniqueId().toString();
-                        DataManager.invs.put(uuid, event.getInventory().getContents());
+                        dataManager.getPlayerShowcases().put(uuid, event.getInventory().getContents());
                         return;
                     }
                 }
                 OfflinePlayer p = Bukkit.getOfflinePlayer(invOwnerName);
                 uuid = p.getUniqueId().toString();
-                DataManager.invs.put(uuid, event.getInventory().getContents());
+                dataManager.getPlayerShowcases().put(uuid, event.getInventory().getContents());
             }
         }
     }
