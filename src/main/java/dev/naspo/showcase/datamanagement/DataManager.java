@@ -87,9 +87,6 @@ public class DataManager {
 
     // Restores file data to hashmap.
     public void restoreShowcaseData() {
-        if (playerDataDirectory.length() == 0) {
-            return;
-        }
         for (File file : playerDataFiles) {
             // Load the YAML file.
             YamlConfiguration yamlConfig = YamlConfiguration.loadConfiguration(file);

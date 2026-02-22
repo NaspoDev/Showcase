@@ -111,7 +111,7 @@ public class OpenShowcaseService {
                 player.getName() + "'s Showcase");
 
         // Set its contents to their showcase's contents.
-        showcase.setContents(dataManager.getPlayerShowcases().get(player.getUniqueId().toString()));
+        showcase.setContents(showcaseItems);
         player.openInventory(showcase); // Open their showcase.
     }
 
