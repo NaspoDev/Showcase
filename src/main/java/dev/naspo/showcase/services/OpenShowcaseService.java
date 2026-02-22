@@ -178,7 +178,7 @@ public class OpenShowcaseService {
                 This probably happened because their 'showcase.size' permission was reduced.
                 
                 To fix this, either re-increase their 'showcase.size' or manually delete enough items
-                from their Showcase dataManager file.
+                from their Showcase player data file.
                 """.formatted(targetPlayerName);
         plugin.getLogger().log(Level.SEVERE, showcaseSizeMismatchErrorMsg);
     }
