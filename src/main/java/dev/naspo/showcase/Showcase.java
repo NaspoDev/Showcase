@@ -57,13 +57,13 @@ public final class Showcase extends JavaPlugin {
 
     private void instantiateClasses() {
         dataManager = new DataManager(this);
-        openShowcase = new OpenShowcaseService(this);
-        commands = new Commands(this, dataManager, openShowcase);
+        openShowcase = new OpenShowcaseService(this, dataManager);
+        commands = new Commands(this, openShowcase);
         tabCompleter = new TabCompleter();
     }
 
     private void registerEvents() {
-        this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
         this.getServer().getPluginManager().registerEvents(new InventoryListener(dataManager), this);
     }
 
