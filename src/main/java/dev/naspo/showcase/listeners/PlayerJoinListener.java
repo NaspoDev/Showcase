@@ -1,6 +1,6 @@
 package dev.naspo.showcase.listeners;
 
-import dev.naspo.showcase.datamanagement.Data;
+import dev.naspo.showcase.datamanagement.DataManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,8 +15,8 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
 
         // If the player does not have a showcase, create one for them.
-        if (!Data.invs.containsKey(player.getUniqueId().toString())) {
-            Data.invs.put(player.getUniqueId().toString(), new ItemStack[0]);
+        if (!DataManager.invs.containsKey(player.getUniqueId().toString())) {
+            DataManager.invs.put(player.getUniqueId().toString(), new ItemStack[0]);
         }
     }
 }

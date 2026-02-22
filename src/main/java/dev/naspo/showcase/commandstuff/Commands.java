@@ -1,29 +1,25 @@
 package dev.naspo.showcase.commandstuff;
 
 import dev.naspo.showcase.Showcase;
+import dev.naspo.showcase.datamanagement.DataManager;
 import dev.naspo.showcase.services.OpenShowcaseService;
 import dev.naspo.showcase.utils.PlayerUtils;
 import dev.naspo.showcase.utils.Utils;
-import dev.naspo.showcase.datamanagement.Data;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Commands implements CommandExecutor {
 
     private Showcase plugin;
-    private Data data;
+    private DataManager dataManager;
     private OpenShowcaseService openShowcase;
 
-    public Commands(Showcase plugin, Data data, OpenShowcaseService openShowcase) {
+    public Commands(Showcase plugin, DataManager dataManager, OpenShowcaseService openShowcase) {
         this.plugin = plugin;
-        this.data = data;
+        this.dataManager = dataManager;
         this.openShowcase = openShowcase;
     }
 

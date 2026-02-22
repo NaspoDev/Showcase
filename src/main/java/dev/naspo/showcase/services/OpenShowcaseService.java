@@ -1,7 +1,7 @@
 package dev.naspo.showcase.services;
 
 import dev.naspo.showcase.Showcase;
-import dev.naspo.showcase.datamanagement.Data;
+import dev.naspo.showcase.datamanagement.DataManager;
 import dev.naspo.showcase.utils.PlayerUtils;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
@@ -45,7 +45,7 @@ public class OpenShowcaseService {
      */
     public void openOtherPlayerShowcase(Player viewer, Player target) {
         int showcaseSize = getShowcaseSize(target);
-        ItemStack[] showcaseItems = Data.invs.get(target.getUniqueId().toString());
+        ItemStack[] showcaseItems = DataManager.invs.get(target.getUniqueId().toString());
 
         // If there is a showcase mismatch error, log errors and exit.
         if (showcaseSizeMismatchExists(showcaseItems, showcaseSize)) {
@@ -58,7 +58,7 @@ public class OpenShowcaseService {
         Inventory showcase = Bukkit.createInventory(target, getShowcaseSize(target),
                 target.getName() + "'s Showcase");
         // Set its content's to the targets showcase contents.
-        showcase.setContents(Data.invs.get(target.getUniqueId().toString()));
+        showcase.setContents(DataManager.invs.get(target.getUniqueId().toString()));
         // Open the target's showcase for the viewer.
         viewer.openInventory(showcase);
     }
@@ -69,7 +69,7 @@ public class OpenShowcaseService {
      * @param target The offline player's showcase of which to open.
      */
     public void openOtherPlayerShowcase(Player viewer, OfflinePlayer target) {
-        ItemStack[] showcaseItems = Data.invs.get(target.getUniqueId().toString());
+        ItemStack[] showcaseItems = DataManager.invs.get(target.getUniqueId().toString());
         int showcaseSize = getShowcaseSize(target);
 
         // If there is a showcase mismatch error, log errors and exit.
@@ -83,7 +83,7 @@ public class OpenShowcaseService {
         Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(target),
                 target.getName() + "'s Showcase");
         // Set its content's to the targets showcase contents.
-        showcase.setContents(Data.invs.get(target.getUniqueId().toString()));
+        showcase.setContents(DataManager.invs.get(target.getUniqueId().toString()));
         // Open the target's showcase for the viewer.
         viewer.openInventory(showcase);
     }
@@ -93,7 +93,7 @@ public class OpenShowcaseService {
      * @param player The player that will open their own showcase.
      */
     public void openOwnShowcase(Player player) {
-        ItemStack[] showcaseItems = Data.invs.get(player.getUniqueId().toString());
+        ItemStack[] showcaseItems = DataManager.invs.get(player.getUniqueId().toString());
         int showcaseSize = getShowcaseSize(player);
 
         // If there is a showcase mismatch error, log errors and exit.
@@ -108,7 +108,7 @@ public class OpenShowcaseService {
                 player.getName() + "'s Showcase");
 
         // Set its contents to their showcase's contents.
-        showcase.setContents(Data.invs.get(player.getUniqueId().toString()));
+        showcase.setContents(DataManager.invs.get(player.getUniqueId().toString()));
         player.openInventory(showcase); // Open their showcase.
     }
 
@@ -175,7 +175,7 @@ public class OpenShowcaseService {
                 This probably happened because their 'showcase.size' permission was reduced.
                 
                 To fix this, either re-increase their 'showcase.size' or manually delete enough items
-                from their Showcase data file.
+                from their Showcase dataManager file.
                 """.formatted(targetPlayerName);
         plugin.getLogger().log(Level.SEVERE, showcaseSizeMismatchErrorMsg);
     }
