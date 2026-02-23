@@ -1,6 +1,7 @@
 package dev.naspo.showcase.listeners;
 
 import dev.naspo.showcase.datamanagement.DataManager;
+import dev.naspo.showcase.types.PlayerShowcase;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -9,6 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -19,9 +22,11 @@ import java.util.List;
 // Event listener for inventory related events.
 public class InventoryListener implements Listener {
 
+    private final DataManager dataManager;
+
     // A showcase inventory will always end with this text.
     private final String SHOWCASE_INVENTORY_TITLE_ENDING = "'s Showcase";
-    private final DataManager dataManager;
+    private final String COOLDOWN_LORE_PREFIX = "Cooldown: ";
 
     public InventoryListener(DataManager dataManager) {
         this.dataManager = dataManager;
@@ -30,53 +35,60 @@ public class InventoryListener implements Listener {
     // Manages edit permissions for a showcase when one is opened.
     @EventHandler
     private void onInvClick(InventoryClickEvent event) {
-        if (event.getClickedInventory() == null || event.getClickedInventory().equals(event.getView().getBottomInventory())) {
-            event.getWhoClicked().sendMessage("You didn't interact with the showcase gui. Ignoring");
+        InventoryView inventoryView = event.getView();
+
+        // If the interaction wasn't with the top inventory. Ignore.
+        if (event.getClickedInventory() == null || event.getClickedInventory().equals(inventoryView.getBottomInventory())) {
             return;
         }
-        String invTitle = event.getView().getTitle();
+
+        // If it's not a showcase inventory, ignore.
+        if (!isShowcaseInventory(inventoryView)) {
+            return;
+        }
+
         Player player = (Player) event.getWhoClicked();
 
-        // If it's a showcase inventory.
-        if (invTitle.contains(SHOWCASE_INVENTORY_TITLE_ENDING)) {
-            // If it's the player's own showcase...
-            if (player.getName().equalsIgnoreCase(invTitle.substring(0, invTitle.lastIndexOf("'")))) {
-                // If they are trying to remove an item...
-                if (event.getCurrentItem() != null && event.getCursor().getType() == Material.AIR) {
-                    player.sendMessage("You are trying to remove an item");
+        // If it's not the player's own showcase, and they don't have the edit permission, cancel the event.
+        if (!showcaseBelongsTo(inventoryView, player) && !player.hasPermission("showcase.edit")) {
+            event.setCancelled(true);
+            return;
+        }
 
-                    // If the slot is on cooldown...
-                    if (dataManager.getPlayerShowcaseSlotCooldowns().get(player.getUniqueId().toString()).get(event.getSlot()) >
-                            System.currentTimeMillis()) {
-                        player.sendMessage("This item is currently on cooldown.");
-                        event.setCancelled(true);
-                        return;
-                    }
-                    player.sendMessage("This item is not on cooldown.");
+        // Otherwise, it's the player's own showcase...
 
-                    // Remove cooldown lore (if it has lore)
-                    ItemStack item = event.getCurrentItem();
-                    ItemMeta meta = item.getItemMeta();
-                    List<String> lore = meta.getLore();
-                    if (lore != null) {
-                        for  (int i = 0; i < lore.size(); i++) {
-                            if (lore.get(i).startsWith("Cooldown time remaining: ")) {
-                                lore.remove(i);
-                            }
-                        }
-                        meta.setLore(lore);
-                        item.setItemMeta(meta);
-                    }
+        // If they don't have permission to interact with it, cancel the event.
+        if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.edit")) {
+            event.setCancelled(true);
+            return;
+        }
 
+        PlayerShowcase showcase = dataManager.getPlayerShowcases().get(player.getUniqueId());
 
-                    if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.edit")) {
-                        event.setCancelled(true);
+        // If they are trying to remove an item...
+        // (We can determine if they are trying to remove an item if what they are clicking on is not null,
+        // and their mouse isn't holding anything).
+        if (event.getCurrentItem() != null && event.getCursor().getType() == Material.AIR) {
+            // If the slot is on cooldown, cancel the event.
+            if (showcase.isSlotOnCooldown(event.getSlot())) {
+                event.setCancelled(true);
+                return;
+            }
+
+            // Otherwise the slot is not on cooldown, so process the removal of the item.
+            // Remove cooldown lore (if it has lore).
+            ItemStack item = event.getCurrentItem();
+            ItemMeta meta = item.getItemMeta();
+            List<String> lore = meta.getLore();
+
+            if (lore != null) {
+                for (int i = 0; i < lore.size(); i++) {
+                    if (lore.get(i).startsWith(COOLDOWN_LORE_PREFIX)) {
+                        lore.remove(i);
                     }
                 }
-                // Otherwise, it's not their showcase.
-                // But if they don't have the showcase.edit permission, cancel the event.
-            } else if (!(event.getWhoClicked().hasPermission("showcase.edit"))) {
-                event.setCancelled(true);
+                meta.setLore(lore);
+                item.setItemMeta(meta);
             }
         }
     }
@@ -145,5 +157,19 @@ public class InventoryListener implements Listener {
                 dataManager.getPlayerShowcases().put(uuid, event.getInventory().getContents());
             }
         }
+    }
+
+    // === Helper Methods ===
+
+    // Returns true if the specified inventory is a showcase inventory.
+    private boolean isShowcaseInventory(InventoryView inventoryView) {
+        if (inventoryView.getTitle().contains(SHOWCASE_INVENTORY_TITLE_ENDING))
+    }
+
+    // Returns true if the specified showcase inventory belongs to the specified player.
+    private boolean showcaseBelongsTo(InventoryView inventoryView, Player player) {
+        String inventoryTitle = inventoryView.getTitle();
+        String playerName = player.getName();
+        return playerName.equalsIgnoreCase(inventoryTitle.substring(0, inventoryTitle.lastIndexOf("'")));
     }
 }

@@ -16,6 +16,11 @@ public class PlayerShowcase {
         slotCooldowns = new HashMap<>();
     }
 
+    // Returns true if the specified slot is on cooldown.
+    public boolean isSlotOnCooldown(int slot) {
+        return slotCooldowns.get(slot) > System.currentTimeMillis();
+    }
+
     // Getters and Setters
 
     public ItemStack[] getItems() {
