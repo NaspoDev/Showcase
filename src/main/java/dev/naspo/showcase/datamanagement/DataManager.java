@@ -4,6 +4,7 @@ import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.types.PlayerShowcase;
 import dev.naspo.showcase.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -114,12 +115,17 @@ public class DataManager {
 
             // Load and process slot cooldowns.
             HashMap<Integer, Long> slotCooldowns = new HashMap<>();
-            Map<String, Object> slotCooldownsRaw = yamlConfig.getConfigurationSection(SLOT_COOLDOWN_YAML_PATH).getValues(false);
-            // Convert generic YAMLConfiguration Map types to my original types.
-            for (Map.Entry<String, Object> entry : slotCooldownsRaw.entrySet()) {
-                Integer slot = Integer.parseInt(entry.getKey());
-                Long unlockTimeEpoch = (Long) entry.getValue();
-                slotCooldowns.put(slot, unlockTimeEpoch);
+            ConfigurationSection configurationSection = yamlConfig.getConfigurationSection(SLOT_COOLDOWN_YAML_PATH);
+            // Checking if a slot cooldown section exists before proceeding. This is
+            // done for backwards compatibility for before the cooldowns feature was added.
+            if (configurationSection != null) {
+                Map<String, Object> slotCooldownsRaw = configurationSection.getValues(false);
+                // Convert generic YAMLConfiguration Map types to my original types.
+                for (Map.Entry<String, Object> entry : slotCooldownsRaw.entrySet()) {
+                    Integer slot = Integer.parseInt(entry.getKey());
+                    Long unlockTimeEpoch = (Long) entry.getValue();
+                    slotCooldowns.put(slot, unlockTimeEpoch);
+                }
             }
             showcase.setSlotCooldowns(slotCooldowns);
 
