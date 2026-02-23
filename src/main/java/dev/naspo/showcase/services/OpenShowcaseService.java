@@ -9,8 +9,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import javax.xml.crypto.Data;
+import java.util.List;
 import java.util.logging.Level;
 
 import java.util.HashMap;
@@ -27,7 +29,7 @@ public class OpenShowcaseService {
     private Showcase plugin;
     private DataManager dataManager;
 
-    public OpenShowcaseService(Showcase plugin,DataManager dataManager) {
+    public OpenShowcaseService(Showcase plugin, DataManager dataManager) {
         this.plugin = plugin;
         this.dataManager = dataManager;
         vaultPerms = null;
@@ -43,6 +45,7 @@ public class OpenShowcaseService {
 
     /**
      * Opens another online player's showcase for the viewer.
+     *
      * @param viewer The player that will be opening the target's showcase.
      * @param target The player's showcase of which to open.
      */
@@ -68,6 +71,7 @@ public class OpenShowcaseService {
 
     /**
      * Opens another offline player's showcase for the viewer.
+     *
      * @param viewer The player that will be opening the target's showcase.
      * @param target The offline player's showcase of which to open.
      */
@@ -93,6 +97,7 @@ public class OpenShowcaseService {
 
     /**
      * Open a player's own Showcase.
+     *
      * @param player The player that will open their own showcase.
      */
     public void openOwnShowcase(Player player) {
@@ -109,6 +114,31 @@ public class OpenShowcaseService {
         // Create a blank showcase inventory with the player's information.
         Inventory showcase = Bukkit.createInventory(player, showcaseSize,
                 player.getName() + "'s Showcase");
+
+        // Update cooldown lores if applicable.
+        for (int i = 0; i < showcaseItems.length; i++) {
+            ItemStack item = showcaseItems[i];
+            if (item == null) {
+                continue;
+            }
+            ItemMeta meta = item.getItemMeta();
+            List<String> lore = meta.getLore();
+            if (lore != null) {
+                for (int j = 0; j < lore.size(); j++) {
+                    if (lore.get(j).startsWith("Cooldown time remaining: ")) {
+                        long unlockTime = dataManager.getPlayerShowcaseSlotCooldowns().get(player.getUniqueId().toString())
+                                .get(i);
+                        if (unlockTime <= System.currentTimeMillis()) {
+                            lore.remove(j);
+                        } else {
+                            lore.set(j, "Cooldown time remaining: " + (unlockTime - System.currentTimeMillis()));
+                        }
+                    }
+                }
+                meta.setLore(lore);
+            }
+            item.setItemMeta(meta);
+        }
 
         // Set its contents to their showcase's contents.
         showcase.setContents(showcaseItems);
@@ -154,7 +184,8 @@ public class OpenShowcaseService {
      * <p>
      * The showcase size mismatch error occurs when a player had their showcase size reduced,
      * causing an error when too many items are trying to be put into an inventory too small.
-     * @param viewer The player trying to view the showcase.
+     *
+     * @param viewer           The player trying to view the showcase.
      * @param targetPlayerName The name of the player with the showcase size mismatch. (Can be same as viewer if
      *                         the player is trying to open their own showcase).
      */

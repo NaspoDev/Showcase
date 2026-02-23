@@ -59,7 +59,11 @@ public class InventoryListener implements Listener {
                     ItemMeta meta = item.getItemMeta();
                     List<String> lore = meta.getLore();
                     if (lore != null) {
-                        lore.remove("Cooldown active!");
+                        for  (int i = 0; i < lore.size(); i++) {
+                            if (lore.get(i).startsWith("Cooldown time remaining: ")) {
+                                lore.remove(i);
+                            }
+                        }
                         meta.setLore(lore);
                         item.setItemMeta(meta);
                     }
@@ -111,7 +115,7 @@ public class InventoryListener implements Listener {
                             if (lore == null) {
                                 lore = new ArrayList<>();
                             }
-                            lore.add("Cooldown active!");
+                            lore.add("Cooldown time remaining: " + (unlockTime - System.currentTimeMillis()));
                             meta.setLore(lore);
                             itemAfter.setItemMeta(meta);
                             itemsAfter[i] = itemAfter;
