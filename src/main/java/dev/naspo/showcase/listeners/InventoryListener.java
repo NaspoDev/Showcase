@@ -49,16 +49,16 @@ public class InventoryListener implements Listener {
 
         Player player = (Player) event.getWhoClicked();
 
-        // If it's not the player's own showcase, and they don't have the edit permission, cancel the event.
-        if (!showcaseBelongsTo(inventoryView, player) && !player.hasPermission("showcase.edit")) {
+        // Permission check 1: If it's their own showcase, but they don't have permission to use it, cancel the event.
+        if (showcaseBelongsTo(inventoryView, player)
+                && !player.hasPermission("showcase.use")
+                && !player.hasPermission("showcase.edit")) {
             event.setCancelled(true);
             return;
         }
 
-        // Otherwise, it's the player's own showcase...
-
-        // If they don't have permission to interact with it, cancel the event.
-        if (!player.hasPermission("showcase.use") && !player.hasPermission("showcase.edit")) {
+        // Permission check 2: If it's not their showcase, and they don't have the edit permission, cancel the event.
+        if (!showcaseBelongsTo(inventoryView, player) && !player.hasPermission("showcase.edit")) {
             event.setCancelled(true);
             return;
         }
