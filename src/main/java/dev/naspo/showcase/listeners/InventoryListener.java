@@ -93,69 +93,70 @@ public class InventoryListener implements Listener {
         }
     }
 
-    // Saving showcase contents to HashMap on inv close.
+    // Saving showcase contents to memory on inv close.
     @EventHandler
     private void onInvClose(InventoryCloseEvent event) {
-        String invTitle = event.getView().getTitle();
+        InventoryView inventoryView = event.getView();
 
-        // If it's a showcase inventory.
-        if (invTitle.contains(SHOWCASE_INVENTORY_TITLE_ENDING)) {
+        // If it's not a showcase inventory, ignore.
+        if (!isShowcaseInventory(inventoryView)) {
+            return;
+        }
 
-            // If the owner of the showcase closed it, save the contents.
-            String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));
-            if (event.getPlayer().getName().equalsIgnoreCase(invOwnerName)) {
+        // If the owner of the showcase closed it, save the contents.
+        String invOwnerName = invTitle.substring(0, invTitle.lastIndexOf("'"));
+        if (event.getPlayer().getName().equalsIgnoreCase(invOwnerName)) {
 
-                // NEW COOLDOWN STUFF
-                // diff the contents and apply a cooldown to slots with newly added items
-                ItemStack[] itemsBefore = dataManager.getPlayerShowcases().get(event.getPlayer().getUniqueId().toString());
-                ItemStack[] itemsAfter = event.getInventory().getContents();
+            // NEW COOLDOWN STUFF
+            // diff the contents and apply a cooldown to slots with newly added items
+            ItemStack[] itemsBefore = dataManager.getPlayerShowcases().get(event.getPlayer().getUniqueId().toString());
+            ItemStack[] itemsAfter = event.getInventory().getContents();
 
-                for (int i = 0; i < itemsBefore.length; i++) {
-                    ItemStack itemBefore = itemsBefore[i];
-                    ItemStack itemAfter = itemsAfter[i];
+            for (int i = 0; i < itemsBefore.length; i++) {
+                ItemStack itemBefore = itemsBefore[i];
+                ItemStack itemAfter = itemsAfter[i];
 
-                    if (itemBefore == null || itemBefore.getType().isAir()) {
-                        if (itemAfter != null && !itemAfter.getType().isAir()) {
-                            // Something has been added. Apply cooldown to the slot.
-                            long unlockTime = System.currentTimeMillis() + 10000L;
-                            dataManager.getPlayerShowcaseSlotCooldowns().computeIfAbsent(
-                                            event.getPlayer().getUniqueId().toString(), k -> new HashMap<>())
-                                    .put(i, unlockTime);
-                            // Add lore to the item
-                            ItemMeta meta = itemAfter.getItemMeta();
-                            List<String> lore = meta.getLore();
-                            if (lore == null) {
-                                lore = new ArrayList<>();
-                            }
-                            lore.add("Cooldown time remaining: " + (unlockTime - System.currentTimeMillis()));
-                            meta.setLore(lore);
-                            itemAfter.setItemMeta(meta);
-                            itemsAfter[i] = itemAfter;
+                if (itemBefore == null || itemBefore.getType().isAir()) {
+                    if (itemAfter != null && !itemAfter.getType().isAir()) {
+                        // Something has been added. Apply cooldown to the slot.
+                        long unlockTime = System.currentTimeMillis() + 10000L;
+                        dataManager.getPlayerShowcaseSlotCooldowns().computeIfAbsent(
+                                        event.getPlayer().getUniqueId().toString(), k -> new HashMap<>())
+                                .put(i, unlockTime);
+                        // Add lore to the item
+                        ItemMeta meta = itemAfter.getItemMeta();
+                        List<String> lore = meta.getLore();
+                        if (lore == null) {
+                            lore = new ArrayList<>();
                         }
+                        lore.add("Cooldown time remaining: " + (unlockTime - System.currentTimeMillis()));
+                        meta.setLore(lore);
+                        itemAfter.setItemMeta(meta);
+                        itemsAfter[i] = itemAfter;
                     }
                 }
-
-                // Save new showcase content.
-                dataManager.getPlayerShowcases().put(event.getPlayer().getUniqueId().toString(), itemsAfter);
-                return;
             }
 
-            // Or, if someone with showcase edit perms closed it, save the contents.
-            if (event.getPlayer().hasPermission("showcase.edit")) {
-                String uuid;
-                List<Player> players = new ArrayList<>();
-                players.addAll(Bukkit.getOnlinePlayers());
-                for (Player p : players) {
-                    if (invOwnerName.equalsIgnoreCase(p.getName())) {
-                        uuid = Bukkit.getPlayer(invOwnerName).getUniqueId().toString();
-                        dataManager.getPlayerShowcases().put(uuid, event.getInventory().getContents());
-                        return;
-                    }
+            // Save new showcase content.
+            dataManager.getPlayerShowcases().put(event.getPlayer().getUniqueId().toString(), itemsAfter);
+            return;
+        }
+
+        // Or, if someone with showcase edit perms closed it, save the contents.
+        if (event.getPlayer().hasPermission("showcase.edit")) {
+            String uuid;
+            List<Player> players = new ArrayList<>();
+            players.addAll(Bukkit.getOnlinePlayers());
+            for (Player p : players) {
+                if (invOwnerName.equalsIgnoreCase(p.getName())) {
+                    uuid = Bukkit.getPlayer(invOwnerName).getUniqueId().toString();
+                    dataManager.getPlayerShowcases().put(uuid, event.getInventory().getContents());
+                    return;
                 }
-                OfflinePlayer p = Bukkit.getOfflinePlayer(invOwnerName);
-                uuid = p.getUniqueId().toString();
-                dataManager.getPlayerShowcases().put(uuid, event.getInventory().getContents());
             }
+            OfflinePlayer p = Bukkit.getOfflinePlayer(invOwnerName);
+            uuid = p.getUniqueId().toString();
+            dataManager.getPlayerShowcases().put(uuid, event.getInventory().getContents());
         }
     }
 
