@@ -4,9 +4,8 @@ import dev.naspo.showcase.commandstuff.Commands;
 import dev.naspo.showcase.services.OpenShowcaseService;
 import dev.naspo.showcase.commandstuff.TabCompleter;
 import dev.naspo.showcase.datamanagement.DataManager;
-import dev.naspo.showcase.listeners.InventoryListener;
+import dev.naspo.showcase.listeners.InventoryClickListener;
 import dev.naspo.showcase.listeners.PlayerJoinListener;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
@@ -64,7 +63,7 @@ public final class Showcase extends JavaPlugin {
 
     private void registerEvents() {
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
-        this.getServer().getPluginManager().registerEvents(new InventoryListener(dataManager), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryClickListener(dataManager), this);
     }
 
     private void registerCommands() {
