@@ -1,10 +1,14 @@
 package dev.naspo.showcase.utils;
 
 import dev.naspo.showcase.types.PlayerShowcase;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,7 +45,21 @@ public class ShowcaseUtils {
             return Optional.empty();
         }
 
+        // First check online players.
+        List<Player> onlinePlayers = new ArrayList<>();
+        onlinePlayers.addAll(Bukkit.getOnlinePlayers());
+        for (Player p : onlinePlayers) {
+            if (p.getName().equalsIgnoreCase(showcaseOwnerName)) {
+                showcaseOwnerUUID = p.getUniqueId();
+            }
+        }
 
+        // If we still haven't found the showcase owner (i.e. the showcase owner wasn't online),
+        // find them as an OfflinePlayer.
+        if (showcaseOwnerUUID == null) {
+            OfflinePlayer p = Bukkit.getOfflinePlayer(showcaseOwnerName);
+            showcaseOwnerUUID = p.getUniqueId();
+        }
     }
 
     // Returns the UUID of the showcase owner by their name.
