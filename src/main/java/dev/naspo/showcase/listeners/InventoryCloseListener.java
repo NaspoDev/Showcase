@@ -55,8 +55,12 @@ public class InventoryCloseListener implements Listener {
     }
 
     // This method applies cooldowns to newly added items and save the new showcase contents to the showcase object.
-    // Note: Cooldowns will be applied here regardless of whether the cooldowns feature is enabled in the config.
-    // Cooldowns feature check and enforcement is only done when opening and removing items.
+    /*
+    Note: Cooldowns will be applied here regardless of whether the cooldowns feature is enabled in the config.
+    Cooldowns feature check and enforcement is only done when opening and removing items.
+    This allows for proper cooldown timing to still work no matter when the server admin enables the feature,
+    because we are always keeping track of cooldowns in the background.
+     */
     private void processShowcaseUponClose(PlayerShowcase showcase, Inventory inventory) {
         ItemStack[] itemsBefore = showcase.getItems();
         ItemStack[] itemsAfter = inventory.getContents();

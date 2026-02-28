@@ -82,7 +82,6 @@ public class ShowcaseUtils {
     }
 
     // Updates cooldown lore on a single item. (Adds, updates, or removes where needed).
-    // TODO: set cooldown time remaining in a proper time format
     public static void syncCooldownLore(ItemStack item, long unlockTime) {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
@@ -93,6 +92,7 @@ public class ShowcaseUtils {
 
         long currentTime = System.currentTimeMillis();
         long timeRemaining = unlockTime - currentTime;
+        String timeRemainingFormatted = Utils.formatDuration(timeRemaining);
 
         int idxOfCooldownLore = -1; // Index of cooldown lore in lore list. (-1 means it doesn't exist).
         // Find existing cooldown lore if it exists.
@@ -105,7 +105,7 @@ public class ShowcaseUtils {
 
         // If there is an active cooldown...
         if (timeRemaining > 0) {
-            String cooldownLine = COOLDOWN_LORE_PREFIX + timeRemaining;
+            String cooldownLine = COOLDOWN_LORE_PREFIX + timeRemainingFormatted;
             // If there is no existing cooldown lore, add it.
             if (idxOfCooldownLore == -1) {
                 lore.add(cooldownLine);
