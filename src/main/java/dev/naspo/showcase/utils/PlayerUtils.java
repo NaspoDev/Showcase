@@ -53,6 +53,13 @@ public class PlayerUtils {
         return player.isPresent();
     }
 
+    public static UUID findUUIDFromName(String playerName) {
+        if (isOnline(playerName)) {
+            return getOnlinePlayer(playerName).getUniqueId();
+        }
+        return Bukkit.getOfflinePlayer(playerName).getUniqueId();
+    }
+
     /**
      * Sends a player a plugin-formatted message which includes the plugin's prefix and color code translation.
      * @param plugin The Showcase plugin.

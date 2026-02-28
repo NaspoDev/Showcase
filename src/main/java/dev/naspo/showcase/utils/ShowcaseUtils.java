@@ -6,6 +6,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +54,28 @@ public class ShowcaseUtils {
         }
     }
 
+    // Returns true if the player has permission to edit the showcase.
+    // Checks via inventory title.
+    public static boolean playerCanEditShowcase(InventoryView inventoryView, Player player) {
+        // If they have the edit permission, or it's their showcase and they have the "use" permission, return true.
+        return player.hasPermission("showcase.edit")
+                || (ShowcaseUtils.showcaseBelongsTo(inventoryView, player) && player.hasPermission("showcase.use"));
+    }
+
+    // Adds cooldown lore to an item.
+    public static void addCooldownLore(ItemStack item, long unlockTime) {
+        ItemMeta meta = item.getItemMeta();
+        List<String> lore = meta.getLore();
+        if (lore == null) {
+            lore = new ArrayList<>();
+        }
+        lore.add("Cooldown time remaining: " + (unlockTime - System.currentTimeMillis()));
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+    }
+
     // Removes cooldown lore from item lore.
-    public static List<String> removeCooldownLore(List<String> lore) {
+    public static void removeCooldownLore(List<String> lore) {
         for (int i = 0; i < lore.size(); i++) {
             if (lore.get(i).startsWith(COOLDOWN_LORE_PREFIX)) {
                 lore.remove(i);

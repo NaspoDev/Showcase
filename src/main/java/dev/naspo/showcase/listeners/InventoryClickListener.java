@@ -44,21 +44,13 @@ public class InventoryClickListener implements Listener {
         Player player = (Player) event.getWhoClicked();
 
         // Permission check.
-        if (!playerCanEditShowcase(inventoryView, player)) {
+        if (!ShowcaseUtils.playerCanEditShowcase(inventoryView, player)) {
             return;
         }
 
         // Find the showcase object.
         String showcaseOwnerName = ShowcaseUtils.getShowcaseOwnerNameFromInvTitle(inventoryView);
-        PlayerShowcase showcase;
-
-        if (PlayerUtils.isOnline(showcaseOwnerName)) {
-            Player showcaseOwner = PlayerUtils.getOnlinePlayer(showcaseOwnerName);
-            showcase = dataManager.getPlayerShowcases().get(showcaseOwner.getUniqueId());
-        } else {
-            OfflinePlayer showcaseOwner = PlayerUtils.getOfflinePlayer(showcaseOwnerName);
-            showcase = dataManager.getPlayerShowcases().get(showcaseOwner.getUniqueId());
-        }
+        PlayerShowcase showcase = dataManager.getPlayerShowcases().get(PlayerUtils.findUUIDFromName(showcaseOwnerName));
 
         // If they are trying to remove an item...
         // (We can determine if they are trying to remove an item if what they are clicking on is not null,
@@ -82,13 +74,5 @@ public class InventoryClickListener implements Listener {
                 item.setItemMeta(meta);
             }
         }
-    }
-
-    // Returns true if the player has permission to edit the showcase.
-    // Checks via inventory title.
-    private boolean playerCanEditShowcase(InventoryView inventoryView, Player player) {
-        // If they have the edit permission, or it's their showcase and they have the "use" permission, return true.
-        return player.hasPermission("showcase.edit")
-                || (ShowcaseUtils.showcaseBelongsTo(inventoryView, player) && player.hasPermission("showcase.use"));
     }
 }
