@@ -5,18 +5,15 @@ import dev.naspo.showcase.types.PlayerShowcase;
 import dev.naspo.showcase.utils.PlayerUtils;
 import dev.naspo.showcase.utils.ShowcaseUtils;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
-import java.util.UUID;
 
 public class InventoryClickListener implements Listener {
 
