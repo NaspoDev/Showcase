@@ -119,7 +119,7 @@ public class OpenShowcaseService {
                 player.getName() + ShowcaseUtils.SHOWCASE_INVENTORY_TITLE_SUFFIX);
 
         // Synchronize cooldown lores.
-        ShowcaseUtils.syncCooldownLores(showcaseItems, showcase.getSlotCooldowns());
+        ShowcaseUtils.syncCooldownLores(showcaseItems, showcase.getSlotCooldowns(), plugin);
 
         // Set the inventory contents and open it.
         inventory.setContents(showcaseItems);

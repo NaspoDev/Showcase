@@ -1,6 +1,14 @@
 #The Showcase plugin allows players to show off their prized possessions by storing them in a publicly
 #viewable GUI.
 
+# Settings for the cooldowns feature.
+# The cooldowns feature applies a cooldown to items placed in a showcase, so that they may not be
+# removed until the cooldown is up. The goal is to prevent players from using their showcase as extra storage.
+cooldowns:
+  enabled: false
+  # The cooldown duration in minutes. (Default is 7200 which is 5 days).
+  duration-minutes: 7200
+
 messages:
   prefix: "&8[&5&lShowcase&8] &r"
   reload: "&7Showcase has been reloaded."

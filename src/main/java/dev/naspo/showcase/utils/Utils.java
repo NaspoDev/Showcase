@@ -19,4 +19,8 @@ public class Utils {
     public static String removeFileExtension(String name) {
         return name.substring(0, name.lastIndexOf('.'));
     }
+
+    public static boolean cooldownsFeatureIsEnabled(Showcase plugin) {
+        return plugin.getConfig().getBoolean("cooldowns.enabled");
+    }
 }

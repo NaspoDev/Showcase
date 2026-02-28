@@ -1,5 +1,6 @@
 package dev.naspo.showcase.utils;
 
+import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.types.PlayerShowcase;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 // Showcase related utility.
 public class ShowcaseUtils {
@@ -59,8 +61,18 @@ public class ShowcaseUtils {
                 || (ShowcaseUtils.showcaseBelongsTo(inventoryView, player) && player.hasPermission("showcase.use"));
     }
 
-    // Updates cooldown lores on a set of showcase items. (Adds, updates, or removes where needed).
-    public static void syncCooldownLores(ItemStack[] showcaseItems, HashMap<Integer, Long> slotCooldowns) {
+    // Synchronizes cooldown lore on a set of showcase items. (Adds, updates, or removes where needed).
+    // Will remove cooldown lore if the cooldowns feature is not enabled.
+    public static void syncCooldownLores(ItemStack[] showcaseItems, HashMap<Integer, Long> slotCooldowns, Showcase plugin) {
+        // If cooldowns aren't enabled, remove cooldown lore from items.
+        if (!Utils.cooldownsFeatureIsEnabled(plugin)) {
+            for (ItemStack item : showcaseItems) {
+                removeCooldownLore(item);
+            }
+            return;
+        }
+
+        // Otherwise the cooldowns feature is enabled, so sync each item's cooldown lore accordingly.
         for (int i = 0; i < showcaseItems.length; i++) {
             ItemStack item = showcaseItems[i];
             if (item != null) {
@@ -112,12 +124,25 @@ public class ShowcaseUtils {
         item.setItemMeta(meta);
     }
 
-    // Removes cooldown lore from item lore.
-    public static void removeCooldownLore(List<String> lore) {
-        for (int i = 0; i < lore.size(); i++) {
-            if (lore.get(i).startsWith(COOLDOWN_LORE_PREFIX)) {
-                lore.remove(i);
+    // Removes cooldown lore from an item.
+    public static void removeCooldownLore(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        List<String> lore = meta.getLore();
+
+        if (lore != null) {
+            for (int i = 0; i < lore.size(); i++) {
+                if (lore.get(i).startsWith(COOLDOWN_LORE_PREFIX)) {
+                    lore.remove(i);
+                }
             }
+
+            meta.setLore(lore);
+            item.setItemMeta(meta);
         }
+    }
+
+    public static long getCooldownDuration(Showcase plugin) {
+        int cooldownDurationMinutes = plugin.getConfig().getInt("cooldowns.duration-minutes");
+        return TimeUnit.MINUTES.toMillis(cooldownDurationMinutes);
     }
 }

@@ -1,9 +1,11 @@
 package dev.naspo.showcase.listeners;
 
+import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.datamanagement.DataManager;
 import dev.naspo.showcase.types.PlayerShowcase;
 import dev.naspo.showcase.utils.PlayerUtils;
 import dev.naspo.showcase.utils.ShowcaseUtils;
+import dev.naspo.showcase.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,9 +19,11 @@ import java.util.List;
 
 public class InventoryClickListener implements Listener {
 
+    private final Showcase plugin;
     private final DataManager dataManager;
 
-    public InventoryClickListener(DataManager dataManager) {
+    public InventoryClickListener(Showcase plugin, DataManager dataManager) {
+        this.plugin = plugin;
         this.dataManager = dataManager;
     }
 
@@ -50,26 +54,19 @@ public class InventoryClickListener implements Listener {
         PlayerShowcase showcase = dataManager.getPlayerShowcases().get(PlayerUtils.findUUIDFromName(showcaseOwnerName));
 
         // If they are trying to remove an item...
-        // (We can determine if they are trying to remove an item if what they are clicking on is not null,
+        // (We can determine if they are trying to remove an item by if what they are clicking on is not null,
         // and their mouse isn't holding anything).
         if (event.getCurrentItem() != null && event.getCursor().getType() == Material.AIR) {
-            // If the slot is on cooldown, cancel the event.
-            if (showcase.isSlotOnCooldown(event.getSlot())) {
+            // If the cooldowns feature is enabled and the slot is on cooldown, cancel the event.
+            if (Utils.cooldownsFeatureIsEnabled(plugin) && showcase.isSlotOnCooldown(event.getSlot())) {
                 event.setCancelled(true);
                 return;
             }
 
-            // Otherwise the slot is not on cooldown, so process the removal of the item.
+            // Process the removal of the item.
             // Remove cooldown lore (if it has lore).
             ItemStack item = event.getCurrentItem();
-            ItemMeta meta = item.getItemMeta();
-            List<String> lore = meta.getLore();
-
-            if (lore != null) {
-                ShowcaseUtils.removeCooldownLore(lore);
-                meta.setLore(lore);
-                item.setItemMeta(meta);
-            }
+            ShowcaseUtils.removeCooldownLore(item);
         }
     }
 }

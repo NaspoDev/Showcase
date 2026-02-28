@@ -60,8 +60,8 @@ public final class Showcase extends JavaPlugin {
 
     private void registerEvents() {
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
-        this.getServer().getPluginManager().registerEvents(new InventoryClickListener(dataManager), this);
-        this.getServer().getPluginManager().registerEvents(new InventoryCloseListener(dataManager), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryClickListener(this, dataManager), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryCloseListener(this, dataManager), this);
     }
 
     private void registerCommands() {
