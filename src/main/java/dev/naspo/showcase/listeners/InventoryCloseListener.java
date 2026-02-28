@@ -1,11 +1,10 @@
 package dev.naspo.showcase.listeners;
 
 import dev.naspo.showcase.Showcase;
-import dev.naspo.showcase.datamanagement.DataManager;
+import dev.naspo.showcase.data.DataManager;
 import dev.naspo.showcase.types.PlayerShowcase;
 import dev.naspo.showcase.utils.PlayerUtils;
 import dev.naspo.showcase.utils.ShowcaseUtils;
-import dev.naspo.showcase.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,7 +14,6 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class InventoryCloseListener implements Listener {
 

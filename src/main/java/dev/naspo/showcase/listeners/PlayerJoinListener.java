@@ -1,12 +1,11 @@
 package dev.naspo.showcase.listeners;
 
-import dev.naspo.showcase.datamanagement.DataManager;
+import dev.naspo.showcase.data.DataManager;
 import dev.naspo.showcase.types.PlayerShowcase;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
 
 public class PlayerJoinListener implements Listener {
     private final DataManager dataManager;

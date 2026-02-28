@@ -1,7 +1,7 @@
 package dev.naspo.showcase.services;
 
 import dev.naspo.showcase.Showcase;
-import dev.naspo.showcase.datamanagement.DataManager;
+import dev.naspo.showcase.data.DataManager;
 import dev.naspo.showcase.types.PlayerShowcase;
 import dev.naspo.showcase.utils.PlayerUtils;
 import dev.naspo.showcase.utils.ShowcaseUtils;
@@ -11,10 +11,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import javax.xml.crypto.Data;
-import java.util.List;
 import java.util.logging.Level;
 
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package dev.naspo.showcase.commandstuff;
+package dev.naspo.showcase.commands;
 
 import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.services.OpenShowcaseService;

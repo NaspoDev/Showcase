@@ -1,4 +1,4 @@
-package dev.naspo.showcase.datamanagement;
+package dev.naspo.showcase.data;
 
 import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.types.PlayerShowcase;
@@ -6,7 +6,6 @@ import dev.naspo.showcase.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 

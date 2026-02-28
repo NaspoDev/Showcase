@@ -1,10 +1,10 @@
 package dev.naspo.showcase;
 
-import dev.naspo.showcase.commandstuff.Commands;
+import dev.naspo.showcase.commands.Commands;
 import dev.naspo.showcase.listeners.InventoryCloseListener;
 import dev.naspo.showcase.services.OpenShowcaseService;
-import dev.naspo.showcase.commandstuff.TabCompleter;
-import dev.naspo.showcase.datamanagement.DataManager;
+import dev.naspo.showcase.commands.TabCompleter;
+import dev.naspo.showcase.data.DataManager;
 import dev.naspo.showcase.listeners.InventoryClickListener;
 import dev.naspo.showcase.listeners.PlayerJoinListener;
 import org.bukkit.plugin.java.JavaPlugin;
