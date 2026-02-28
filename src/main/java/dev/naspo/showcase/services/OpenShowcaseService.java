@@ -2,7 +2,9 @@ package dev.naspo.showcase.services;
 
 import dev.naspo.showcase.Showcase;
 import dev.naspo.showcase.datamanagement.DataManager;
+import dev.naspo.showcase.types.PlayerShowcase;
 import dev.naspo.showcase.utils.PlayerUtils;
+import dev.naspo.showcase.utils.ShowcaseUtils;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -42,7 +44,6 @@ public class OpenShowcaseService {
         permissionToSize.put("showcase.size.6", 54);
     }
 
-
     /**
      * Opens another online player's showcase for the viewer.
      *
@@ -51,7 +52,8 @@ public class OpenShowcaseService {
      */
     public void openOtherPlayerShowcase(Player viewer, Player target) {
         int showcaseSize = getShowcaseSize(target);
-        ItemStack[] showcaseItems = dataManager.getPlayerShowcases().get(target.getUniqueId().toString());
+        PlayerShowcase showcase = dataManager.getPlayerShowcases().get(target.getUniqueId());
+        ItemStack[] showcaseItems = showcase.getItems();
 
         // If there is a showcase mismatch error, log errors and exit.
         if (showcaseSizeMismatchExists(showcaseItems, showcaseSize)) {
@@ -61,12 +63,12 @@ public class OpenShowcaseService {
 
         // Otherwise continue with the creation and opening of the inventory.
         // Create a blank showcase inventory with the target's information.
-        Inventory showcase = Bukkit.createInventory(target, getShowcaseSize(target),
-                target.getName() + "'s Showcase");
+        Inventory inventory = Bukkit.createInventory(target, showcaseSize,
+                target.getName() + ShowcaseUtils.SHOWCASE_INVENTORY_TITLE_SUFFIX);
         // Set its content's to the targets showcase contents.
-        showcase.setContents(dataManager.getPlayerShowcases().get(target.getUniqueId().toString()));
+        inventory.setContents(showcaseItems);
         // Open the target's showcase for the viewer.
-        viewer.openInventory(showcase);
+        viewer.openInventory(inventory);
     }
 
     /**
@@ -76,8 +78,9 @@ public class OpenShowcaseService {
      * @param target The offline player's showcase of which to open.
      */
     public void openOtherPlayerShowcase(Player viewer, OfflinePlayer target) {
-        ItemStack[] showcaseItems = dataManager.getPlayerShowcases().get(target.getUniqueId().toString());
         int showcaseSize = getShowcaseSize(target);
+        PlayerShowcase showcase = dataManager.getPlayerShowcases().get(target.getUniqueId());
+        ItemStack[] showcaseItems = showcase.getItems();
 
         // If there is a showcase mismatch error, log errors and exit.
         if (showcaseSizeMismatchExists(showcaseItems, showcaseSize)) {
@@ -87,12 +90,12 @@ public class OpenShowcaseService {
 
         // Otherwise continue with the creation and opening of the inventory.
         // Create a blank showcase inventory with the target's information.
-        Inventory showcase = Bukkit.createInventory(null, getShowcaseSize(target),
-                target.getName() + "'s Showcase");
+        Inventory inventory = Bukkit.createInventory(null, showcaseSize,
+                target.getName() + ShowcaseUtils.SHOWCASE_INVENTORY_TITLE_SUFFIX);
         // Set its content's to the targets showcase contents.
-        showcase.setContents(dataManager.getPlayerShowcases().get(target.getUniqueId().toString()));
+        inventory.setContents(showcaseItems);
         // Open the target's showcase for the viewer.
-        viewer.openInventory(showcase);
+        viewer.openInventory(inventory);
     }
 
     /**
@@ -101,7 +104,8 @@ public class OpenShowcaseService {
      * @param player The player that will open their own showcase.
      */
     public void openOwnShowcase(Player player) {
-        ItemStack[] showcaseItems = dataManager.getPlayerShowcases().get(player.getUniqueId().toString());
+        PlayerShowcase showcase = dataManager.getPlayerShowcases().get(player.getUniqueId());
+        ItemStack[] showcaseItems = showcase.getItems();
         int showcaseSize = getShowcaseSize(player);
 
         // If there is a showcase mismatch error, log errors and exit.
@@ -110,39 +114,16 @@ public class OpenShowcaseService {
             return;
         }
 
-        // Otherwise continue with the creation and opening of the inventory.
         // Create a blank showcase inventory with the player's information.
-        Inventory showcase = Bukkit.createInventory(player, showcaseSize,
-                player.getName() + "'s Showcase");
+        Inventory inventory = Bukkit.createInventory(player, showcaseSize,
+                player.getName() + ShowcaseUtils.SHOWCASE_INVENTORY_TITLE_SUFFIX);
 
-        // Update cooldown lores if applicable.
-        for (int i = 0; i < showcaseItems.length; i++) {
-            ItemStack item = showcaseItems[i];
-            if (item == null) {
-                continue;
-            }
-            ItemMeta meta = item.getItemMeta();
-            List<String> lore = meta.getLore();
-            if (lore != null) {
-                for (int j = 0; j < lore.size(); j++) {
-                    if (lore.get(j).startsWith("Cooldown time remaining: ")) {
-                        long unlockTime = dataManager.getPlayerShowcaseSlotCooldowns().get(player.getUniqueId().toString())
-                                .get(i);
-                        if (unlockTime <= System.currentTimeMillis()) {
-                            lore.remove(j);
-                        } else {
-                            lore.set(j, "Cooldown time remaining: " + (unlockTime - System.currentTimeMillis()));
-                        }
-                    }
-                }
-                meta.setLore(lore);
-            }
-            item.setItemMeta(meta);
-        }
+        // Synchronize cooldown lores.
+        ShowcaseUtils.syncCooldownLores(showcaseItems, showcase.getSlotCooldowns());
 
-        // Set its contents to their showcase's contents.
-        showcase.setContents(showcaseItems);
-        player.openInventory(showcase); // Open their showcase.
+        // Set the inventory contents and open it.
+        inventory.setContents(showcaseItems);
+        player.openInventory(inventory);
     }
 
     // Returns the size of an online player's showcase size.

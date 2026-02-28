@@ -65,10 +65,6 @@ public class InventoryCloseListener implements Listener {
                     // TODO: Get the cooldown time from the config
                     long unlockTime = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(5);
                     showcase.getSlotCooldowns().put(i, unlockTime);
-
-                    // Add lore to the item
-                    // TODO: Move this logic to when the showcase is opened.
-                    ShowcaseUtils.addCooldownLore(itemAfter, unlockTime);
                 }
             }
         }

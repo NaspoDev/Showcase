@@ -9,16 +9,13 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 // Showcase related utility.
 public class ShowcaseUtils {
 
     // A showcase inventory will always end with this text.
-    private static final String SHOWCASE_INVENTORY_TITLE_SUFFIX = "'s Showcase";
+    public static final String SHOWCASE_INVENTORY_TITLE_SUFFIX = "'s Showcase";
     // Item cooldown lore always starts with this text.
     private static final String COOLDOWN_LORE_PREFIX = "Cooldown: ";
 
@@ -62,14 +59,55 @@ public class ShowcaseUtils {
                 || (ShowcaseUtils.showcaseBelongsTo(inventoryView, player) && player.hasPermission("showcase.use"));
     }
 
-    // Adds cooldown lore to an item.
-    public static void addCooldownLore(ItemStack item, long unlockTime) {
+    // Updates cooldown lores on a set of showcase items. (Adds, updates, or removes where needed).
+    public static void syncCooldownLores(ItemStack[] showcaseItems, HashMap<Integer, Long> slotCooldowns) {
+        for (int i = 0; i < showcaseItems.length; i++) {
+            ItemStack item = showcaseItems[i];
+            if (item != null) {
+                syncCooldownLore(item, slotCooldowns.get(i));
+            }
+        }
+    }
+
+    // Updates cooldown lore on a single item. (Adds, updates, or removes where needed).
+    // TODO: set cooldown time remaining in a proper time format
+    public static void syncCooldownLore(ItemStack item, long unlockTime) {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
+
         if (lore == null) {
             lore = new ArrayList<>();
         }
-        lore.add("Cooldown time remaining: " + (unlockTime - System.currentTimeMillis()));
+
+        long currentTime = System.currentTimeMillis();
+        long timeRemaining = unlockTime - currentTime;
+
+        int idxOfCooldownLore = -1; // Index of cooldown lore in lore list. (-1 means it doesn't exist).
+        // Find existing cooldown lore if it exists.
+        for (int i = 0; i < lore.size(); i++) {
+            if (lore.get(i).startsWith(COOLDOWN_LORE_PREFIX)) {
+                idxOfCooldownLore = i;
+                break;
+            }
+        }
+
+        // If there is an active cooldown...
+        if (timeRemaining > 0) {
+            String cooldownLine = COOLDOWN_LORE_PREFIX + timeRemaining;
+            // If there is no existing cooldown lore, add it.
+            if (idxOfCooldownLore == -1) {
+                lore.add(cooldownLine);
+            } else {
+                // Otherwise update the existing cooldown lore.
+                lore.set(idxOfCooldownLore, cooldownLine);
+            }
+        } else {
+            // There is no cooldown active. Remove cooldown lore if it exists.
+            if (idxOfCooldownLore >= 0) {
+                lore.remove(idxOfCooldownLore);
+            }
+        }
+
         meta.setLore(lore);
         item.setItemMeta(meta);
     }
