@@ -33,37 +33,31 @@ public class ShowcaseUtils {
             return false;
         }
 
-        String inventoryTitle = inventoryView.getTitle();
         String playerName = player.getName();
-        return playerName.equalsIgnoreCase(inventoryTitle.substring(0, inventoryTitle.lastIndexOf("'")));
+        return playerName.equalsIgnoreCase(getShowcaseOwnerNameFromInvTitle(inventoryView));
     }
 
-    // Finds the showcase from the Inventory. Returns empty if the provided inventory is not a showcase inventory,
-    // and therefore a showcase couldn't be found.
-    public static Optional<PlayerShowcase> findShowcaseFromInventory(InventoryView inventoryView) {
+    /**
+     * Parses and returns a showcase inventory title to get the owner's name.
+     *
+     * @param inventoryView The Inventor
+     * @return The name of the showcase owner. Returns null if the provided InventoryView is not a showcase inventory.
+     */
+    public static String getShowcaseOwnerNameFromInvTitle(InventoryView inventoryView) {
         if (!isShowcaseInventory(inventoryView)) {
-            return Optional.empty();
+            return null;
+        } else {
+            String invTitle = inventoryView.getTitle();
+            return invTitle.substring(0, invTitle.lastIndexOf("'"));
         }
+    }
 
-        // First check online players.
-        List<Player> onlinePlayers = new ArrayList<>();
-        onlinePlayers.addAll(Bukkit.getOnlinePlayers());
-        for (Player p : onlinePlayers) {
-            if (p.getName().equalsIgnoreCase(showcaseOwnerName)) {
-                showcaseOwnerUUID = p.getUniqueId();
+    // Removes cooldown lore from item lore.
+    public static List<String> removeCooldownLore(List<String> lore) {
+        for (int i = 0; i < lore.size(); i++) {
+            if (lore.get(i).startsWith(COOLDOWN_LORE_PREFIX)) {
+                lore.remove(i);
             }
         }
-
-        // If we still haven't found the showcase owner (i.e. the showcase owner wasn't online),
-        // find them as an OfflinePlayer.
-        if (showcaseOwnerUUID == null) {
-            OfflinePlayer p = Bukkit.getOfflinePlayer(showcaseOwnerName);
-            showcaseOwnerUUID = p.getUniqueId();
-        }
-    }
-
-    // Returns the UUID of the showcase owner by their name.
-    public static UUID findShowcaseOwnerByName(String ownerName) {
-
     }
 }

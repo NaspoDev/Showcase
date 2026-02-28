@@ -2,8 +2,10 @@ package dev.naspo.showcase.listeners;
 
 import dev.naspo.showcase.datamanagement.DataManager;
 import dev.naspo.showcase.types.PlayerShowcase;
+import dev.naspo.showcase.utils.PlayerUtils;
 import dev.naspo.showcase.utils.ShowcaseUtils;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -46,9 +48,17 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
-        // Find the showcase.
-        PlayerShowcase showcase = null;
-        if (ShowcaseUtils.showcaseBelongsTo(inventoryView, player))
+        // Find the showcase object.
+        String showcaseOwnerName = ShowcaseUtils.getShowcaseOwnerNameFromInvTitle(inventoryView);
+        PlayerShowcase showcase;
+
+        if (PlayerUtils.isOnline(showcaseOwnerName)) {
+            Player showcaseOwner = PlayerUtils.getOnlinePlayer(showcaseOwnerName);
+            showcase = dataManager.getPlayerShowcases().get(showcaseOwner.getUniqueId());
+        } else {
+            OfflinePlayer showcaseOwner = PlayerUtils.getOfflinePlayer(showcaseOwnerName);
+            showcase = dataManager.getPlayerShowcases().get(showcaseOwner.getUniqueId());
+        }
 
         // If they are trying to remove an item...
         // (We can determine if they are trying to remove an item if what they are clicking on is not null,
@@ -67,11 +77,7 @@ public class InventoryClickListener implements Listener {
             List<String> lore = meta.getLore();
 
             if (lore != null) {
-                for (int i = 0; i < lore.size(); i++) {
-                    if (lore.get(i).startsWith(COOLDOWN_LORE_PREFIX)) {
-                        lore.remove(i);
-                    }
-                }
+                ShowcaseUtils.removeCooldownLore(lore);
                 meta.setLore(lore);
                 item.setItemMeta(meta);
             }
