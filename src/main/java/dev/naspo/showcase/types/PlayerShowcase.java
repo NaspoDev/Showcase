@@ -19,7 +19,7 @@ public class PlayerShowcase {
 
     // Returns true if the specified slot is on cooldown.
     public boolean isSlotOnCooldown(int slot) {
-        return slotCooldowns.get(slot) > System.currentTimeMillis();
+        return slotCooldowns.getOrDefault(slot, 0L) > System.currentTimeMillis();
     }
 
     // Getters and Setters
