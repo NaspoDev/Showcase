@@ -54,10 +54,13 @@ public class InventoryClickListener implements Listener {
         // If they are trying to remove an item...
         // (We can determine if they are trying to remove an item by if what they are clicking on is not null).
         if (event.getCurrentItem() != null) {
-            // If the cooldowns feature is enabled and the slot is on cooldown, cancel the event.
+            // If the cooldowns feature is enabled and the slot is on cooldown, cancel the event. Unless
+            // they have permission to bypass cooldowns.
             if (Utils.cooldownsFeatureIsEnabled(plugin) && showcase.isSlotOnCooldown(event.getSlot())) {
-                event.setCancelled(true);
-                return;
+                if (!player.hasPermission("showcase.edit") && !player.hasPermission("showcase.cooldowns.bypass")) {
+                    event.setCancelled(true);
+                    return;
+                }
             }
 
             // Process the removal of the item.
