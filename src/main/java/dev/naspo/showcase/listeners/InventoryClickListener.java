@@ -43,6 +43,7 @@ public class InventoryClickListener implements Listener {
 
         // Permission check.
         if (!ShowcaseUtils.playerCanEditShowcase(inventoryView, player)) {
+            event.setCancelled(true);
             return;
         }
 

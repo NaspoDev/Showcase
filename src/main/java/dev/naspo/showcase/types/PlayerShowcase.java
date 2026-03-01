@@ -13,6 +13,7 @@ public class PlayerShowcase {
 
     public PlayerShowcase(UUID ownerUUID) {
         this.ownerUUID = ownerUUID;
+        items = new ItemStack[0];
         slotCooldowns = new HashMap<>();
     }
 

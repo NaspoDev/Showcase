@@ -128,6 +128,10 @@ public class ShowcaseUtils {
 
     // Removes cooldown lore from an item.
     public static void removeCooldownLore(ItemStack item) {
+        if (item == null) {
+            return;
+        }
+
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
 

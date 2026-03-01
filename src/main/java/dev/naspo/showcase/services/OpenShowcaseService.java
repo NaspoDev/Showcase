@@ -62,6 +62,12 @@ public class OpenShowcaseService {
         // Create a blank showcase inventory with the target's information.
         Inventory inventory = Bukkit.createInventory(target, showcaseSize,
                 target.getName() + ShowcaseUtils.SHOWCASE_INVENTORY_TITLE_SUFFIX);
+
+        // Remove all cooldown lore from items. Other players shouldn't be able to see the cooldowns of others.
+        for (ItemStack item : showcaseItems) {
+            ShowcaseUtils.removeCooldownLore(item);
+        }
+
         // Set its content's to the targets showcase contents.
         inventory.setContents(showcaseItems);
         // Open the target's showcase for the viewer.
@@ -89,6 +95,12 @@ public class OpenShowcaseService {
         // Create a blank showcase inventory with the target's information.
         Inventory inventory = Bukkit.createInventory(null, showcaseSize,
                 target.getName() + ShowcaseUtils.SHOWCASE_INVENTORY_TITLE_SUFFIX);
+
+        // Remove all cooldown lore from items. Other players shouldn't be able to see the cooldowns of others.
+        for (ItemStack item : showcaseItems) {
+            ShowcaseUtils.removeCooldownLore(item);
+        }
+
         // Set its content's to the targets showcase contents.
         inventory.setContents(showcaseItems);
         // Open the target's showcase for the viewer.
