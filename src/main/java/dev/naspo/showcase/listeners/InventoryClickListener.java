@@ -28,9 +28,11 @@ public class InventoryClickListener implements Listener {
     @EventHandler
     private void onInvClick(InventoryClickEvent event) {
         InventoryView inventoryView = event.getView();
+        Player player = (Player) event.getWhoClicked();
 
-        // If the interaction wasn't with the top inventory. Ignore.
-        if (event.getClickedInventory() == null || event.getClickedInventory().equals(inventoryView.getBottomInventory())) {
+        // If the interaction wasn't with any inventory (i.e. they have an inventory open by they clicked
+        // outside the GUI), ignore.
+        if (event.getClickedInventory() == null) {
             return;
         }
 
@@ -39,9 +41,20 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
-        Player player = (Player) event.getWhoClicked();
+        /*
+        If the interaction was with the bottom inventory (i.e. the player's own inventory), and they don't
+        have permission to edit the showcase, cancel the event.
+        This prevents the player from adding anything to a showcase that they don't have permission to edit.
+        Otherwise, if they do have permission to edit the showcase, allow it (ignore).
+        */
+        if (event.getClickedInventory().equals(inventoryView.getBottomInventory())) {
+            if (!ShowcaseUtils.playerCanEditShowcase(inventoryView, player)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
 
-        // Permission check.
+        // Standard permission check.
         if (!ShowcaseUtils.playerCanEditShowcase(inventoryView, player)) {
             event.setCancelled(true);
             return;
