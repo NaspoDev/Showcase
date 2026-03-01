@@ -67,7 +67,9 @@ public class ShowcaseUtils {
         // If cooldowns aren't enabled, remove cooldown lore from items.
         if (!Utils.cooldownsFeatureIsEnabled(plugin)) {
             for (ItemStack item : showcaseItems) {
-                removeCooldownLore(item);
+                if (item != null) {
+                    removeCooldownLore(item);
+                }
             }
             return;
         }

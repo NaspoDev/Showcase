@@ -18,6 +18,9 @@ public final class Showcase extends JavaPlugin {
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
+        this.getConfig().options().copyDefaults(true);
+        this.saveConfig();
+
         this.getLogger().info("Showcase has been enabled!");
 
         dependencyCheck();

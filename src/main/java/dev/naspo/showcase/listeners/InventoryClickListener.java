@@ -51,9 +51,8 @@ public class InventoryClickListener implements Listener {
         PlayerShowcase showcase = dataManager.getPlayerShowcases().get(PlayerUtils.findUUIDFromName(showcaseOwnerName));
 
         // If they are trying to remove an item...
-        // (We can determine if they are trying to remove an item by if what they are clicking on is not null,
-        // and their mouse isn't holding anything).
-        if (event.getCurrentItem() != null && event.getCursor().getType() == Material.AIR) {
+        // (We can determine if they are trying to remove an item by if what they are clicking on is not null).
+        if (event.getCurrentItem() != null) {
             // If the cooldowns feature is enabled and the slot is on cooldown, cancel the event.
             if (Utils.cooldownsFeatureIsEnabled(plugin) && showcase.isSlotOnCooldown(event.getSlot())) {
                 event.setCancelled(true);
