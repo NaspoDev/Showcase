@@ -1,7 +1,6 @@
-package dev.naspo.showcase.commandstuff;
+package dev.naspo.showcase.commands;
 
 import dev.naspo.showcase.Showcase;
-import dev.naspo.showcase.datamanagement.DataManager;
 import dev.naspo.showcase.services.OpenShowcaseService;
 import dev.naspo.showcase.utils.PlayerUtils;
 import dev.naspo.showcase.utils.Utils;
@@ -14,11 +13,11 @@ import org.bukkit.entity.Player;
 public class Commands implements CommandExecutor {
 
     private Showcase plugin;
-    private OpenShowcaseService openShowcase;
+    private OpenShowcaseService openShowcaseService;
 
-    public Commands(Showcase plugin, OpenShowcaseService openShowcase) {
+    public Commands(Showcase plugin, OpenShowcaseService openShowcaseService) {
         this.plugin = plugin;
-        this.openShowcase = openShowcase;
+        this.openShowcaseService = openShowcaseService;
     }
 
     @Override
@@ -49,7 +48,7 @@ public class Commands implements CommandExecutor {
 
         // If there are no args, have the player open their own showcase.
         if (args.length == 0) {
-            openShowcase.openOwnShowcase(player);
+            openShowcaseService.openOwnShowcase(player);
         } else {
             // Handle arguments.
             switch (args[0].toLowerCase()) {
@@ -96,13 +95,13 @@ public class Commands implements CommandExecutor {
     private void handleOpenOtherShowcaseCommand(Player player, String targetPlayerName) {
         // If the player is online, open their showcase.
         if (PlayerUtils.isOnline(targetPlayerName)) {
-            openShowcase.openOtherPlayerShowcase(player, PlayerUtils.getOnlinePlayer(targetPlayerName));
+            openShowcaseService.openOtherPlayerShowcase(player, PlayerUtils.getOnlinePlayer(targetPlayerName));
         } else {
             // Otherwise try for an offline player.
             OfflinePlayer offlinePlayer = PlayerUtils.getOfflinePlayer(targetPlayerName);
             // If they have played before, open their showcase.
             if (offlinePlayer.hasPlayedBefore()) {
-                openShowcase.openOtherPlayerShowcase(player, PlayerUtils.getOfflinePlayer(targetPlayerName));
+                openShowcaseService.openOtherPlayerShowcase(player, PlayerUtils.getOfflinePlayer(targetPlayerName));
             } else {
                 // Otherwise, if they have never played the server before, send
                 // a player-has-never-joined message.

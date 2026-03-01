@@ -11,20 +11,22 @@ import java.util.UUID;
 // Player related utility methods.
 public class PlayerUtils {
 
-    // Get online player.
+    // Get online player by UUID.
     public static Player getOnlinePlayer(UUID playerUUID) {
         return isOnline(playerUUID) ? Bukkit.getPlayer(playerUUID) : null;
     }
 
-    // Get online player.
+    // Get online player by name.
     public static Player getOnlinePlayer(String playerName) {
         return isOnline(playerName) ? Bukkit.getPlayer(playerName) : null;
     }
 
+    // Get offline player by UUID.
     public static OfflinePlayer getOfflinePlayer(UUID playerUUID) {
         return Bukkit.getOfflinePlayer(playerUUID);
     }
 
+    // Get offline player by name.
     public static OfflinePlayer getOfflinePlayer(String playerName) {
         return Bukkit.getOfflinePlayer(playerName);
     }
@@ -49,6 +51,13 @@ public class PlayerUtils {
                 .map(p -> (Player) p);
 
         return player.isPresent();
+    }
+
+    public static UUID findUUIDFromName(String playerName) {
+        if (isOnline(playerName)) {
+            return getOnlinePlayer(playerName).getUniqueId();
+        }
+        return Bukkit.getOfflinePlayer(playerName).getUniqueId();
     }
 
     /**

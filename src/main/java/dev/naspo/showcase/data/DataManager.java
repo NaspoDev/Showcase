@@ -1,8 +1,10 @@
-package dev.naspo.showcase.datamanagement;
+package dev.naspo.showcase.data;
 
 import dev.naspo.showcase.Showcase;
+import dev.naspo.showcase.types.PlayerShowcase;
 import dev.naspo.showcase.utils.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
@@ -17,12 +19,17 @@ public class DataManager {
     private final Showcase plugin;
     private File playerDataDirectory;
     private File[] playerDataFiles;
+
+    // YAML paths.
+    private final String ITEM_DATA_YAML_PATH = "data";
+    private final String SLOT_COOLDOWN_YAML_PATH = "slot-cooldowns";
+
     // The Bukkit scheduler task that repeatedly auto saves data to disk on set intervals.
     private BukkitTask autoSaveTask;
 
     // Main working HashMap that stores showcase data in runtime.
-    // Player UUID as string : Showcase contents (ItemStack[])
-    private final HashMap<String, ItemStack[]> playerShowcases;
+    // Player UUID : PlayerShowcase
+    private final HashMap<UUID, PlayerShowcase> playerShowcases;
 
     public DataManager(Showcase plugin) {
         this.plugin = plugin;
@@ -55,16 +62,19 @@ public class DataManager {
 
     // Saves in-memory showcase data to files.
     public void saveShowcaseData() {
-        for (Map.Entry<String, ItemStack[]> entry : playerShowcases.entrySet()) {
+        for (Map.Entry<UUID, PlayerShowcase> entry : playerShowcases.entrySet()) {
+            String uuidString = entry.getKey().toString();
+            PlayerShowcase showcase = entry.getValue();
+
             // Initialize the player file.
-            File playerFile = new File(playerDataDirectory, entry.getKey() + ".yml");
+            File playerFile = new File(playerDataDirectory, uuidString + ".yml");
 
             // If it doesn't exist, try and create it.
             if (!(playerFile.exists())) {
                 try {
                     playerFile.createNewFile();
                 } catch (IOException e) {
-                    plugin.getLogger().log(Level.WARNING, "Could not create playerdata file for player uuid " + entry.getKey());
+                    plugin.getLogger().log(Level.WARNING, "Could not create playerdata file for player uuid " + uuidString);
                     e.printStackTrace();
                     return;
                 }
@@ -72,14 +82,16 @@ public class DataManager {
 
             // Load the player's YAML file.
             YamlConfiguration yamlConfig = YamlConfiguration.loadConfiguration(playerFile);
-            // Set "data" key to showcase contents (ItemStack).
-            yamlConfig.set("data", entry.getValue());
+            // Set item data to showcase contents (ItemStack[]).
+            yamlConfig.set(ITEM_DATA_YAML_PATH, showcase.getItems());
+            // Set slow cooldown data.
+            yamlConfig.set(SLOT_COOLDOWN_YAML_PATH, showcase.getSlotCooldowns());
 
             // Save.
             try {
                 yamlConfig.save(playerFile);
             } catch (IOException e) {
-                plugin.getLogger().log(Level.WARNING, "Could not save playerdata for player uuid " + entry.getKey());
+                plugin.getLogger().log(Level.WARNING, "Could not save playerdata for player uuid " + uuidString);
                 e.printStackTrace();
             }
         }
@@ -90,11 +102,34 @@ public class DataManager {
         for (File file : playerDataFiles) {
             // Load the YAML file.
             YamlConfiguration yamlConfig = YamlConfiguration.loadConfiguration(file);
-            // Add each item to the content list.
-            List<ItemStack> content = new ArrayList<>();
-            yamlConfig.getList("data").forEach(item -> content.add((ItemStack) item));
-            // Add the data to the hashmap.
-            playerShowcases.put(Utils.removeFileExtension(file.getName()), content.toArray(new ItemStack[0]));
+
+            // Initialize the PlayerShowcase.
+            UUID playerUUID = UUID.fromString(Utils.removeFileExtension(file.getName()));
+            PlayerShowcase showcase = new PlayerShowcase(playerUUID);
+
+            // Load and process showcase items.
+            List<ItemStack> items = new ArrayList<>();
+            yamlConfig.getList("data").forEach(item -> items.add((ItemStack) item));
+            showcase.setItems(items.toArray(new ItemStack[0]));
+
+            // Load and process slot cooldowns.
+            HashMap<Integer, Long> slotCooldowns = new HashMap<>();
+            ConfigurationSection configurationSection = yamlConfig.getConfigurationSection(SLOT_COOLDOWN_YAML_PATH);
+            // Checking if a slot cooldown section exists before proceeding. This is
+            // done for backwards compatibility for before the cooldowns feature was added.
+            if (configurationSection != null) {
+                Map<String, Object> slotCooldownsRaw = configurationSection.getValues(false);
+                // Convert generic YAMLConfiguration Map types to my original types.
+                for (Map.Entry<String, Object> entry : slotCooldownsRaw.entrySet()) {
+                    Integer slot = Integer.parseInt(entry.getKey());
+                    Long unlockTimeEpoch = (Long) entry.getValue();
+                    slotCooldowns.put(slot, unlockTimeEpoch);
+                }
+            }
+            showcase.setSlotCooldowns(slotCooldowns);
+
+            // Add the showcase to the playerShowcases hashmap.
+            playerShowcases.put(playerUUID, showcase);
         }
     }
 
@@ -109,9 +144,8 @@ public class DataManager {
         autoSaveTask = Bukkit.getScheduler().runTaskTimer(plugin, this::saveShowcaseData, 6000L, 6000L);
     }
 
-    // Getters
-    public HashMap<String, ItemStack[]> getPlayerShowcases() {
+    // Getter
+    public HashMap<UUID, PlayerShowcase> getPlayerShowcases() {
         return playerShowcases;
     }
-
 }

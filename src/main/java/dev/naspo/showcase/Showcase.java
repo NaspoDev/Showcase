@@ -1,25 +1,26 @@
 package dev.naspo.showcase;
 
-import dev.naspo.showcase.commandstuff.Commands;
+import dev.naspo.showcase.commands.Commands;
+import dev.naspo.showcase.listeners.InventoryCloseListener;
 import dev.naspo.showcase.services.OpenShowcaseService;
-import dev.naspo.showcase.commandstuff.TabCompleter;
-import dev.naspo.showcase.datamanagement.DataManager;
-import dev.naspo.showcase.listeners.InventoryListener;
+import dev.naspo.showcase.commands.TabCompleter;
+import dev.naspo.showcase.data.DataManager;
+import dev.naspo.showcase.listeners.InventoryClickListener;
 import dev.naspo.showcase.listeners.PlayerJoinListener;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
 
 public final class Showcase extends JavaPlugin {
     private DataManager dataManager;
-    private OpenShowcaseService openShowcase;
-    private Commands commands;
-    private TabCompleter tabCompleter;
+    private OpenShowcaseService openShowcaseService;
 
     @Override
     public void onEnable() {
         this.saveDefaultConfig();
+        this.getConfig().options().copyDefaults(true);
+        this.saveConfig();
+
         this.getLogger().info("Showcase has been enabled!");
 
         dependencyCheck();
@@ -39,7 +40,7 @@ public final class Showcase extends JavaPlugin {
     }
 
     private void dependencyCheck() {
-        //Vault
+        // Vault
         if (this.getServer().getPluginManager().getPlugin("Vault") == null) {
             this.getLogger().log(Level.SEVERE, "Could not locate Vault which is a dependency of this plugin!");
             this.getLogger().log(Level.SEVERE, "Disabling plugin.");
@@ -57,18 +58,17 @@ public final class Showcase extends JavaPlugin {
 
     private void instantiateClasses() {
         dataManager = new DataManager(this);
-        openShowcase = new OpenShowcaseService(this, dataManager);
-        commands = new Commands(this, openShowcase);
-        tabCompleter = new TabCompleter();
+        openShowcaseService = new OpenShowcaseService(this, dataManager);
     }
 
     private void registerEvents() {
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(dataManager), this);
-        this.getServer().getPluginManager().registerEvents(new InventoryListener(dataManager), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryClickListener(this, dataManager), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryCloseListener(this, dataManager), this);
     }
 
     private void registerCommands() {
-        this.getCommand("showcase").setExecutor(commands);
-        this.getCommand("showcase").setTabCompleter(tabCompleter);
+        this.getCommand("showcase").setExecutor(new Commands(this, openShowcaseService));
+        this.getCommand("showcase").setTabCompleter(new TabCompleter());
     }
 }
