@@ -10,7 +10,7 @@ cooldowns:
   duration-minutes: 7200
 
 messages:
-  prefix: "&8[&5&lShowcase&8] &r"
+  prefix: "&8[&5Showcase&8] &r"
   reload: "&7Showcase has been reloaded."
   no-permission: "&cYou do not have permission."
   player-has-never-joined: "&7%player_name% has never played on the server before."
