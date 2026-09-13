@@ -1,11 +1,21 @@
 ![Showcase Banner](https://i.imgur.com/fnEMAzw.png)
 
-## Overview
+# Overview
 The Showcase plugin gives players a way to show off their prized possessions by storing them in a publicly viewable GUI.
 
-Available on [Spigot](https://www.spigotmc.org/resources/showcase.101606/), [Modrinth](https://modrinth.com/plugin/showcase-plugin), and [Hangar](https://hangar.papermc.io/Naspo/ShowcaseIt).
+## Download
+[<img src="https://i.imgur.com/SgO3sQT.png" width="180" alt="Available on Modrinth">](https://modrinth.com/plugin/showcase-plugin)
+[<img src="https://i.imgur.com/r1ZIvDN.png" width="180" alt="Available on Hangar">](https://hangar.papermc.io/Naspo/ShowcaseIt)
 
-## Features
+Alternatively, you can also download Tether from its [releases on GitHub](https://github.com/NaspoDev/Showcase/releases).
+
+## Compatability
+[<img src="https://i.imgur.com/E76tnrm.png" width="180" alt="Available for Paper">](https://papermc.io/)
+[<img src="https://i.imgur.com/HkbCj5L.png" width="180" alt="Available for Purpur">](https://purpurmc.org/)
+
+Versions before 1.8.0 also support plain [Spigot](https://www.spigotmc.org/) servers.
+
+# Features
 - Display any of your prized possessions in a compact GUI.
 - Display up to 54 items (6 rows).
 - Works with offline players.
@@ -14,12 +24,12 @@ Available on [Spigot](https://www.spigotmc.org/resources/showcase.101606/), [Mod
     - Applies a cooldown to items placed in a showcase, so that they may not be removed until the cooldown is up. (Prevent players from using their showcase as extra storage).
     - _Note that cooldowns are not enabled by default._
 
-## Commands
+# Commands
 - `/showcase` - Open your showcase.
 - `/showcase <user>` - View a player’s showcase.
 - `/showcase reload` - Reloads the configuration.
 
-## Permissions
+# Permissions
 - `showcase.use` - Allows players to use their own showcase, and view other players' showcase.
 - `showcase.use.view` - Allows the player to view showcases (including their own), but not edit their own showcase.
 - `showcase.size.<#>` - Amount of rows a player is allowed for their showcase. (2 through 6, default: 1).
@@ -27,7 +37,7 @@ Available on [Spigot](https://www.spigotmc.org/resources/showcase.101606/), [Mod
 - `showcase.edit` - Allows the player to edit anyone’s showcase, and bypass coooldowns.
 - `showcase.reload` - Reload the plugin.
 
-## Dependencies
+# Dependencies
 Vault is a dependency of this plugin. You need it in order for showcase to work properly. To install Vault, click [here](https://www.spigotmc.org/resources/vault.34315/).
 
 <br/><br/>
